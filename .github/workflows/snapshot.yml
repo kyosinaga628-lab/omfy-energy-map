@@ -1,0 +1,48 @@
+name: nightly-snapshot
+
+# 公開用スプレッドシート（ウェブに公開した CSV）を毎晩取得し、変化があれば data/latest に保存してコミットする。
+# 03:00 JST = 18:00 UTC。手動実行も可。
+
+on:
+  schedule:
+    - cron: "0 18 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download published CSVs
+        env:
+          SHEET_NODES_URL: ${{ vars.SHEET_NODES_URL }}
+          SHEET_OPINIONS_URL: ${{ vars.SHEET_OPINIONS_URL }}
+          SHEET_ROLES_URL: ${{ vars.SHEET_ROLES_URL }}
+        run: |
+          set -euo pipefail
+          test -n "$SHEET_NODES_URL"    || { echo "SHEET_NODES_URL is not set (Settings > Variables)"; exit 1; }
+          test -n "$SHEET_OPINIONS_URL" || { echo "SHEET_OPINIONS_URL is not set"; exit 1; }
+          test -n "$SHEET_ROLES_URL"    || { echo "SHEET_ROLES_URL is not set"; exit 1; }
+          mkdir -p data/latest
+          curl -fsSL "$SHEET_NODES_URL"    -o data/latest/nodes.csv
+          curl -fsSL "$SHEET_OPINIONS_URL" -o data/latest/opinions.csv
+          curl -fsSL "$SHEET_ROLES_URL"    -o data/latest/roles.csv
+          echo "nodes:    $(wc -l < data/latest/nodes.csv) lines"
+          echo "opinions: $(wc -l < data/latest/opinions.csv) lines"
+          echo "roles:    $(wc -l < data/latest/roles.csv) lines"
+
+      - name: Commit if changed
+        run: |
+          git config user.name "omfy-snapshot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/latest
+          if git diff --cached --quiet; then
+            echo "no changes"
+            exit 0
+          fi
+          git commit -m "snapshot: $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push

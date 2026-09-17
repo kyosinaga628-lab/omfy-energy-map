@@ -1,0 +1,2 @@
+このディレクトリには、毎晩 GitHub Actions が公開用スプレッドシートから取得した CSV スナップショットが置かれます（nodes.csv / opinions.csv / roles.csv）。
+初回のワークフロー実行までは空です。
