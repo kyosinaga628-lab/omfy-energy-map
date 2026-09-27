@@ -1,0 +1,91 @@
+/* @omfy 論点マップ 共通スタイル（詳細ビュー index.html と 俯瞰ビュー overview.html で共有） */
+:root{
+  color-scheme: light dark;
+  --bg:#F2F4F6; --surface:#FFFFFF; --surface2:#E9EDF0; --ink:#1C2730; --muted:#5B6B76; --rule:#D3DBE1; --rule2:#BCC6CE;
+  --accent:#2B4C7E; --accent-soft:#DCE5F2;
+  --st-support:#2F6DB5; --st-cond:#2E9E8F; --st-neutral:#8A96A0; --st-question:#7E5EA8; --st-oppose:#D2622A;
+  --k-objective:#2E3543; --k-theme:#5B6F93; --k-criterion:#7E8F57; --k-object:#9C6F46; --k-issue:#AEB9C4; --k-context:#8E6F9C;
+  --warn:#D2622A; --ok:#2E9E8F;
+  --shadow:0 1px 2px rgba(28,39,48,.06), 0 8px 24px rgba(28,39,48,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141A1F; --surface:#1C232A; --surface2:#232C34; --ink:#E4E9EE; --muted:#98A5B1; --rule:#2F3A44; --rule2:#3D4A56;
+    --accent:#8FB0E0; --accent-soft:#24344A;
+    --st-support:#7FA9E6; --st-cond:#63C2B3; --st-neutral:#9AA6B0; --st-question:#B093D8; --st-oppose:#E8925F;
+    --k-objective:#C9D2DE; --k-theme:#7F93B8; --k-criterion:#A3B57A; --k-object:#C0906A; --k-issue:#55636F; --k-context:#AE93B8;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141A1F; --surface:#1C232A; --surface2:#232C34; --ink:#E4E9EE; --muted:#98A5B1; --rule:#2F3A44; --rule2:#3D4A56;
+  --accent:#8FB0E0; --accent-soft:#24344A;
+  --st-support:#7FA9E6; --st-cond:#63C2B3; --st-neutral:#9AA6B0; --st-question:#B093D8; --st-oppose:#E8925F;
+  --k-objective:#C9D2DE; --k-theme:#7F93B8; --k-criterion:#A3B57A; --k-object:#C0906A; --k-issue:#55636F; --k-context:#AE93B8;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",Meiryo,sans-serif;font-size:15px;line-height:1.7}
+h1,h2,h3{font-family:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;font-weight:700;margin:0;text-wrap:balance}
+code{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:.9em;background:var(--surface2);padding:1px 5px;border-radius:3px}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* 画面切り替え（詳細ビュー / 俯瞰ビュー） */
+.nav{display:inline-flex;border:1px solid var(--rule2);border-radius:999px;overflow:hidden;flex:none}
+.nav a{padding:4px 13px;font-size:12.5px;text-decoration:none;color:var(--ink);background:var(--surface);white-space:nowrap}
+.nav a:hover{background:var(--surface2)}
+.nav a[aria-current="page"]{background:var(--ink);color:var(--bg)}
+
+/* ボタン */
+.btn{font:inherit;font-size:12.5px;line-height:1.5;padding:4px 11px;border-radius:999px;border:1px solid var(--rule2);background:var(--surface);color:var(--ink);cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--accent)}
+.btn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.seg{display:inline-flex;border:1px solid var(--rule2);border-radius:999px;overflow:hidden}
+.seg .btn{border:0;border-radius:0}
+
+/* 凡例 */
+.legend-k{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.sw{width:11px;height:11px;border-radius:3px;display:inline-block;flex:none}
+.sw.round{border-radius:50%;width:9px;height:9px}
+
+/* チップ */
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:2px 9px;border-radius:999px;border:1px solid var(--rule2);background:var(--surface);color:var(--ink);line-height:1.5}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+button.chip{font:inherit;font-size:12px;cursor:pointer}
+button.chip:hover{border-color:var(--accent)}
+
+/* 意見リスト（両画面の論点パネルで共通） */
+.gbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;font-size:12.5px;color:var(--muted)}
+.grp{background:var(--surface2);border:1px solid var(--rule);border-radius:6px;overflow:hidden;margin-bottom:10px}
+.grp-h{padding:6px 10px;font-size:12.5px;font-weight:700;border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;gap:8px}
+.grp-h .n{font-weight:400;color:var(--muted);white-space:nowrap}
+.op{padding:9px 10px;border-bottom:1px solid var(--rule);font-size:13px;background:var(--surface)}
+.op:last-child{border-bottom:0}
+.op .claim{font-weight:500}
+.op .meta2{display:flex;flex-wrap:wrap;gap:4px 8px;font-size:11px;color:var(--muted);margin-top:4px;align-items:center}
+.op .meta2 .st{padding:0 7px;border-radius:3px;font-weight:700}
+.op .meta2 .au{margin-left:auto}
+.op .note{font-size:12px;color:var(--muted);margin-top:4px}
+.op.example .claim::after{content:" (サンプル)";font-weight:400;color:var(--muted);font-size:11px}
+.empty{padding:14px 10px;font-size:12.5px;color:var(--muted)}
+
+/* SVG の共通 */
+svg text{font-family:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;fill:var(--ink)}
+svg .edge{fill:none;stroke:var(--rule2);stroke-width:1.2}
+svg .node{cursor:pointer}
+svg .node:focus{outline:none}
+svg .node:focus-visible circle.core{stroke:var(--accent);stroke-width:3}
+svg .node circle.core{stroke:var(--surface);stroke-width:1.5}
+svg .node.selected circle.core{stroke:var(--ink);stroke-width:2.5}
+svg .lbl{font-size:11px}
+svg .lbl.big{font-size:12.5px;font-weight:700}
+svg .halo{stroke:var(--bg);stroke-width:3.5;paint-order:stroke;stroke-linejoin:round}
+svg .badge{stroke:var(--surface);stroke-width:1}
+
+/* 読み込み中・エラー */
+.state{padding:40px 16px;text-align:center;color:var(--muted)}
+.state.err{color:var(--warn)}
