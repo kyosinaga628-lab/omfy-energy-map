@@ -190,6 +190,7 @@ function renderPanel(){
     '<h2>'+E(n.label)+' <span class="chip" style="vertical-align:middle;margin-left:4px"><span class="dot" style="background:'+O.kindColor(n.kind)+'"></span>'+E(n.kind)+'</span></h2>'+
     '<p class="q"><strong>問い:</strong> '+E(n.question||'（未記入）')+'</p>'+
     '<div class="chips">'+O.criteriaChipsHtml(n)+'</div>'+
+    O.writeLinkHtml(n)+
     '<div class="gbar"><span>意見 '+n.opinions.length+' 件 ／ 並べ方:</span><span class="seg"><button class="btn" data-g="role" aria-pressed="'+(GROUP==='role')+'">記入者属性別</button><button class="btn" data-g="stance" aria-pressed="'+(GROUP==='stance')+'">立場別</button></span></div>'+
     O.opinionsHtml(n, GROUP, DATA.roles)+
     '<div class="more"><a href="overview.html#n='+encodeURIComponent(n.id)+'">この論点を俯瞰ビューで見る</a></div>';

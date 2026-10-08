@@ -15,6 +15,15 @@
     roles: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTlAW55KSksgmHytcuHjtNz_ovRS2_02lzsrIIlpJSHflrlonXEZ8Rs5FDoToE49oKs7zImGOjDh1w9/pub?gid=198592258&single=true&output=csv',
   };
 
+  // 意見を書く Google フォーム。スプレッドシートの omfy → 5（またはリンク情報を表示）で
+  // 出る 2 行をここに貼る。url が空のあいだは「この論点に意見を書く」ボタンを出さない。
+  const FORM = {
+    url: 'https://docs.google.com/forms/d/e/1FAIpQLSfOYr0s4RfBfvcTLm4szYQKq6bH-90AHkR0yhGDKkmlgIF8iQ/viewform',
+    nodeEntry: 'entry.813697348',
+  };
+  // フォームの論点の選択肢から外している状態（omfy_setup.gs の CFG.FORM.HIDE_STATUSES と合わせる）
+  const FORM_HIDE_STATUSES = ['取り下げ', '統合済'];
+
   const KINDS = ['目的', 'テーマ', '評価軸', '対象', '外部環境', '問い'];
   const KIND_COLOR = { '目的': 'var(--k-objective)', 'テーマ': 'var(--k-theme)', '評価軸': 'var(--k-criterion)', '対象': 'var(--k-object)', '問い': 'var(--k-issue)', '外部環境': 'var(--k-context)' };
   const STANCES = ['賛成', '条件付き', '中立', '問い', '反対'];
@@ -198,6 +207,18 @@
     return html;
   }
 
+  // 「この論点に意見を書く」: 論点名を入れた状態でフォームを別タブに開く
+  function formUrl(node) {
+    if (!FORM.url || !FORM.nodeEntry) return '';
+    return FORM.url + '?usp=pp_url&' + FORM.nodeEntry + '=' + encodeURIComponent(node.label);
+  }
+  function writeLinkHtml(node) {
+    const url = formUrl(node);
+    if (!url || FORM_HIDE_STATUSES.indexOf(node.status) >= 0) return '';
+    return '<div class="write"><a class="btn primary" href="' + escapeHtml(url) + '" target="_blank" rel="noopener">この論点に意見を書く</a>' +
+      '<span>Google フォームが開きます。送信後、数分でここに表示されます（ページを開き直すと最新になります）</span></div>';
+  }
+
   function criteriaChipsHtml(node) {
     const on = CRITERIA_COLS.filter((c) => node.flags[c]);
     if (!on.length) return '<span style="font-size:12px;color:var(--muted)">（評価軸へのリンクなし）</span>';
@@ -220,10 +241,10 @@
   }
 
   const api = {
-    CSV_URLS, KINDS, KIND_COLOR, STANCES, STANCE_COLOR, CRITERIA_COLS,
+    CSV_URLS, FORM, KINDS, KIND_COLOR, STANCES, STANCE_COLOR, CRITERIA_COLS,
     build, loadCSV, loadAll,
     countStances, subtreeOpinions, descendantCount, pathOf,
-    escapeHtml, stanceColor, kindColor, opinionHtml, opinionsHtml, criteriaChipsHtml,
+    escapeHtml, stanceColor, kindColor, opinionHtml, opinionsHtml, criteriaChipsHtml, formUrl, writeLinkHtml,
     nowJST, readHashId, writeHashId,
   };
   root.OMFY = api;

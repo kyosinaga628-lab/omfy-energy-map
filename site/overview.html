@@ -380,6 +380,7 @@ function renderPanel(){
     '<div class="chips">' + O.criteriaChipsHtml(n) + '</div>' +
     (kids ? '<h3>下位の論点（' + n.children.length + '）' + (below ? ' ／ 下位への意見 ' + below + ' 件' : '') + '</h3><div class="chips">' + kids + '</div>' : '') +
     '<h3>この論点への意見</h3>' +
+    O.writeLinkHtml(n) +
     '<div class="gbar"><span>' + n.opinions.length + ' 件 ／ 並べ方:</span><span class="seg"><button class="btn" data-g="role" aria-pressed="' + (GROUP==='role') + '">記入者属性別</button><button class="btn" data-g="stance" aria-pressed="' + (GROUP==='stance') + '">立場別</button></span></div>' +
     O.opinionsHtml(n, GROUP, DATA.roles) +
     '<div class="more"><a href="index.html#n=' + encodeURIComponent(n.id) + '">この論点を詳細ビューで開く</a></div>';

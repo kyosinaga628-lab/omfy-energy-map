@@ -44,6 +44,8 @@ a{color:var(--accent)}
 .btn{font:inherit;font-size:12.5px;line-height:1.5;padding:4px 11px;border-radius:999px;border:1px solid var(--rule2);background:var(--surface);color:var(--ink);cursor:pointer;white-space:nowrap}
 .btn:hover{border-color:var(--accent)}
 .btn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:700;text-decoration:none;display:inline-block}
+.btn.primary:hover{filter:brightness(1.1)}
 .seg{display:inline-flex;border:1px solid var(--rule2);border-radius:999px;overflow:hidden}
 .seg .btn{border:0;border-radius:0}
 
@@ -72,6 +74,8 @@ button.chip:hover{border-color:var(--accent)}
 .op .note{font-size:12px;color:var(--muted);margin-top:4px}
 .op.example .claim::after{content:" (サンプル)";font-weight:400;color:var(--muted);font-size:11px}
 .empty{padding:14px 10px;font-size:12.5px;color:var(--muted)}
+.write{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:0 0 12px;font-size:11.5px;color:var(--muted);line-height:1.5}
+.write .btn{font-size:13px;padding:5px 14px}
 
 /* SVG の共通 */
 svg text{font-family:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;fill:var(--ink)}
