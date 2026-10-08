@@ -75,7 +75,7 @@ body{display:flex;flex-direction:column;overflow:hidden}
 <header class="topbar">
   <h1>@omfy 論点マップ</h1>
   <nav class="nav" aria-label="画面の切り替え">
-    <a href="overview.html" aria-current="page">俯瞰ビュー</a><a href="index.html" id="toDetail">詳細ビュー</a>
+    <a href="index.html">はじめに</a><a href="overview.html" aria-current="page">俯瞰ビュー</a><a href="detail.html" id="toDetail">詳細ビュー</a>
   </nav>
   <div class="ctrl"><span>形</span>
     <span class="seg" role="group" aria-label="マップの形">
@@ -349,7 +349,7 @@ function select(id, focus){
   // 折りたたまれた深さにある論点なら、見えるところまで深さを広げる
   if (n.depth > MAXD) { MAXD = n.depth; syncDepthSel(); doLayout(); }
   O.writeHashId(id);
-  document.getElementById('toDetail').href = 'index.html#n=' + encodeURIComponent(id);
+  document.getElementById('toDetail').href = 'detail.html#n=' + encodeURIComponent(id);
   panel.hidden = false;
   renderPanel();
   render();
@@ -358,7 +358,7 @@ function select(id, focus){
 
 function closePanel(){
   panel.hidden = true; SELECTED = null; O.writeHashId(null);
-  document.getElementById('toDetail').href = 'index.html';
+  document.getElementById('toDetail').href = 'detail.html';
   render();
 }
 
@@ -383,7 +383,7 @@ function renderPanel(){
     O.writeLinkHtml(n) +
     '<div class="gbar"><span>' + n.opinions.length + ' 件 ／ 並べ方:</span><span class="seg"><button class="btn" data-g="role" aria-pressed="' + (GROUP==='role') + '">記入者属性別</button><button class="btn" data-g="stance" aria-pressed="' + (GROUP==='stance') + '">立場別</button></span></div>' +
     O.opinionsHtml(n, GROUP, DATA.roles) +
-    '<div class="more"><a href="index.html#n=' + encodeURIComponent(n.id) + '">この論点を詳細ビューで開く</a></div>';
+    '<div class="more"><a href="detail.html#n=' + encodeURIComponent(n.id) + '">この論点を詳細ビューで開く</a></div>';
   panel.querySelector('#pClose').addEventListener('click', closePanel);
   panel.querySelectorAll('[data-id]').forEach(b => b.addEventListener('click', () => select(b.dataset.id, true)));
   panel.querySelectorAll('.gbar .btn').forEach(b => b.addEventListener('click', () => { GROUP = b.dataset.g; renderPanel(); }));

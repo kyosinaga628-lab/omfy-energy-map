@@ -3,50 +3,103 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>@omfy 論点マップ</title>
+<title>@omfy 論点マップ はじめに</title>
+<meta name="description" content="エネルギーをめぐる論点を、社会像から各論まで一枚の地図に整理し、立場の違う人の意見を同じ地図の上に並べる試み。">
+<script>
+// 旧 URL（詳細ビューが index.html だった頃の site/#n=<論点ID>）で来た人を詳細ビューへ送る
+if (/(?:^#|&)n=/.test(location.hash)) location.replace('detail.html' + location.hash);
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="common.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script src="common.js"></script>
 <style>
-body{padding-inline:clamp(12px,3vw,28px);padding-block:0 40px}
-.wrap{max-width:1180px;margin:0 auto}
+body{padding-inline:clamp(16px,3vw,28px);padding-block:0 48px}
+.wrap{max-width:1040px;margin:0 auto}
 header{padding-block:18px 12px;border-bottom:1px solid var(--rule2);display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
 header h1{font-size:22px;margin-right:auto}
-.meta{font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;width:100%}
-.legendbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:12px 0;padding:9px 14px;background:var(--surface);border:1px solid var(--rule);border-radius:8px;font-size:12px;color:var(--muted)}
-.legendbar .lbl{font-weight:700;color:var(--ink)}
-.legendbar .sep{width:1px;height:16px;background:var(--rule2)}
-main.app{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--surface);margin-top:10px;box-shadow:var(--shadow)}
-.tree{border-right:1px solid var(--rule);padding:10px 8px;overflow:auto;max-height:680px}
-.tree svg{display:block;height:auto}
-.tree svg .halo{stroke:var(--surface)}
-.panel{padding:16px 20px;min-width:0}
-.panel .crumb{font-size:12px;color:var(--muted)}
-.panel h2{font-size:19px;margin:4px 0 0}
-.panel .q{margin:8px 0 6px;font-size:14px}
-.panel .chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 14px}
-.panel .more{margin-top:12px;font-size:12.5px}
-section.matrices{margin-top:24px}
-section.matrices h2{font-size:18px;margin-bottom:6px}
-section.matrices p{font-size:13px;color:var(--muted);max-width:60em;margin:0 0 6px}
-.scroll{overflow-x:auto;margin:10px 0;border:1px solid var(--rule);border-radius:6px;background:var(--surface)}
-table{border-collapse:collapse;width:100%;font-size:13px}
-th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--rule);white-space:nowrap}
-th{background:var(--surface2);font-weight:700;font-size:11.5px}
-tr[data-id]{cursor:pointer}
-tr[data-id]:hover td{background:var(--surface2)}
-tr.sel td{background:var(--accent-soft)}
-td.cnt{text-align:center;font-variant-numeric:tabular-nums}
-td.cnt span{display:inline-block;min-width:26px;padding:1px 6px;border-radius:4px}
-.zero{color:var(--rule2)}
-.qa{margin-top:18px;padding:12px 16px;border:1px solid var(--rule);border-radius:8px;background:var(--surface)}
-.qa h3{font-size:14px;margin-bottom:6px}
-.qa ul{margin:4px 0;padding-left:1.3em;font-size:13px}
-.qa.ok{border-color:var(--ok)}
-footer{margin-top:24px;padding-top:12px;border-top:1px solid var(--rule);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px}
-@media (max-width: 860px){ main.app{grid-template-columns:1fr} .tree{border-right:0;border-bottom:1px solid var(--rule);max-height:340px} }
+
+.hero{padding:44px 0 28px;max-width:46em}
+.hero .kicker{font-size:12.5px;color:var(--muted);letter-spacing:.08em;margin:0 0 10px}
+.hero h2{font-size:clamp(26px,4.4vw,38px);line-height:1.35;margin:0 0 16px}
+.hero p{font-size:16px;margin:0 0 12px}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.cta .btn{font-size:14px;padding:8px 18px;text-decoration:none;display:inline-block}
+
+section{margin-top:44px}
+section > h2{font-size:22px;margin:0 0 6px}
+section > .lead{color:var(--muted);margin:0 0 18px;max-width:46em}
+.num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;color:var(--accent);display:block;margin-bottom:2px;letter-spacing:.06em}
+
+.aims{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:16px 18px;box-shadow:var(--shadow)}
+.card h3{font-size:16.5px;margin:0 0 6px}
+.card p{margin:0;font-size:14px}
+
+/* 構造図 */
+.figure{background:var(--surface);border:1px solid var(--rule);border-radius:10px;box-shadow:var(--shadow);padding:14px 10px 6px}
+.figscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.figscroll svg{display:block;width:100%;min-width:760px;height:auto}
+.figure figcaption{font-size:12.5px;color:var(--muted);padding:6px 10px 8px;display:flex;flex-wrap:wrap;gap:4px 16px}
+.figure .swipe{display:none}
+@media (max-width: 800px){ .figure .swipe{display:inline} }
+
+.fig text{font-size:14px}
+.fig .lane{font-size:12px;fill:var(--muted)}
+.fig .lane-rule{stroke:var(--rule);stroke-width:1;stroke-dasharray:2 4}
+.fig .goal rect{fill:var(--k-objective)}
+.fig .goal text{fill:var(--bg);font-size:18px;font-weight:700;letter-spacing:.1em}
+.fig .box rect{fill:var(--accent-soft);stroke:transparent;stroke-width:1.5}
+.fig .box.hl rect{fill:var(--accent)}
+.fig .box.hl text{fill:var(--surface);font-weight:700}
+.fig .crit rect{fill:var(--surface);stroke:var(--k-criterion);stroke-width:1.5}
+.fig .q rect{fill:var(--surface);stroke:var(--rule2);stroke-width:1}
+.fig .q text{font-size:13px}
+.fig .ctx rect{fill:color-mix(in srgb, var(--k-context) 18%, var(--surface));stroke:transparent;stroke-width:1.5}
+.fig .frame{fill:var(--surface2);stroke:var(--rule2);stroke-width:1}
+.fig .frame-lbl{font-size:11.5px;fill:var(--muted)}
+.fig .line{fill:none;stroke:var(--muted);stroke-width:1.6}
+.fig .dot{fill:var(--muted)}
+.fig .more{fill:var(--muted);font-size:16px;letter-spacing:.2em}
+.fig .time rect{fill:none;stroke:var(--muted);stroke-width:1.4;stroke-dasharray:5 4}
+.fig .time .t1{font-size:18px;font-weight:700}
+.fig .time .t2{font-size:11.5px;fill:var(--muted)}
+.fig .cross{stroke:var(--muted);stroke-width:2.2;stroke-linecap:round}
+.fig a{cursor:pointer}
+.fig a:hover rect,.fig a:focus-visible rect{stroke:var(--accent);stroke-width:2.5}
+.fig a.goal:hover rect,.fig a.goal:focus-visible rect{stroke:var(--accent)}
+.fig a:focus{outline:none}
+
+.layers{margin:18px 0 0;display:grid;gap:0;border:1px solid var(--rule);border-radius:10px;overflow:hidden;background:var(--surface)}
+.layers > div{display:grid;grid-template-columns:9.5em 1fr;gap:4px 18px;padding:12px 18px;border-bottom:1px solid var(--rule)}
+.layers > div:last-child{border-bottom:0}
+.layers dt{font-weight:700;display:flex;align-items:baseline;gap:8px}
+.layers dt .sw{transform:translateY(1px)}
+.layers dd{margin:0;font-size:14px}
+.layers dd .ex{color:var(--muted);font-size:13px}
+.layers .future{background:var(--surface2)}
+@media (max-width: 640px){ .layers > div{grid-template-columns:1fr} }
+
+.views{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.views .card h3{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.views .card h3 small{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:400;font-size:12.5px;color:var(--muted)}
+.views dl{margin:10px 0 14px;display:grid;grid-template-columns:5.5em 1fr;gap:6px 10px;font-size:14px}
+.views dt{color:var(--muted);font-size:13px}
+.views dd{margin:0}
+
+.reading{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.reading ul{margin:8px 0 0;padding-left:1.2em;font-size:14px}
+.reading li{margin:3px 0}
+.stlist{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:10px;font-size:13.5px}
+.mock{margin-top:12px;border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+
+.steps{counter-reset:s;list-style:none;margin:0;padding:0;display:grid;gap:10px;max-width:46em}
+.steps li{counter-increment:s;position:relative;padding:12px 16px 12px 52px;background:var(--surface);border:1px solid var(--rule);border-radius:10px;font-size:14.5px}
+.steps li::before{content:counter(s);position:absolute;left:16px;top:12px;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--surface);font-weight:700;font-size:13px;display:grid;place-items:center;line-height:1}
+
+.notes{font-size:13.5px;color:var(--muted);max-width:52em;padding-left:1.2em}
+.notes li{margin:4px 0}
+
+footer{margin-top:48px;padding-top:12px;border-top:1px solid var(--rule);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px}
 </style>
 </head>
 <body>
@@ -54,48 +107,218 @@ footer{margin-top:24px;padding-top:12px;border-top:1px solid var(--rule);font-si
   <header>
     <h1>@omfy 論点マップ</h1>
     <nav class="nav" aria-label="画面の切り替え">
-      <a href="overview.html" id="toOverview">俯瞰ビュー</a><a href="index.html" aria-current="page">詳細ビュー</a>
+      <a href="index.html" aria-current="page">はじめに</a><a href="overview.html">俯瞰ビュー</a><a href="detail.html">詳細ビュー</a>
     </nav>
-    <div class="meta" id="metaLine">読み込み中…</div>
   </header>
 
-  <div class="legendbar" id="legendbar" hidden>
-    <span class="lbl">種別</span>
-    <span class="legend-k"><i class="sw" style="background:var(--k-objective)"></i>目的</span>
-    <span class="legend-k"><i class="sw" style="background:var(--k-theme)"></i>テーマ</span>
-    <span class="legend-k"><i class="sw" style="background:var(--k-criterion)"></i>評価軸</span>
-    <span class="legend-k"><i class="sw" style="background:var(--k-object)"></i>対象</span>
-    <span class="legend-k"><i class="sw" style="background:var(--k-context)"></i>外部環境</span>
-    <span class="legend-k"><i class="sw" style="background:var(--k-issue)"></i>問い</span>
-    <span class="sep"></span>
-    <span class="lbl">意見の印（立場）</span>
-    <span class="legend-k"><i class="sw round" style="background:var(--st-support)"></i>賛成</span>
-    <span class="legend-k"><i class="sw round" style="background:var(--st-cond)"></i>条件付き</span>
-    <span class="legend-k"><i class="sw round" style="background:var(--st-neutral)"></i>中立</span>
-    <span class="legend-k"><i class="sw round" style="background:var(--st-question)"></i>問い</span>
-    <span class="legend-k"><i class="sw round" style="background:var(--st-oppose)"></i>反対</span>
-    <span class="sep"></span>
-    <span>ツリーの向き:</span>
-    <span class="seg" role="group" aria-label="ツリーの向き">
-      <button class="btn" id="btnH" aria-pressed="true">横（画面）</button><button class="btn" id="btnV" aria-pressed="false">縦（印刷・発表）</button>
-    </span>
+  <div class="hero">
+    <p class="kicker">はじめての方へ</p>
+    <h2>エネルギーの論点を、<br>一枚の地図に。</h2>
+    <p>エネルギーの話は、どこから話すかで噛み合わなくなりがちです。ある人は電気代の話を、別の人は事故のリスクの話を、また別の人は孫の世代の話をしている。どれも大事なのに、同じ土俵に並びません。</p>
+    <p>@omfy の論点マップは、「目指す社会」から「原子力の個別の論点」までを一つの木構造に整理し、立場の違う人の意見を、その木の同じ場所に並べる試みです。</p>
+    <div class="cta">
+      <a class="btn primary" href="detail.html">論点ごとに意見を読む（詳細ビュー）</a>
+      <a class="btn" href="overview.html">全体を一枚で見る（俯瞰ビュー）</a>
+    </div>
   </div>
 
-  <div id="loadingState" class="state">データを取得しています…</div>
-  <div id="errorState" class="state err" hidden></div>
+  <section aria-labelledby="h-aim">
+    <h2 id="h-aim">目指していること</h2>
+    <p class="lead">賛成か反対かを決める場所ではありません。話の「位置」と「声の偏り」を見えるようにする場所です。</p>
+    <div class="aims">
+      <div class="card"><span class="num">01</span><h3>いま何の話をしているかを揃える</h3><p>意見は必ず地図のどこか一点に付きます。「それは安全性の話」「それはコストの話」と位置が分かれば、すれ違いが減ります。</p></div>
+      <div class="card"><span class="num">02</span><h3>どの声が足りないかを見えるようにする</h3><p>意見ごとに、書いた人の立場（立地地域の住民、需要家、学生など）を記録します。どの論点にどの立場の声がまだ無いかが一目で分かります。</p></div>
+      <div class="card"><span class="num">03</span><h3>違う意見を、同じ地図に並べる</h3><p>賛成・反対・条件付き・問い。結論が違う意見も同じ論点の下に並べ、根拠（データ・経験・価値観）と一緒に読めるようにします。</p></div>
+    </div>
+  </section>
 
-  <main class="app" id="app" hidden>
-    <div class="tree" id="treePane"></div>
-    <div class="panel" id="panel"></div>
-  </main>
+  <section aria-labelledby="h-map">
+    <h2 id="h-map">論点マップの考え方</h2>
+    <p class="lead">上から下へ、大きな目的から具体的な問いへと降りていきます。図の箱をクリックすると、その論点を俯瞰ビューで開きます。</p>
 
-  <section class="matrices" id="matrices" hidden>
-    <h2>抜けの確認</h2>
-    <p>(a) 論点 × 記入者属性。どの属性の声がどの論点に足りないかを見る。行をクリックするとその論点を開く。</p>
-    <div class="scroll"><table id="mxRole"></table></div>
-    <p>(b) 電源 × 3E+S。セルは、その電源の下の各論のうち評価軸に関係するものの数。</p>
-    <div class="scroll"><table id="mxCrit"></table></div>
-    <div class="qa" id="qa"></div>
+    <figure class="figure" style="margin:0">
+      <div class="figscroll">
+      <svg class="fig" viewBox="0 0 1000 630" role="group" aria-labelledby="figTitle">
+        <title id="figTitle">論点マップの構造図。社会像「豊かで平和な生活」の下にテーマ、エネルギーの下に評価軸 3E+S と外部環境、その下に電源、原子力の下に個別の問いが並ぶ。時間軸は今後の構想。</title>
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+        </defs>
+
+        <!-- 段の名前 -->
+        <g>
+          <text class="lane" x="16" y="52">社会像</text>
+          <line class="lane-rule" x1="16" y1="90" x2="984" y2="90"/>
+          <text class="lane" x="16" y="137">テーマ</text>
+          <text class="lane" x="16" y="262">評価軸</text>
+          <text class="lane" x="16" y="280">と外部環境</text>
+          <line class="lane-rule" x1="16" y1="364" x2="984" y2="364"/>
+          <text class="lane" x="16" y="424">対象（電源）</text>
+          <line class="lane-rule" x1="16" y1="462" x2="984" y2="462"/>
+          <text class="lane" x="16" y="560">問い（各論）</text>
+        </g>
+
+        <!-- 線 -->
+        <g>
+          <path class="line" d="M255,70 V114"/><circle class="dot" cx="255" cy="70" r="4"/><circle class="dot" cx="255" cy="114" r="4"/>
+          <path class="line" d="M415,70 V114"/><circle class="dot" cx="415" cy="70" r="4"/><circle class="dot" cx="415" cy="114" r="4"/>
+          <path class="line" d="M575,70 V114"/><circle class="dot" cx="575" cy="70" r="4"/><circle class="dot" cx="575" cy="114" r="4"/>
+          <path class="line" d="M255,154 V180 H480 V202"/><circle class="dot" cx="255" cy="154" r="4"/><circle class="dot" cx="480" cy="202" r="4"/>
+          <path class="line" d="M266,272 H296" marker-end="url(#arr)"/>
+          <path class="line" d="M694,272 H664" marker-end="url(#arr)"/>
+          <g>
+            <path class="line" d="M480,334 L240,402"/><path class="line" d="M480,334 L394,402"/><path class="line" d="M480,334 L548,402"/>
+            <path class="line" d="M480,334 L702,402"/><path class="line" d="M480,334 L856,402"/>
+            <circle class="dot" cx="480" cy="334" r="4"/>
+            <circle class="dot" cx="240" cy="402" r="4"/><circle class="dot" cx="394" cy="402" r="4"/><circle class="dot" cx="548" cy="402" r="4"/><circle class="dot" cx="702" cy="402" r="4"/><circle class="dot" cx="856" cy="402" r="4"/>
+          </g>
+          <path class="line" d="M548,442 V490"/><circle class="dot" cx="548" cy="442" r="4"/><circle class="dot" cx="548" cy="490" r="4"/>
+        </g>
+
+        <!-- 社会像 -->
+        <a class="goal" href="overview.html#n=root" aria-label="豊かで平和な生活（社会像）を俯瞰ビューで開く">
+          <rect x="150" y="26" width="820" height="44" rx="6"/>
+          <text x="560" y="49" text-anchor="middle" dominant-baseline="middle">豊かで平和な生活</text>
+        </a>
+
+        <!-- テーマ -->
+        <a class="box hl" href="overview.html#n=energy" aria-label="エネルギー"><rect x="190" y="114" width="130" height="40" rx="5"/><text x="255" y="135" text-anchor="middle" dominant-baseline="middle">エネルギー</text></a>
+        <a class="box" href="overview.html#n=food" aria-label="食料"><rect x="350" y="114" width="130" height="40" rx="5"/><text x="415" y="135" text-anchor="middle" dominant-baseline="middle">食料</text></a>
+        <a class="box" href="overview.html#n=security" aria-label="安全保障"><rect x="510" y="114" width="130" height="40" rx="5"/><text x="575" y="135" text-anchor="middle" dominant-baseline="middle">安全保障</text></a>
+        <text class="more" x="668" y="139">…</text>
+
+        <!-- 評価軸 3E+S -->
+        <rect class="frame" x="300" y="202" width="360" height="132" rx="6"/>
+        <a href="overview.html#n=3es" aria-label="3E+S（評価軸）"><text class="frame-lbl" x="312" y="220">3E+S（評価軸）</text></a>
+        <a class="crit" href="overview.html#n=s" aria-label="安全性"><rect x="314" y="230" width="98" height="92" rx="4"/><text x="363" y="277" text-anchor="middle" dominant-baseline="middle" style="font-size:16px;font-weight:700">安全性</text></a>
+        <a class="crit" href="overview.html#n=sec" aria-label="安定供給（自給率）"><rect x="422" y="230" width="224" height="27" rx="4"/><text x="534" y="244" text-anchor="middle" dominant-baseline="middle">安定供給（自給率）</text></a>
+        <a class="crit" href="overview.html#n=eco" aria-label="経済効率性（コスト）"><rect x="422" y="262" width="224" height="27" rx="4"/><text x="534" y="276" text-anchor="middle" dominant-baseline="middle">経済効率性（コスト）</text></a>
+        <a class="crit" href="overview.html#n=env" aria-label="環境適合（CO2）"><rect x="422" y="295" width="224" height="27" rx="4"/><text x="534" y="309" text-anchor="middle" dominant-baseline="middle">環境適合（CO₂）</text></a>
+
+        <!-- 外部環境 -->
+        <a class="box ctx" href="overview.html#n=intl" aria-label="国際情勢"><rect x="150" y="252" width="112" height="40" rx="5"/><text x="206" y="273" text-anchor="middle" dominant-baseline="middle">国際情勢</text></a>
+        <a class="box ctx" href="overview.html#n=dom" aria-label="国内情勢"><rect x="698" y="252" width="112" height="40" rx="5"/><text x="754" y="273" text-anchor="middle" dominant-baseline="middle">国内情勢</text></a>
+
+        <!-- 時間軸（今後の構想） -->
+        <g class="time">
+          <path class="cross" d="M834,262 l16,16 M850,262 l-16,16"/>
+          <rect x="862" y="232" width="110" height="76" rx="8"/>
+          <text class="t1" x="917" y="266" text-anchor="middle">時間軸</text>
+          <text class="t2" x="917" y="290" text-anchor="middle">今後の構想</text>
+        </g>
+
+        <!-- 対象（電源） -->
+        <a class="box" href="overview.html#n=re" aria-label="再生可能エネルギー"><rect x="170" y="402" width="140" height="40" rx="5"/><text x="240" y="423" text-anchor="middle" dominant-baseline="middle">再生可能エネルギー</text></a>
+        <a class="box" href="overview.html#n=thermal" aria-label="火力と脱炭素化"><rect x="324" y="402" width="140" height="40" rx="5"/><text x="394" y="423" text-anchor="middle" dominant-baseline="middle">火力と脱炭素化</text></a>
+        <a class="box hl" href="overview.html#n=nuc" aria-label="原子力"><rect x="478" y="402" width="140" height="40" rx="5"/><text x="548" y="423" text-anchor="middle" dominant-baseline="middle">原子力</text></a>
+        <a class="box" href="overview.html#n=h2" aria-label="水素・アンモニア"><rect x="632" y="402" width="140" height="40" rx="5"/><text x="702" y="423" text-anchor="middle" dominant-baseline="middle">水素・アンモニア</text></a>
+        <a class="box" href="overview.html#n=grid" aria-label="送配電・蓄電"><rect x="786" y="402" width="140" height="40" rx="5"/><text x="856" y="423" text-anchor="middle" dominant-baseline="middle">送配電・蓄電</text></a>
+
+        <!-- 原子力の問い -->
+        <rect class="frame" x="156" y="490" width="818" height="118" rx="6"/>
+        <text class="frame-lbl" x="168" y="508">原子力の問い</text>
+        <a class="q" href="overview.html#n=nuc.reg"><rect x="170" y="516" width="150" height="36" rx="4"/><text x="245" y="535" text-anchor="middle" dominant-baseline="middle">安全規制・防災</text></a>
+        <a class="q" href="overview.html#n=nuc.restart"><rect x="330" y="516" width="150" height="36" rx="4"/><text x="405" y="535" text-anchor="middle" dominant-baseline="middle">再稼働・運転期間</text></a>
+        <a class="q" href="overview.html#n=nuc.new"><rect x="490" y="516" width="150" height="36" rx="4"/><text x="565" y="535" text-anchor="middle" dominant-baseline="middle">新増設・次世代炉</text></a>
+        <a class="q" href="overview.html#n=nuc.backend"><rect x="650" y="516" width="150" height="36" rx="4"/><text x="725" y="535" text-anchor="middle" dominant-baseline="middle">放射性廃棄物</text></a>
+        <a class="q" href="overview.html#n=nuc.cycle"><rect x="810" y="516" width="150" height="36" rx="4"/><text x="885" y="535" text-anchor="middle" dominant-baseline="middle">核燃料サイクル</text></a>
+        <a class="q" href="overview.html#n=nuc.site"><rect x="170" y="562" width="150" height="36" rx="4"/><text x="245" y="581" text-anchor="middle" dominant-baseline="middle">立地地域と合意形成</text></a>
+        <a class="q" href="overview.html#n=nuc.cost"><rect x="330" y="562" width="150" height="36" rx="4"/><text x="405" y="581" text-anchor="middle" dominant-baseline="middle">コストと事業環境</text></a>
+        <a class="q" href="overview.html#n=nuc.hr"><rect x="490" y="562" width="150" height="36" rx="4"/><text x="565" y="581" text-anchor="middle" dominant-baseline="middle">人材・技術基盤</text></a>
+        <a class="q" href="overview.html#n=nuc.risk"><rect x="650" y="562" width="150" height="36" rx="4"/><text x="725" y="581" text-anchor="middle" dominant-baseline="middle">国民理解・対話</text></a>
+        <text class="more" x="868" y="585">…</text>
+      </svg>
+      </div>
+      <figcaption>
+        <span>図は地図の主な部分だけを抜き出したものです。実際の地図には、需要側（省エネ・電化など）や、再エネ・火力ほかの電源ごとの問いも含まれます。</span>
+        <span class="swipe">図は横にスクロールできます。</span>
+      </figcaption>
+    </figure>
+
+    <dl class="layers">
+      <div><dt><i class="sw" style="background:var(--k-objective)"></i>社会像</dt><dd>すべての議論が目指す先。ここでは「豊かで平和な生活」と置いています。<br><span class="ex">エネルギーはそのための手段の一つで、食料や安全保障と並ぶテーマです。</span></dd></div>
+      <div><dt><i class="sw" style="background:var(--k-theme)"></i>テーマ</dt><dd>社会像を支える分野。いまはエネルギーを深く掘り、他のテーマは骨組みだけ置いています。</dd></div>
+      <div><dt><i class="sw" style="background:var(--k-criterion)"></i>評価軸</dt><dd>選択肢を測るものさし。国のエネルギー基本計画でも使われる「3E+S」、つまり安全性（Safety）を大前提に、安定供給・経済効率性・環境適合の三つの E をどう両立させるかを軸にしています。<br><span class="ex">個々の問いには、どの評価軸に関係するかの印が付いています。</span></dd></div>
+      <div><dt><i class="sw" style="background:var(--k-context)"></i>外部環境</dt><dd>こちらでは選べないが、判断を左右する前提。国際情勢（資源価格・地政学）と国内情勢（人口・産業構造、世論・財政）。</dd></div>
+      <div><dt><i class="sw" style="background:var(--k-object)"></i>対象（電源）</dt><dd>実際に選ぶもの。再エネ、原子力、火力、水素、送配電・蓄電。</dd></div>
+      <div><dt><i class="sw" style="background:var(--k-issue)"></i>問い（各論）</dt><dd>意見を書く場所の中心。「〜をどうするか」という問いの形で置いています。いまは原子力を最も細かく分けています。</dd></div>
+      <div class="future"><dt><i class="sw" style="border:1.4px dashed var(--muted)"></i>時間軸（今後）</dt><dd>同じ問いでも、2030 年の話か 2050 年の話かで答えは変わります。時点を区切って整理する方法は、試し書きの結果を見て検討します。いまの地図にはまだ入っていません。</dd></div>
+    </dl>
+  </section>
+
+  <section aria-labelledby="h-views">
+    <h2 id="h-views">2 つの画面の使い分け</h2>
+    <p class="lead">同じデータを、目的の違う 2 つの画面で見られます。画面の上のボタンでいつでも切り替えられ、選んでいる論点は引き継がれます。</p>
+    <div class="views">
+      <div class="card">
+        <h3>俯瞰ビュー <small>全体をつかむ</small></h3>
+        <dl>
+          <dt>形</dt><dd>中心から外へ広がる放射状の地図（縦の木にも切り替え可）</dd>
+          <dt>操作</dt><dd>拡大・縮小、ドラッグで移動、深さの折りたたみ、キーワード検索</dd>
+          <dt>向く場面</dt><dd>はじめて全体を見るとき、会合での発表、A3 での印刷</dd>
+        </dl>
+        <a class="btn primary" href="overview.html">俯瞰ビューを開く</a>
+      </div>
+      <div class="card">
+        <h3>詳細ビュー <small>意見を読む・抜けを探す</small></h3>
+        <dl>
+          <dt>形</dt><dd>左に論点のツリー、右に選んだ論点の意見の一覧</dd>
+          <dt>操作</dt><dd>意見を「記入者の立場別」「賛否別」に並べ替え</dd>
+          <dt>向く場面</dt><dd>論点ごとに意見を読み比べる。「抜けの確認表」で、どの立場の声が足りないかを見る</dd>
+        </dl>
+        <a class="btn primary" href="detail.html">詳細ビューを開く</a>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-read">
+    <h2 id="h-read">意見の読み方</h2>
+    <p class="lead">意見は一件ずつ、短い主張と、それを読むための手がかりの組でできています。</p>
+    <div class="reading">
+      <div class="card">
+        <h3>一件の意見に付いているもの</h3>
+        <ul>
+          <li><strong>主張</strong> … 60 字以内の一言</li>
+          <li><strong>立場</strong> … その論点に対する賛否（下の 5 つ）</li>
+          <li><strong>根拠タイプ</strong> … データ（数字・文献）／経験（見聞き・体験）／価値観（大切にしたいこと）。どれが偉いということはありません</li>
+          <li><strong>記入者属性</strong> … どの立場で書いたか。同じ人でも、需要家として書く日も、学生として書く日もあります</li>
+          <li><strong>ハンドル</strong> … 書いた人の名前（ハンドルネーム）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>地図の上の色の印</h3>
+        <p style="font-size:14px;margin:0">論点の横の小さな丸は、そこに付いた意見の立場の内訳です。</p>
+        <div class="stlist">
+          <span class="legend-k"><i class="sw round" style="background:var(--st-support)"></i>賛成</span>
+          <span class="legend-k"><i class="sw round" style="background:var(--st-cond)"></i>条件付き</span>
+          <span class="legend-k"><i class="sw round" style="background:var(--st-neutral)"></i>中立</span>
+          <span class="legend-k"><i class="sw round" style="background:var(--st-question)"></i>問い</span>
+          <span class="legend-k"><i class="sw round" style="background:var(--st-oppose)"></i>反対</span>
+        </div>
+        <p style="font-size:13px;color:var(--muted);margin:12px 0 0">「(サンプル)」と付いた意見は、書き方の見本として置いたもので、誰かの実際の意見ではありません。</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-write">
+    <h2 id="h-write">意見を書くには（@omfy メンバー向け）</h2>
+    <p class="lead">書き込みは @omfy のメンバーが、登録したハンドルネームで行います。閲覧はどなたでもできます。</p>
+    <ol class="steps">
+      <li>詳細ビューまたは俯瞰ビューで、意見を書きたい論点を選ぶ</li>
+      <li>「この論点に意見を書く」を押す（Google フォームが開き、論点は入力済み）</li>
+      <li>ハンドル・記入者属性・立場・根拠タイプを選び、主張を 60 字以内で書いて送信する</li>
+      <li>数分以内に地図に反映されます。画面の「再読み込み」で最新の状態を取り直せます</li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="h-note">
+    <h2 id="h-note">ご利用にあたって</h2>
+    <ul class="notes">
+      <li>掲載された意見は記入者個人の見解であり、@omfy の公式見解ではありません。</li>
+      <li>論点の構造はメンバーの合意に基づく整理です。網羅性・中立性は目標であり、いまも作りかけです。足りない論点の指摘を歓迎します。</li>
+      <li>論点の骨組みは、国のエネルギー基本計画をもとにした案から始めています。</li>
+      <li>データと図は <a href="https://creativecommons.org/licenses/by/4.0/deed.ja">CC BY 4.0</a> で公開しています。「@omfy 論点マップ」と URL を示せば再利用できます。</li>
+      <li>意見の削除・訂正の申請は、<a href="https://github.com/kyosinaga628-lab/omfy-energy-map/issues">GitHub の Issues</a> または @omfy のメンバー経由でお知らせください。ご本人からの申請には速やかに対応します。</li>
+    </ul>
   </section>
 
   <footer>
@@ -104,170 +327,5 @@ footer{margin-top:24px;padding-top:12px;border-top:1px solid var(--rule);font-si
     <span><a href="https://github.com/kyosinaga628-lab/omfy-energy-map">GitHub リポジトリ</a></span>
   </footer>
 </div>
-
-<script>
-(function(){
-'use strict';
-const O = window.OMFY;
-let DATA = null, SELECTED = null, VIEW = 'h', GROUP = 'role';
-
-const NS = 'http://www.w3.org/2000/svg';
-function el(tag, attrs, parent){ const e=document.createElementNS(NS,tag); for(const k in attrs){ if(k==='text') e.textContent=attrs[k]; else e.setAttribute(k,attrs[k]); } if(parent) parent.appendChild(e); return e; }
-function badges(g, x, y, node, dx, dy){
-  const c = O.countStances(node.opinions); const keys = O.STANCES.filter(s=>c[s]>0);
-  keys.forEach((s,i) => { const off=(i-(keys.length-1)/2)*8; el('circle',{cx:x+dx*off, cy:y+dy*off, r:3.6, fill:O.stanceColor(s), class:'badge'}, g); });
-}
-function nodeTitle(n){ return n.label + '（' + n.kind + '）' + (n.opinions.length ? ' 意見 ' + n.opinions.length + ' 件' : ''); }
-function nodeGroup(parent, n){
-  const g = el('g', {class:'node'+(n.id===SELECTED?' selected':''), tabindex:'0', role:'button', 'aria-label':nodeTitle(n)}, parent);
-  g.addEventListener('click', () => select(n.id));
-  g.addEventListener('keydown', (e) => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); select(n.id); } });
-  el('title',{text:nodeTitle(n)}, g);
-  return g;
-}
-
-function drawHorizontal(container){
-  const T = DATA.tree;
-  container.innerHTML = '';
-  const svg = el('svg', {role:'img', 'aria-label':'左から右へ広がる論点ツリー'}, container);
-  const rowH=19, x0=24, colW=122, top=22; let row=0;
-  (function place(n){ if(!n.children.length){ n.y=top+row*rowH; row++; } else { n.children.forEach(place); n.y=(n.children[0].y+n.children[n.children.length-1].y)/2; } n.x=x0+n.depth*colW; })(T.root);
-  const W = x0 + T.maxDepth*colW + 190, H = Math.max(300, top+row*rowH+16);
-  svg.setAttribute('viewBox', '0 0 '+W+' '+H);
-  svg.style.width = W + 'px';
-  const g = el('g', {}, svg);
-  T.nodes.forEach(n => { if(!n.parent) return; const p=n.parent; const mx=(p.x+n.x)/2; el('path',{d:'M'+p.x+','+p.y+' C'+mx+','+p.y+' '+mx+','+n.y+' '+n.x+','+n.y, class:'edge'}, g); });
-  T.nodes.forEach(n => {
-    const ng = nodeGroup(g, n);
-    el('circle',{cx:n.x,cy:n.y,r:n.depth===0?7:5,fill:O.kindColor(n.kind),class:'core'}, ng);
-    const isLeaf = !n.children.length;
-    el('text',{x:n.depth===0?n.x-6:n.x+(isLeaf?9:0), y:isLeaf?n.y:n.y-10, 'dominant-baseline':isLeaf?'middle':'auto','text-anchor':(isLeaf||n.depth===0)?'start':'middle', class:'lbl halo'+(n.depth<=1?' big':''), text:n.label}, ng);
-    if(n.opinions.length){ const bx = n.x+(isLeaf ? 9+n.label.length*11+8 : 0); badges(ng, isLeaf?bx:n.x, isLeaf?n.y:n.y+11, n, 1, 0); }
-  });
-}
-
-function drawVertical(container){
-  const T = DATA.tree;
-  container.innerHTML = '';
-  const svg = el('svg', {role:'img', 'aria-label':'上から下へ広がる論点ツリー'}, container);
-  const colW=28, rowH=112, x0=24, top=30; let col=0;
-  (function place(n){ if(!n.children.length){ n.tx=x0+col*colW; col++; } else { n.children.forEach(place); n.tx=(n.children[0].tx+n.children[n.children.length-1].tx)/2; } n.ty=top+n.depth*rowH; })(T.root);
-  const W = Math.max(700, x0+col*colW+20), H = top+T.maxDepth*rowH+140;
-  svg.setAttribute('viewBox', '0 0 '+W+' '+H);
-  container.querySelector('svg').style.width = W + 'px';
-  const g = el('g', {}, svg);
-  T.nodes.forEach(n => { if(!n.parent) return; const p=n.parent; const my=(p.ty+n.ty)/2; el('path',{d:'M'+p.tx+','+p.ty+' C'+p.tx+','+my+' '+n.tx+','+my+' '+n.tx+','+n.ty, class:'edge'}, g); });
-  T.nodes.forEach(n => {
-    const ng = nodeGroup(g, n);
-    el('circle',{cx:n.tx,cy:n.ty,r:n.depth===0?7:5,fill:O.kindColor(n.kind),class:'core'}, ng);
-    const isLeaf = !n.children.length;
-    if(isLeaf){
-      el('text',{x:n.tx, y:n.ty+10, class:'lbl halo', 'writing-mode':'tb', text:n.label}, ng);
-      if(n.opinions.length) badges(ng, n.tx+11, n.ty+10+n.label.length*5.5+6, n, 0, 1);
-    } else if(n.depth<=2){
-      el('text',{x:n.tx, y:n.ty-11, 'text-anchor':'middle', class:'lbl halo'+(n.depth<=1?' big':''), text:n.label}, ng);
-      if(n.opinions.length) badges(ng, n.tx, n.ty+13, n, 1, 0);
-    } else {
-      el('text',{x:n.tx+9, y:n.ty-8, class:'lbl halo', text:n.label}, ng);
-      if(n.opinions.length) badges(ng, n.tx+11, n.ty+10, n, 0, 1);
-    }
-  });
-}
-
-function renderTree(){
-  const pane = document.getElementById('treePane');
-  pane.className = 'tree' + (VIEW==='v' ? ' vertical' : '');
-  if (VIEW === 'h') drawHorizontal(pane); else drawVertical(pane);
-}
-
-function renderPanel(){
-  const panel = document.getElementById('panel');
-  const n = DATA.tree.byId[SELECTED];
-  if(!n){ panel.innerHTML = '<div class="empty">左のツリーから論点を選んでください。</div>'; return; }
-  const E = O.escapeHtml;
-  panel.innerHTML =
-    '<div class="crumb">'+O.pathOf(n).map(p=>E(p.label)).join(' › ')+'</div>'+
-    '<h2>'+E(n.label)+' <span class="chip" style="vertical-align:middle;margin-left:4px"><span class="dot" style="background:'+O.kindColor(n.kind)+'"></span>'+E(n.kind)+'</span></h2>'+
-    '<p class="q"><strong>問い:</strong> '+E(n.question||'（未記入）')+'</p>'+
-    '<div class="chips">'+O.criteriaChipsHtml(n)+'</div>'+
-    O.writeLinkHtml(n)+
-    '<div class="gbar"><span>意見 '+n.opinions.length+' 件 ／ 並べ方:</span><span class="seg"><button class="btn" data-g="role" aria-pressed="'+(GROUP==='role')+'">記入者属性別</button><button class="btn" data-g="stance" aria-pressed="'+(GROUP==='stance')+'">立場別</button></span></div>'+
-    O.opinionsHtml(n, GROUP, DATA.roles)+
-    '<div class="more"><a href="overview.html#n='+encodeURIComponent(n.id)+'">この論点を俯瞰ビューで見る</a></div>';
-  panel.querySelectorAll('.gbar .btn').forEach(b => b.addEventListener('click', () => { GROUP = b.dataset.g; renderPanel(); }));
-}
-
-function select(id){
-  SELECTED = id;
-  O.writeHashId(id);
-  document.getElementById('toOverview').href = 'overview.html#n=' + encodeURIComponent(id);
-  renderTree(); renderPanel(); markMatrixRow();
-}
-
-function markMatrixRow(){
-  document.querySelectorAll('#mxRole tr[data-id]').forEach(tr => tr.classList.toggle('sel', tr.dataset.id === SELECTED));
-}
-
-function renderMatrices(){
-  const T = DATA.tree, E = O.escapeHtml;
-  const issues = T.nodes.filter(n => n.kind === '問い' || (n.kind === '評価軸' && !n.children.length));
-  let h = '<thead><tr><th>親</th><th>論点</th>' + DATA.roles.map(r=>{ const m=/^(.*?)（(.*)）$/.exec(r.name); return '<th title="'+E(r.name)+'">'+(m?E(m[1])+'<br><span style="font-weight:400;color:var(--muted)">'+E(m[2])+'</span>':E(r.name))+'</th>'; }).join('') + '<th>合計</th></tr></thead><tbody>';
-  issues.forEach(n => {
-    h += '<tr data-id="'+E(n.id)+'"><td style="color:var(--muted);font-size:11.5px">'+(n.parent?E(n.parent.label):'')+'</td><td>'+E(n.label)+'</td>';
-    DATA.roles.forEach(r => { const v = n.opinions.filter(o=>o.role===r.name).length; const bg = v ? 'color-mix(in srgb, var(--accent) '+Math.min(14+v*22,80)+'%, var(--surface))' : 'transparent'; h += '<td class="cnt"><span style="background:'+bg+'" class="'+(v?'':'zero')+'">'+(v||'·')+'</span></td>'; });
-    h += '<td class="cnt '+(n.opinions.length?'':'zero')+'">'+(n.opinions.length||'·')+'</td></tr>';
-  });
-  const mx = document.getElementById('mxRole');
-  mx.innerHTML = h + '</tbody>';
-  mx.querySelectorAll('tr[data-id]').forEach(tr => tr.addEventListener('click', () => { select(tr.dataset.id); window.scrollTo({top:0, behavior:'smooth'}); }));
-
-  const src = T.byLabel['電源・技術'];
-  const objects = src ? src.children.filter(n=>n.kind==='対象') : [];
-  let h2 = '<thead><tr><th>電源</th>' + O.CRITERIA_COLS.map(c=>'<th>'+c+'</th>').join('') + '<th>各論数</th></tr></thead><tbody>';
-  objects.forEach(o => {
-    h2 += '<tr><td>'+E(o.label)+'</td>';
-    O.CRITERIA_COLS.forEach(c => { const v = o.children.filter(ch=>ch.flags[c]).length; const bg = v ? 'color-mix(in srgb, var(--k-criterion) '+Math.min(15+v*25,85)+'%, var(--surface))' : 'transparent'; h2 += '<td class="cnt"><span style="background:'+bg+'" class="'+(v?'':'zero')+'">'+(v||'·')+'</span></td>'; });
-    h2 += '<td class="cnt">'+o.children.length+'</td></tr>';
-  });
-  document.getElementById('mxCrit').innerHTML = h2 + '</tbody>';
-
-  const qa = document.getElementById('qa');
-  qa.className = DATA.warnings.length ? 'qa' : 'qa ok';
-  qa.innerHTML = '<h3>データの点検（モデレータ向け）</h3>' + (DATA.warnings.length
-    ? '<ul>' + DATA.warnings.map(w=>'<li>'+E(w)+'</li>').join('') + '</ul>'
-    : '<p style="margin:0;font-size:13px">問題は見つかりませんでした。</p>');
-}
-
-async function main(){
-  try {
-    DATA = await O.loadAll();
-    const T = DATA.tree;
-    const fromHash = O.readHashId();
-    SELECTED = (fromHash && T.byId[fromHash]) ? fromHash : (T.root.children[0] ? T.root.children[0].id : T.root.id);
-    document.getElementById('loadingState').hidden = true;
-    ['legendbar','app','matrices'].forEach(id => document.getElementById(id).hidden = false);
-    const ex = DATA.opinions.filter(o=>o.isExample).length;
-    document.getElementById('metaLine').innerHTML =
-      '<span>論点 '+T.nodes.length+' 件 ／ 意見 '+DATA.opinions.length+' 件'+(ex?'（うちサンプル '+ex+' 件）':'')+'</span>'+
-      '<span>取得 '+O.nowJST()+'</span><button class="btn" id="reload">再読み込み</button>';
-    document.getElementById('reload').addEventListener('click', () => location.reload());
-    renderMatrices();
-    select(SELECTED);
-  } catch (err) {
-    document.getElementById('loadingState').hidden = true;
-    const es = document.getElementById('errorState');
-    es.hidden = false;
-    es.innerHTML = 'データの取得に失敗しました。<br>' + O.escapeHtml(err.message || String(err)) +
-      '<br><br>公開用スプレッドシートが「ファイル → 共有 → ウェブに公開」の状態か確認してください。<br><button class="btn" id="retry" style="margin-top:10px">再試行</button>';
-    document.getElementById('retry').addEventListener('click', () => location.reload());
-  }
-}
-
-document.getElementById('btnH').addEventListener('click', function(){ VIEW='h'; this.setAttribute('aria-pressed','true'); document.getElementById('btnV').setAttribute('aria-pressed','false'); renderTree(); });
-document.getElementById('btnV').addEventListener('click', function(){ VIEW='v'; this.setAttribute('aria-pressed','true'); document.getElementById('btnH').setAttribute('aria-pressed','false'); renderTree(); });
-
-main();
-})();
-</script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-/* @omfy 論点マップ 共通スタイル（詳細ビュー index.html と 俯瞰ビュー overview.html で共有） */
+/* @omfy 論点マップ 共通スタイル（ガイド index.html、俯瞰ビュー overview.html、詳細ビュー detail.html で共有） */
 :root{
   color-scheme: light dark;
   --bg:#F2F4F6; --surface:#FFFFFF; --surface2:#E9EDF0; --ink:#1C2730; --muted:#5B6B76; --rule:#D3DBE1; --rule2:#BCC6CE;

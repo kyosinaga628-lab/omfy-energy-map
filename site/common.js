@@ -1,5 +1,5 @@
 /* @omfy 論点マップ 共通モジュール
- * 詳細ビュー（index.html）と俯瞰ビュー（overview.html）で共有する。
+ * 詳細ビュー（detail.html）と俯瞰ビュー（overview.html）で共有する。ガイド（index.html）は使わない。
  *  - 公開用スプレッドシートの CSV（論点・意見・属性マスタ）を取得して木を組み立てる
  *  - 意見リストの HTML を作る
  * ブラウザでは window.OMFY、Node（テスト）では module.exports で使える。

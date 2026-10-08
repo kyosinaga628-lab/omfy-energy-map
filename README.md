@@ -5,9 +5,11 @@
 - 編集面: Google スプレッドシート（メンバーのみ）
 - 探索用マップ: [Kumu（公開）](https://embed.kumu.io/60df0d9cd82ddb8ef5518e544d696fa7)
 - 公開サイト（GitHub Pages）
+  - はじめに（ガイド、入口）: https://kyosinaga628-lab.github.io/omfy-energy-map/site/ — 何を目指しているか、論点マップの構造図、2 画面の使い分け、意見の読み方・書き方
   - 俯瞰ビュー（UI-A）: https://kyosinaga628-lab.github.io/omfy-energy-map/site/overview.html — 論点の構造を一枚で見る。放射状／縦、深さの折りたたみ、検索、印刷（A3 横）
-  - 詳細ビュー（UI-B）: https://kyosinaga628-lab.github.io/omfy-energy-map/site/ — ツリーと論点ごとの意見パネル、抜けの確認表、データの点検
-  - どちらも公開用スプレッドシートを開くたびに直接読み込む。CSV の URL は `site/common.js` の先頭にまとめてある
+  - 詳細ビュー（UI-B）: https://kyosinaga628-lab.github.io/omfy-energy-map/site/detail.html — ツリーと論点ごとの意見パネル、抜けの確認表、データの点検
+  - 旧 URL の `site/#n=<論点ID>` は詳細ビューへ転送する
+  - 俯瞰ビューと詳細ビューは公開用スプレッドシートを開くたびに直接読み込む。CSV の URL は `site/common.js` の先頭にまとめてある
 - データのスナップショット: `data/latest/`（毎晩 03:00 JST に自動取得。差分は履歴で見られる）
 
 ## データ

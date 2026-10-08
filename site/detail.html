@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>@omfy 論点マップ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="common.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="common.js"></script>
+<style>
+body{padding-inline:clamp(12px,3vw,28px);padding-block:0 40px}
+.wrap{max-width:1180px;margin:0 auto}
+header{padding-block:18px 12px;border-bottom:1px solid var(--rule2);display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+header h1{font-size:22px;margin-right:auto}
+.meta{font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;width:100%}
+.legendbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:12px 0;padding:9px 14px;background:var(--surface);border:1px solid var(--rule);border-radius:8px;font-size:12px;color:var(--muted)}
+.legendbar .lbl{font-weight:700;color:var(--ink)}
+.legendbar .sep{width:1px;height:16px;background:var(--rule2)}
+main.app{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--surface);margin-top:10px;box-shadow:var(--shadow)}
+.tree{border-right:1px solid var(--rule);padding:10px 8px;overflow:auto;max-height:680px}
+.tree svg{display:block;height:auto}
+.tree svg .halo{stroke:var(--surface)}
+.panel{padding:16px 20px;min-width:0}
+.panel .crumb{font-size:12px;color:var(--muted)}
+.panel h2{font-size:19px;margin:4px 0 0}
+.panel .q{margin:8px 0 6px;font-size:14px}
+.panel .chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 14px}
+.panel .more{margin-top:12px;font-size:12.5px}
+section.matrices{margin-top:24px}
+section.matrices h2{font-size:18px;margin-bottom:6px}
+section.matrices p{font-size:13px;color:var(--muted);max-width:60em;margin:0 0 6px}
+.scroll{overflow-x:auto;margin:10px 0;border:1px solid var(--rule);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--rule);white-space:nowrap}
+th{background:var(--surface2);font-weight:700;font-size:11.5px}
+tr[data-id]{cursor:pointer}
+tr[data-id]:hover td{background:var(--surface2)}
+tr.sel td{background:var(--accent-soft)}
+td.cnt{text-align:center;font-variant-numeric:tabular-nums}
+td.cnt span{display:inline-block;min-width:26px;padding:1px 6px;border-radius:4px}
+.zero{color:var(--rule2)}
+.qa{margin-top:18px;padding:12px 16px;border:1px solid var(--rule);border-radius:8px;background:var(--surface)}
+.qa h3{font-size:14px;margin-bottom:6px}
+.qa ul{margin:4px 0;padding-left:1.3em;font-size:13px}
+.qa.ok{border-color:var(--ok)}
+footer{margin-top:24px;padding-top:12px;border-top:1px solid var(--rule);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px}
+@media (max-width: 860px){ main.app{grid-template-columns:1fr} .tree{border-right:0;border-bottom:1px solid var(--rule);max-height:340px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>@omfy 論点マップ</h1>
+    <nav class="nav" aria-label="画面の切り替え">
+      <a href="index.html">はじめに</a><a href="overview.html" id="toOverview">俯瞰ビュー</a><a href="detail.html" aria-current="page">詳細ビュー</a>
+    </nav>
+    <div class="meta" id="metaLine">読み込み中…</div>
+  </header>
+
+  <div class="legendbar" id="legendbar" hidden>
+    <span class="lbl">種別</span>
+    <span class="legend-k"><i class="sw" style="background:var(--k-objective)"></i>目的</span>
+    <span class="legend-k"><i class="sw" style="background:var(--k-theme)"></i>テーマ</span>
+    <span class="legend-k"><i class="sw" style="background:var(--k-criterion)"></i>評価軸</span>
+    <span class="legend-k"><i class="sw" style="background:var(--k-object)"></i>対象</span>
+    <span class="legend-k"><i class="sw" style="background:var(--k-context)"></i>外部環境</span>
+    <span class="legend-k"><i class="sw" style="background:var(--k-issue)"></i>問い</span>
+    <span class="sep"></span>
+    <span class="lbl">意見の印（立場）</span>
+    <span class="legend-k"><i class="sw round" style="background:var(--st-support)"></i>賛成</span>
+    <span class="legend-k"><i class="sw round" style="background:var(--st-cond)"></i>条件付き</span>
+    <span class="legend-k"><i class="sw round" style="background:var(--st-neutral)"></i>中立</span>
+    <span class="legend-k"><i class="sw round" style="background:var(--st-question)"></i>問い</span>
+    <span class="legend-k"><i class="sw round" style="background:var(--st-oppose)"></i>反対</span>
+    <span class="sep"></span>
+    <span>ツリーの向き:</span>
+    <span class="seg" role="group" aria-label="ツリーの向き">
+      <button class="btn" id="btnH" aria-pressed="true">横（画面）</button><button class="btn" id="btnV" aria-pressed="false">縦（印刷・発表）</button>
+    </span>
+  </div>
+
+  <div id="loadingState" class="state">データを取得しています…</div>
+  <div id="errorState" class="state err" hidden></div>
+
+  <main class="app" id="app" hidden>
+    <div class="tree" id="treePane"></div>
+    <div class="panel" id="panel"></div>
+  </main>
+
+  <section class="matrices" id="matrices" hidden>
+    <h2>抜けの確認</h2>
+    <p>(a) 論点 × 記入者属性。どの属性の声がどの論点に足りないかを見る。行をクリックするとその論点を開く。</p>
+    <div class="scroll"><table id="mxRole"></table></div>
+    <p>(b) 電源 × 3E+S。セルは、その電源の下の各論のうち評価軸に関係するものの数。</p>
+    <div class="scroll"><table id="mxCrit"></table></div>
+    <div class="qa" id="qa"></div>
+  </section>
+
+  <footer>
+    <span>データは <a href="https://creativecommons.org/licenses/by/4.0/deed.ja">CC BY 4.0</a> で公開（出典表示で再利用可）</span>
+    <span>意見は記入者個人の見解であり @omfy の公式見解ではない</span>
+    <span><a href="https://github.com/kyosinaga628-lab/omfy-energy-map">GitHub リポジトリ</a></span>
+  </footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+const O = window.OMFY;
+let DATA = null, SELECTED = null, VIEW = 'h', GROUP = 'role';
+
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, parent){ const e=document.createElementNS(NS,tag); for(const k in attrs){ if(k==='text') e.textContent=attrs[k]; else e.setAttribute(k,attrs[k]); } if(parent) parent.appendChild(e); return e; }
+function badges(g, x, y, node, dx, dy){
+  const c = O.countStances(node.opinions); const keys = O.STANCES.filter(s=>c[s]>0);
+  keys.forEach((s,i) => { const off=(i-(keys.length-1)/2)*8; el('circle',{cx:x+dx*off, cy:y+dy*off, r:3.6, fill:O.stanceColor(s), class:'badge'}, g); });
+}
+function nodeTitle(n){ return n.label + '（' + n.kind + '）' + (n.opinions.length ? ' 意見 ' + n.opinions.length + ' 件' : ''); }
+function nodeGroup(parent, n){
+  const g = el('g', {class:'node'+(n.id===SELECTED?' selected':''), tabindex:'0', role:'button', 'aria-label':nodeTitle(n)}, parent);
+  g.addEventListener('click', () => select(n.id));
+  g.addEventListener('keydown', (e) => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); select(n.id); } });
+  el('title',{text:nodeTitle(n)}, g);
+  return g;
+}
+
+function drawHorizontal(container){
+  const T = DATA.tree;
+  container.innerHTML = '';
+  const svg = el('svg', {role:'img', 'aria-label':'左から右へ広がる論点ツリー'}, container);
+  const rowH=19, x0=24, colW=122, top=22; let row=0;
+  (function place(n){ if(!n.children.length){ n.y=top+row*rowH; row++; } else { n.children.forEach(place); n.y=(n.children[0].y+n.children[n.children.length-1].y)/2; } n.x=x0+n.depth*colW; })(T.root);
+  const W = x0 + T.maxDepth*colW + 190, H = Math.max(300, top+row*rowH+16);
+  svg.setAttribute('viewBox', '0 0 '+W+' '+H);
+  svg.style.width = W + 'px';
+  const g = el('g', {}, svg);
+  T.nodes.forEach(n => { if(!n.parent) return; const p=n.parent; const mx=(p.x+n.x)/2; el('path',{d:'M'+p.x+','+p.y+' C'+mx+','+p.y+' '+mx+','+n.y+' '+n.x+','+n.y, class:'edge'}, g); });
+  T.nodes.forEach(n => {
+    const ng = nodeGroup(g, n);
+    el('circle',{cx:n.x,cy:n.y,r:n.depth===0?7:5,fill:O.kindColor(n.kind),class:'core'}, ng);
+    const isLeaf = !n.children.length;
+    el('text',{x:n.depth===0?n.x-6:n.x+(isLeaf?9:0), y:isLeaf?n.y:n.y-10, 'dominant-baseline':isLeaf?'middle':'auto','text-anchor':(isLeaf||n.depth===0)?'start':'middle', class:'lbl halo'+(n.depth<=1?' big':''), text:n.label}, ng);
+    if(n.opinions.length){ const bx = n.x+(isLeaf ? 9+n.label.length*11+8 : 0); badges(ng, isLeaf?bx:n.x, isLeaf?n.y:n.y+11, n, 1, 0); }
+  });
+}
+
+function drawVertical(container){
+  const T = DATA.tree;
+  container.innerHTML = '';
+  const svg = el('svg', {role:'img', 'aria-label':'上から下へ広がる論点ツリー'}, container);
+  const colW=28, rowH=112, x0=24, top=30; let col=0;
+  (function place(n){ if(!n.children.length){ n.tx=x0+col*colW; col++; } else { n.children.forEach(place); n.tx=(n.children[0].tx+n.children[n.children.length-1].tx)/2; } n.ty=top+n.depth*rowH; })(T.root);
+  const W = Math.max(700, x0+col*colW+20), H = top+T.maxDepth*rowH+140;
+  svg.setAttribute('viewBox', '0 0 '+W+' '+H);
+  container.querySelector('svg').style.width = W + 'px';
+  const g = el('g', {}, svg);
+  T.nodes.forEach(n => { if(!n.parent) return; const p=n.parent; const my=(p.ty+n.ty)/2; el('path',{d:'M'+p.tx+','+p.ty+' C'+p.tx+','+my+' '+n.tx+','+my+' '+n.tx+','+n.ty, class:'edge'}, g); });
+  T.nodes.forEach(n => {
+    const ng = nodeGroup(g, n);
+    el('circle',{cx:n.tx,cy:n.ty,r:n.depth===0?7:5,fill:O.kindColor(n.kind),class:'core'}, ng);
+    const isLeaf = !n.children.length;
+    if(isLeaf){
+      el('text',{x:n.tx, y:n.ty+10, class:'lbl halo', 'writing-mode':'tb', text:n.label}, ng);
+      if(n.opinions.length) badges(ng, n.tx+11, n.ty+10+n.label.length*5.5+6, n, 0, 1);
+    } else if(n.depth<=2){
+      el('text',{x:n.tx, y:n.ty-11, 'text-anchor':'middle', class:'lbl halo'+(n.depth<=1?' big':''), text:n.label}, ng);
+      if(n.opinions.length) badges(ng, n.tx, n.ty+13, n, 1, 0);
+    } else {
+      el('text',{x:n.tx+9, y:n.ty-8, class:'lbl halo', text:n.label}, ng);
+      if(n.opinions.length) badges(ng, n.tx+11, n.ty+10, n, 0, 1);
+    }
+  });
+}
+
+function renderTree(){
+  const pane = document.getElementById('treePane');
+  pane.className = 'tree' + (VIEW==='v' ? ' vertical' : '');
+  if (VIEW === 'h') drawHorizontal(pane); else drawVertical(pane);
+}
+
+function renderPanel(){
+  const panel = document.getElementById('panel');
+  const n = DATA.tree.byId[SELECTED];
+  if(!n){ panel.innerHTML = '<div class="empty">左のツリーから論点を選んでください。</div>'; return; }
+  const E = O.escapeHtml;
+  panel.innerHTML =
+    '<div class="crumb">'+O.pathOf(n).map(p=>E(p.label)).join(' › ')+'</div>'+
+    '<h2>'+E(n.label)+' <span class="chip" style="vertical-align:middle;margin-left:4px"><span class="dot" style="background:'+O.kindColor(n.kind)+'"></span>'+E(n.kind)+'</span></h2>'+
+    '<p class="q"><strong>問い:</strong> '+E(n.question||'（未記入）')+'</p>'+
+    '<div class="chips">'+O.criteriaChipsHtml(n)+'</div>'+
+    O.writeLinkHtml(n)+
+    '<div class="gbar"><span>意見 '+n.opinions.length+' 件 ／ 並べ方:</span><span class="seg"><button class="btn" data-g="role" aria-pressed="'+(GROUP==='role')+'">記入者属性別</button><button class="btn" data-g="stance" aria-pressed="'+(GROUP==='stance')+'">立場別</button></span></div>'+
+    O.opinionsHtml(n, GROUP, DATA.roles)+
+    '<div class="more"><a href="overview.html#n='+encodeURIComponent(n.id)+'">この論点を俯瞰ビューで見る</a></div>';
+  panel.querySelectorAll('.gbar .btn').forEach(b => b.addEventListener('click', () => { GROUP = b.dataset.g; renderPanel(); }));
+}
+
+function select(id){
+  SELECTED = id;
+  O.writeHashId(id);
+  document.getElementById('toOverview').href = 'overview.html#n=' + encodeURIComponent(id);
+  renderTree(); renderPanel(); markMatrixRow();
+}
+
+function markMatrixRow(){
+  document.querySelectorAll('#mxRole tr[data-id]').forEach(tr => tr.classList.toggle('sel', tr.dataset.id === SELECTED));
+}
+
+function renderMatrices(){
+  const T = DATA.tree, E = O.escapeHtml;
+  const issues = T.nodes.filter(n => n.kind === '問い' || (n.kind === '評価軸' && !n.children.length));
+  let h = '<thead><tr><th>親</th><th>論点</th>' + DATA.roles.map(r=>{ const m=/^(.*?)（(.*)）$/.exec(r.name); return '<th title="'+E(r.name)+'">'+(m?E(m[1])+'<br><span style="font-weight:400;color:var(--muted)">'+E(m[2])+'</span>':E(r.name))+'</th>'; }).join('') + '<th>合計</th></tr></thead><tbody>';
+  issues.forEach(n => {
+    h += '<tr data-id="'+E(n.id)+'"><td style="color:var(--muted);font-size:11.5px">'+(n.parent?E(n.parent.label):'')+'</td><td>'+E(n.label)+'</td>';
+    DATA.roles.forEach(r => { const v = n.opinions.filter(o=>o.role===r.name).length; const bg = v ? 'color-mix(in srgb, var(--accent) '+Math.min(14+v*22,80)+'%, var(--surface))' : 'transparent'; h += '<td class="cnt"><span style="background:'+bg+'" class="'+(v?'':'zero')+'">'+(v||'·')+'</span></td>'; });
+    h += '<td class="cnt '+(n.opinions.length?'':'zero')+'">'+(n.opinions.length||'·')+'</td></tr>';
+  });
+  const mx = document.getElementById('mxRole');
+  mx.innerHTML = h + '</tbody>';
+  mx.querySelectorAll('tr[data-id]').forEach(tr => tr.addEventListener('click', () => { select(tr.dataset.id); window.scrollTo({top:0, behavior:'smooth'}); }));
+
+  const src = T.byLabel['電源・技術'];
+  const objects = src ? src.children.filter(n=>n.kind==='対象') : [];
+  let h2 = '<thead><tr><th>電源</th>' + O.CRITERIA_COLS.map(c=>'<th>'+c+'</th>').join('') + '<th>各論数</th></tr></thead><tbody>';
+  objects.forEach(o => {
+    h2 += '<tr><td>'+E(o.label)+'</td>';
+    O.CRITERIA_COLS.forEach(c => { const v = o.children.filter(ch=>ch.flags[c]).length; const bg = v ? 'color-mix(in srgb, var(--k-criterion) '+Math.min(15+v*25,85)+'%, var(--surface))' : 'transparent'; h2 += '<td class="cnt"><span style="background:'+bg+'" class="'+(v?'':'zero')+'">'+(v||'·')+'</span></td>'; });
+    h2 += '<td class="cnt">'+o.children.length+'</td></tr>';
+  });
+  document.getElementById('mxCrit').innerHTML = h2 + '</tbody>';
+
+  const qa = document.getElementById('qa');
+  qa.className = DATA.warnings.length ? 'qa' : 'qa ok';
+  qa.innerHTML = '<h3>データの点検（モデレータ向け）</h3>' + (DATA.warnings.length
+    ? '<ul>' + DATA.warnings.map(w=>'<li>'+E(w)+'</li>').join('') + '</ul>'
+    : '<p style="margin:0;font-size:13px">問題は見つかりませんでした。</p>');
+}
+
+async function main(){
+  try {
+    DATA = await O.loadAll();
+    const T = DATA.tree;
+    const fromHash = O.readHashId();
+    SELECTED = (fromHash && T.byId[fromHash]) ? fromHash : (T.root.children[0] ? T.root.children[0].id : T.root.id);
+    document.getElementById('loadingState').hidden = true;
+    ['legendbar','app','matrices'].forEach(id => document.getElementById(id).hidden = false);
+    const ex = DATA.opinions.filter(o=>o.isExample).length;
+    document.getElementById('metaLine').innerHTML =
+      '<span>論点 '+T.nodes.length+' 件 ／ 意見 '+DATA.opinions.length+' 件'+(ex?'（うちサンプル '+ex+' 件）':'')+'</span>'+
+      '<span>取得 '+O.nowJST()+'</span><button class="btn" id="reload">再読み込み</button>';
+    document.getElementById('reload').addEventListener('click', () => location.reload());
+    renderMatrices();
+    select(SELECTED);
+  } catch (err) {
+    document.getElementById('loadingState').hidden = true;
+    const es = document.getElementById('errorState');
+    es.hidden = false;
+    es.innerHTML = 'データの取得に失敗しました。<br>' + O.escapeHtml(err.message || String(err)) +
+      '<br><br>公開用スプレッドシートが「ファイル → 共有 → ウェブに公開」の状態か確認してください。<br><button class="btn" id="retry" style="margin-top:10px">再試行</button>';
+    document.getElementById('retry').addEventListener('click', () => location.reload());
+  }
+}
+
+document.getElementById('btnH').addEventListener('click', function(){ VIEW='h'; this.setAttribute('aria-pressed','true'); document.getElementById('btnV').setAttribute('aria-pressed','false'); renderTree(); });
+document.getElementById('btnV').addEventListener('click', function(){ VIEW='v'; this.setAttribute('aria-pressed','true'); document.getElementById('btnH').setAttribute('aria-pressed','false'); renderTree(); });
+
+main();
+})();
+</script>
+</body>
+</html>
