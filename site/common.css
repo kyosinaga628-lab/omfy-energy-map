@@ -3,8 +3,9 @@
   color-scheme: light dark;
   --bg:#F2F4F6; --surface:#FFFFFF; --surface2:#E9EDF0; --ink:#1C2730; --muted:#5B6B76; --rule:#D3DBE1; --rule2:#BCC6CE;
   --accent:#2B4C7E; --accent-soft:#DCE5F2;
-  --st-support:#2F6DB5; --st-cond:#2E9E8F; --st-neutral:#8A96A0; --st-question:#7E5EA8; --st-oppose:#D2622A;
-  --k-objective:#2E3543; --k-theme:#5B6F93; --k-criterion:#7E8F57; --k-object:#9C6F46; --k-issue:#AEB9C4; --k-context:#8E6F9C;
+  /* 意見の立場と論点の種別の色（3 画面共通。2026-10 に enepen. 系の明るい色へ） */
+  --st-support:#2F7BEA; --st-cond:#12A594; --st-neutral:#8F9BA8; --st-question:#8B5CF6; --st-oppose:#EF5A2A;
+  --k-objective:#1A1A1A; --k-theme:#4F6BFF; --k-criterion:#2FB46A; --k-object:#FF6B9D; --k-issue:#AAB4BF; --k-context:#F5A524;
   --warn:#D2622A; --ok:#2E9E8F;
   --shadow:0 1px 2px rgba(28,39,48,.06), 0 8px 24px rgba(28,39,48,.08);
 }
@@ -12,16 +13,16 @@
   :root:not([data-theme="light"]){
     --bg:#141A1F; --surface:#1C232A; --surface2:#232C34; --ink:#E4E9EE; --muted:#98A5B1; --rule:#2F3A44; --rule2:#3D4A56;
     --accent:#8FB0E0; --accent-soft:#24344A;
-    --st-support:#7FA9E6; --st-cond:#63C2B3; --st-neutral:#9AA6B0; --st-question:#B093D8; --st-oppose:#E8925F;
-    --k-objective:#C9D2DE; --k-theme:#7F93B8; --k-criterion:#A3B57A; --k-object:#C0906A; --k-issue:#55636F; --k-context:#AE93B8;
+    --st-support:#6FA8FF; --st-cond:#3FD0BD; --st-neutral:#A7B3C2; --st-question:#B79CFF; --st-oppose:#FF8A5C;
+    --k-objective:#EEF1F5; --k-theme:#8EA6FF; --k-criterion:#5FD38F; --k-object:#FF8DB5; --k-issue:#5A6672; --k-context:#FFC266;
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
   }
 }
 :root[data-theme="dark"]{
   --bg:#141A1F; --surface:#1C232A; --surface2:#232C34; --ink:#E4E9EE; --muted:#98A5B1; --rule:#2F3A44; --rule2:#3D4A56;
   --accent:#8FB0E0; --accent-soft:#24344A;
-  --st-support:#7FA9E6; --st-cond:#63C2B3; --st-neutral:#9AA6B0; --st-question:#B093D8; --st-oppose:#E8925F;
-  --k-objective:#C9D2DE; --k-theme:#7F93B8; --k-criterion:#A3B57A; --k-object:#C0906A; --k-issue:#55636F; --k-context:#AE93B8;
+  --st-support:#6FA8FF; --st-cond:#3FD0BD; --st-neutral:#A7B3C2; --st-question:#B79CFF; --st-oppose:#FF8A5C;
+  --k-objective:#EEF1F5; --k-theme:#8EA6FF; --k-criterion:#5FD38F; --k-object:#FF8DB5; --k-issue:#5A6672; --k-context:#FFC266;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
 }
 

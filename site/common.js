@@ -33,7 +33,7 @@
   const COL = {
     id: 'ID', label: '論点名（20字以内）', kind: '種別', parent: '親論点', question: '問い（〜か）', status: '状態',
     date: '記入日', handle: 'ハンドル', node: '論点', role: '記入者属性', stance: '立場', basis: '根拠タイプ',
-    claim: '主張（60字以内）', note: '補足・出典（任意）',
+    claim: '主張（200字以内）', claimOld: '主張（60字以内）', note: '補足・出典（任意）',
     roleName: '属性（エネルギーに対する立場）', roleDesc: '説明', roleAgg: '集約先（任意）', roleOrder: '並び順',
   };
 
@@ -89,14 +89,16 @@
     nodes.filter((n) => typeof n.depth !== 'number' && n.parentLabel && byLabel[n.parentLabel])
       .forEach((n) => warnings.push('根から辿れない論点: 「' + n.label + '」'));
 
-    const opinions = opRows.filter((r) => t(r[COL.claim])).map((r) => ({
+    // 主張の列名は 2026-10 に「60字以内」から「200字以内」へ変えた。シートがどちらでも読めるようにする
+    const claimOf = (r) => t(r[COL.claim]) || t(r[COL.claimOld]);
+    const opinions = opRows.filter((r) => claimOf(r)).map((r) => ({
       date: t(r[COL.date]),
       handle: t(r[COL.handle]),
       nodeLabel: t(r[COL.node]),
       role: t(r[COL.role]),
       stance: t(r[COL.stance]),
       basis: t(r[COL.basis]),
-      claim: t(r[COL.claim]),
+      claim: claimOf(r),
       note: t(r[COL.note]),
       isExample: t(r[COL.handle]).indexOf('@example_') === 0,
     }));

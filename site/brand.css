@@ -1,0 +1,84 @@
+/* @omfy 論点マップ 新しい見た目（enepen. のサイトに寄せたもの）。common.css の後に読み込む。
+   使っている画面: はじめに index.html、詳細ビュー detail.html */
+:root{
+  --bg:#FFFFFF; --bg2:#F7F8FA; --ink:#1A1A1A; --muted:#66707B; --faint:#949EA9;
+  --surface:#FFFFFF; --surface2:#EEF1F5; --rule:#E3E7EC; --rule2:#CDD4DC;
+  --accent:#3B5BDB; --accent-soft:#E4EAFF;
+  --grad:linear-gradient(135deg,#4F6BFF 0%,#3AA0F2 50%,#2CCFB5 100%);
+  --glow-a:rgba(100,150,255,.16); --glow-b:rgba(60,210,190,.12); --glow-c:rgba(120,170,255,.10);
+  --head-bg:rgba(255,255,255,.8); --lift:0 30px 80px rgba(0,0,0,.10);
+  --soft:0 1px 2px rgba(0,0,0,.04), 0 12px 40px rgba(0,0,0,.06);
+  --pill-bg:#1A1A1A; --pill-ink:#FFFFFF;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1116; --bg2:#161B22; --ink:#EEF1F5; --muted:#9AA5B1; --faint:#6E7884;
+    --surface:#161B22; --surface2:#1F2630; --rule:#262E39; --rule2:#36404C;
+    --accent:#8EA6FF; --accent-soft:#222C4A;
+    --glow-a:rgba(80,120,255,.20); --glow-b:rgba(40,190,170,.14); --glow-c:rgba(90,140,255,.12);
+    --head-bg:rgba(14,17,22,.75); --lift:0 30px 80px rgba(0,0,0,.5);
+    --soft:0 1px 2px rgba(0,0,0,.4), 0 12px 40px rgba(0,0,0,.35);
+    --pill-bg:#EEF1F5; --pill-ink:#0E1116;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1116; --bg2:#161B22; --ink:#EEF1F5; --muted:#9AA5B1; --faint:#6E7884;
+  --surface:#161B22; --surface2:#1F2630; --rule:#262E39; --rule2:#36404C;
+  --accent:#8EA6FF; --accent-soft:#222C4A;
+  --glow-a:rgba(80,120,255,.20); --glow-b:rgba(40,190,170,.14); --glow-c:rgba(90,140,255,.12);
+  --head-bg:rgba(14,17,22,.75); --lift:0 30px 80px rgba(0,0,0,.5);
+  --soft:0 1px 2px rgba(0,0,0,.4), 0 12px 40px rgba(0,0,0,.35);
+  --pill-bg:#EEF1F5; --pill-ink:#0E1116;
+}
+
+body{font-family:"Inter","Noto Sans JP","Hiragino Sans","Yu Gothic",Meiryo,sans-serif;position:relative}
+h1,h2,h3{font-family:inherit;font-weight:800;word-break:auto-phrase}
+svg text{font-family:"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif}
+a{transition:color .2s ease}
+
+/* 背景の光 */
+.glow{position:fixed;width:600px;height:600px;border-radius:50%;pointer-events:none;z-index:0;filter:blur(120px);transition:transform .4s ease-out}
+.glow-a{top:-200px;left:-200px;background:var(--glow-a)}
+.glow-b{top:100px;right:-300px;background:var(--glow-b)}
+.glow-c{bottom:200px;left:-200px;background:var(--glow-c)}
+
+/* ヘッダー（左に画面の切り替え、右にロゴ） */
+.header{position:fixed;inset:0 0 auto;z-index:1000;background:var(--head-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);transition:box-shadow .3s ease}
+.header.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.05)}
+.header .bar{max-width:1200px;margin:0 auto;padding:18px 40px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.vnav{display:flex;gap:4px;flex-wrap:wrap}
+.vnav a{padding:7px 16px;border-radius:999px;font-size:14px;font-weight:500;color:var(--muted);text-decoration:none;white-space:nowrap}
+.vnav a:hover{color:var(--ink)}
+.vnav a[aria-current="page"]{background:var(--pill-bg);color:var(--pill-ink)}
+.logo{display:flex;align-items:baseline;gap:8px;text-decoration:none;white-space:nowrap;margin:0;font-size:inherit}
+.logo b{font-size:24px;font-weight:800;letter-spacing:-.5px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.logo span{font-size:13px;font-weight:700;color:var(--ink)}
+
+/* 大きなピル型ボタン */
+.pill{display:inline-flex;align-items:center;gap:12px;padding:15px 28px;border-radius:999px;font-size:15px;font-weight:700;text-decoration:none;transition:transform .3s ease,box-shadow .3s ease,background .2s ease,color .2s ease;border:2px solid var(--pill-bg)}
+.pill.dark{background:var(--pill-bg);color:var(--pill-ink)}
+.pill.line{background:transparent;color:var(--ink)}
+.pill:hover{transform:scale(1.04);box-shadow:0 20px 40px rgba(0,0,0,.15)}
+.pill.line:hover{background:var(--pill-bg);color:var(--pill-ink)}
+.pill svg{width:18px;height:18px;flex:none;transition:transform .2s ease}
+.pill:hover svg{transform:translateX(4px)}
+
+/* common.css の小さな部品をこの見た目に合わせる */
+.btn{border-color:var(--rule2);transition:border-color .2s ease,background .2s ease}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--pill-bg);border-color:var(--pill-bg);color:var(--pill-ink);padding:9px 20px;font-size:13.5px}
+.btn.primary:hover{filter:none;background:var(--grad);border-color:transparent;color:#fff}
+.seg{border-color:var(--rule2)}
+.chip{border-color:transparent;background:var(--bg2)}
+.grp{background:var(--bg2);border:0;border-radius:16px}
+.grp-h{border-bottom-color:var(--rule)}
+.op{background:var(--bg);border-bottom-color:var(--rule)}
+
+@media (max-width: 768px){
+  .header .bar{padding:12px 16px;flex-wrap:wrap-reverse;gap:8px}
+  .vnav a{padding:6px 12px;font-size:13px}
+  .pill{padding:13px 22px}
+}
+@media (prefers-reduced-motion: reduce){
+  .pill,.glow{transition:none}
+}

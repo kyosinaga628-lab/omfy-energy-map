@@ -5,59 +5,76 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>@omfy 論点マップ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap">
 <link rel="stylesheet" href="common.css">
+<link rel="stylesheet" href="brand.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="common.js"></script>
 <style>
-body{padding-inline:clamp(12px,3vw,28px);padding-block:0 40px}
-.wrap{max-width:1180px;margin:0 auto}
-header{padding-block:18px 12px;border-bottom:1px solid var(--rule2);display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
-header h1{font-size:22px;margin-right:auto}
-.meta{font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;width:100%}
-.legendbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:12px 0;padding:9px 14px;background:var(--surface);border:1px solid var(--rule);border-radius:8px;font-size:12px;color:var(--muted)}
+/* 詳細ビューの部品。色・ヘッダー・ボタンは brand.css */
+body{font-size:15px;line-height:1.7;padding:0 0 40px;overflow-x:hidden}
+.wrap{max-width:1200px;margin:0 auto;padding:96px 40px 0;position:relative;z-index:1}
+.pagehead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 24px;margin:16px 0 20px}
+.pagehead h1{font-size:clamp(28px,3.6vw,40px);letter-spacing:-.03em;line-height:1.2;margin:0}
+.pagehead .sub{display:block;font-size:14px;font-weight:500;letter-spacing:0;color:var(--muted);margin-top:6px}
+.meta{font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center}
+.legendbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:0 0 16px;padding:12px 20px;background:var(--bg2);border-radius:20px;font-size:12px;color:var(--muted)}
 .legendbar .lbl{font-weight:700;color:var(--ink)}
 .legendbar .sep{width:1px;height:16px;background:var(--rule2)}
-main.app{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--surface);margin-top:10px;box-shadow:var(--shadow)}
-.tree{border-right:1px solid var(--rule);padding:10px 8px;overflow:auto;max-height:680px}
+main.app{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);border:1px solid var(--rule);border-radius:28px;overflow:hidden;background:var(--bg);box-shadow:var(--soft)}
+.tree{border-right:1px solid var(--rule);padding:14px 10px;overflow:auto;max-height:680px}
 .tree svg{display:block;height:auto}
-.tree svg .halo{stroke:var(--surface)}
-.panel{padding:16px 20px;min-width:0}
+.tree svg .halo{stroke:var(--bg)}
+.panel{padding:22px 26px;min-width:0}
 .panel .crumb{font-size:12px;color:var(--muted)}
-.panel h2{font-size:19px;margin:4px 0 0}
-.panel .q{margin:8px 0 6px;font-size:14px}
-.panel .chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 14px}
-.panel .more{margin-top:12px;font-size:12.5px}
-section.matrices{margin-top:24px}
-section.matrices h2{font-size:18px;margin-bottom:6px}
-section.matrices p{font-size:13px;color:var(--muted);max-width:60em;margin:0 0 6px}
-.scroll{overflow-x:auto;margin:10px 0;border:1px solid var(--rule);border-radius:6px;background:var(--surface)}
+.panel h2{font-size:24px;letter-spacing:-.02em;margin:4px 0 0}
+.panel .q{margin:10px 0 8px;font-size:14.5px}
+.panel .chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 16px}
+.panel .more{margin-top:14px;font-size:12.5px}
+section.matrices{margin-top:56px}
+section.matrices h2{font-size:clamp(22px,2.6vw,28px);letter-spacing:-.02em;margin-bottom:8px}
+section.matrices p{font-size:13.5px;color:var(--muted);max-width:60em;margin:0 0 6px}
+.scroll{overflow-x:auto;margin:12px 0 22px;border-radius:20px;background:var(--bg2);padding:4px 8px}
 table{border-collapse:collapse;width:100%;font-size:13px}
-th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--rule);white-space:nowrap}
-th{background:var(--surface2);font-weight:700;font-size:11.5px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--rule);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+th{font-weight:600;font-size:11.5px;color:var(--muted)}
 tr[data-id]{cursor:pointer}
-tr[data-id]:hover td{background:var(--surface2)}
+tr[data-id]:hover td{background:var(--bg)}
 tr.sel td{background:var(--accent-soft)}
 td.cnt{text-align:center;font-variant-numeric:tabular-nums}
-td.cnt span{display:inline-block;min-width:26px;padding:1px 6px;border-radius:4px}
+td.cnt span{display:inline-block;min-width:26px;padding:1px 6px;border-radius:6px}
 .zero{color:var(--rule2)}
-.qa{margin-top:18px;padding:12px 16px;border:1px solid var(--rule);border-radius:8px;background:var(--surface)}
-.qa h3{font-size:14px;margin-bottom:6px}
+.qa{margin-top:18px;padding:18px 22px;border-radius:20px;background:var(--bg2)}
+.qa h3{font-size:15px;margin-bottom:6px}
 .qa ul{margin:4px 0;padding-left:1.3em;font-size:13px}
-.qa.ok{border-color:var(--ok)}
-footer{margin-top:24px;padding-top:12px;border-top:1px solid var(--rule);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px}
+.qa.ok{box-shadow:inset 0 0 0 1.5px var(--ok)}
+footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 20px}
+footer a{color:var(--muted)}
+footer a:hover{color:var(--ink)}
 @media (max-width: 860px){ main.app{grid-template-columns:1fr} .tree{border-right:0;border-bottom:1px solid var(--rule);max-height:340px} }
+@media (max-width: 768px){ .wrap{padding:120px 16px 0} main.app{border-radius:22px} .panel{padding:18px 18px} }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>@omfy 論点マップ</h1>
-    <nav class="nav" aria-label="画面の切り替え">
+<div class="glow glow-a"></div>
+<div class="glow glow-b"></div>
+
+<header class="header">
+  <div class="bar">
+    <nav class="vnav" aria-label="画面の切り替え">
       <a href="index.html">はじめに</a><a href="overview.html" id="toOverview">俯瞰ビュー</a><a href="detail.html" aria-current="page">詳細ビュー</a>
     </nav>
+    <a class="logo" href="index.html"><b>@omfy</b><span>論点マップ</span></a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="pagehead">
+    <h1>詳細ビュー<span class="sub">論点ごとに意見を読む・抜けを探す</span></h1>
     <div class="meta" id="metaLine">読み込み中…</div>
-  </header>
+  </div>
 
   <div class="legendbar" id="legendbar" hidden>
     <span class="lbl">種別</span>
@@ -93,7 +110,7 @@ footer{margin-top:24px;padding-top:12px;border-top:1px solid var(--rule);font-si
     <h2>抜けの確認</h2>
     <p>(a) 論点 × 記入者属性。どの属性の声がどの論点に足りないかを見る。行をクリックするとその論点を開く。</p>
     <div class="scroll"><table id="mxRole"></table></div>
-    <p>(b) 電源 × 3E+S。セルは、その電源の下の各論のうち評価軸に関係するものの数。</p>
+    <p>(b) 電源 × S+3E。セルは、その電源の下の各論のうち評価軸に関係するものの数。</p>
     <div class="scroll"><table id="mxCrit"></table></div>
     <div class="qa" id="qa"></div>
   </section>
@@ -268,6 +285,9 @@ document.getElementById('btnV').addEventListener('click', function(){ VIEW='v'; 
 
 main();
 })();
+</script>
+<script>
+addEventListener('scroll', function(){ document.querySelector('.header').classList.toggle('scrolled', scrollY > 40); }, {passive:true});
 </script>
 </body>
 </html>
