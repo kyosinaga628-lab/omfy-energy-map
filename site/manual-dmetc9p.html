@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 関係者向けマニュアル（限定公開）。他のページからはリンクしない。検索エンジンに載せず、外へのリンクで URL を漏らさない -->
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<title>@omfy 論点マップ 関係者マニュアル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="common.css">
+<link rel="stylesheet" href="brand.css">
+<style>
+/* マニュアルだけの部品。色・ヘッダー・ボタンは brand.css */
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{font-size:15.5px;line-height:1.85;overflow-x:hidden;background:var(--bg)}
+.wrap{max-width:1200px;margin:0 auto;padding-inline:40px;position:relative;z-index:1}
+
+/* 冒頭 */
+.top{padding:128px 0 8px;max-width:52em}
+.tag{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;font-size:13px;font-weight:600;background:var(--bg2);color:var(--muted);margin:0 0 20px}
+.tag i{width:8px;height:8px;border-radius:50%;background:var(--st-oppose)}
+.top h1{font-size:clamp(32px,4.4vw,52px);line-height:1.25;letter-spacing:-.03em;margin:0 0 20px}
+.top h1 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.top p{color:var(--muted);margin:0 0 10px;font-size:16px}
+.meta{font-size:13px;color:var(--faint)}
+
+.caution{margin:28px 0 0;padding:18px 22px;border-radius:20px;background:color-mix(in srgb,var(--st-oppose) 9%,var(--bg));border:1px solid color-mix(in srgb,var(--st-oppose) 30%,transparent);font-size:14.5px;max-width:52em}
+.caution strong{display:block;margin:0 0 4px}
+.caution p{margin:0}
+
+/* 役割の入口 */
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:36px 0 0}
+.role{display:block;padding:24px 26px;border-radius:28px;background:var(--bg2);text-decoration:none;color:inherit;transition:transform .3s ease,box-shadow .3s ease}
+.role:hover{transform:translateY(-6px);box-shadow:var(--lift)}
+.role .who{font-size:12.5px;font-weight:700;letter-spacing:.04em;color:var(--muted)}
+.role h3{font-size:20px;margin:4px 0 8px;letter-spacing:-.01em}
+.role p{margin:0;font-size:14px;color:var(--muted)}
+.role .go{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:14px;font-weight:700}
+.role .go svg{width:15px;height:15px;transition:transform .2s ease}
+.role:hover .go svg{transform:translateX(4px)}
+
+/* 本文と目次 */
+.layout{display:grid;grid-template-columns:200px minmax(0,1fr);gap:56px;margin-top:24px}
+.toc{position:sticky;top:96px;align-self:start;font-size:13.5px;padding-top:72px}
+.toc b{display:block;font-size:12px;color:var(--faint);letter-spacing:.06em;margin:0 0 8px}
+.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.toc a{display:block;padding:5px 12px;border-radius:10px;color:var(--muted);text-decoration:none;line-height:1.5}
+.toc a:hover{color:var(--ink);background:var(--bg2)}
+.toc a.on{color:var(--ink);background:var(--bg2);font-weight:700}
+.toc .sub a{padding-left:24px;font-size:12.5px}
+
+section.sec{padding:72px 0 0}
+.sec-head{margin:0 0 28px}
+.en{display:block;font-family:"Inter",sans-serif;font-size:clamp(40px,5.2vw,68px);font-weight:800;letter-spacing:-.04em;line-height:1;margin:0 0 14px}
+.sec-head h2{font-size:clamp(22px,2.4vw,27px);letter-spacing:-.02em;line-height:1.4;margin:0 0 8px}
+.sec-head .lead{color:var(--muted);margin:0;max-width:44em}
+h3.h{font-size:19px;letter-spacing:-.01em;margin:40px 0 12px;line-height:1.5}
+h3.h:first-child{margin-top:0}
+p{margin:0 0 12px}
+.muted{color:var(--muted)}
+.small{font-size:13.5px}
+ul.ls,ol.ls{margin:0 0 12px;padding-left:1.3em}
+ul.ls li,ol.ls li{margin:5px 0}
+kbd,.ui{font-family:inherit;font-size:.92em;font-weight:600;background:var(--surface2);border:1px solid var(--rule);border-radius:6px;padding:1px 7px;white-space:nowrap}
+code{font-size:.88em}
+
+.panel{background:var(--bg2);border-radius:28px;padding:28px 30px}
+.panel > :last-child{margin-bottom:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.box-tip{border-left:4px solid var(--st-cond);background:color-mix(in srgb,var(--st-cond) 8%,var(--bg));border-radius:0 16px 16px 0;padding:14px 20px;margin:16px 0;font-size:14.5px}
+.box-warn{border-left:4px solid var(--st-oppose);background:color-mix(in srgb,var(--st-oppose) 8%,var(--bg));border-radius:0 16px 16px 0;padding:14px 20px;margin:16px 0;font-size:14.5px}
+.box-tip > :last-child,.box-warn > :last-child{margin-bottom:0}
+
+/* 仕組みの流れ */
+.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;align-items:stretch;gap:10px}
+.flow .st{background:var(--bg2);border-radius:22px;padding:18px 18px 16px}
+.flow .st .n{font-family:"Inter",sans-serif;font-size:12px;font-weight:800;letter-spacing:.06em;color:var(--muted)}
+.flow .st h4{margin:4px 0 6px;font-size:16px;font-weight:800}
+.flow .st p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.7}
+.flow .st.hub{background:var(--accent-soft)}
+.flow .ar{display:grid;place-items:center;color:var(--faint)}
+.flow .ar svg{width:22px;height:22px}
+.flow .ar span{display:none}
+.tbl.timing{margin-top:16px}
+
+/* 表 */
+.tbl{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:20px;background:var(--bg2);margin:0 0 12px}
+table{width:100%;border-collapse:collapse;font-size:14.5px;line-height:1.7}
+th,td{text-align:left;vertical-align:top;padding:12px 16px;border-bottom:1px solid var(--rule)}
+th{font-size:12.5px;font-weight:700;color:var(--muted);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+td.nw{white-space:nowrap}
+.tbl.wide table{min-width:640px}
+
+/* 手順 */
+.steps{counter-reset:s;list-style:none;margin:0 0 12px;padding:0;display:grid;gap:10px}
+.steps > li{counter-increment:s;position:relative;padding:16px 22px 16px 68px;background:var(--bg2);border-radius:20px}
+.steps > li::before{content:counter(s);position:absolute;left:20px;top:16px;width:30px;height:30px;border-radius:50%;background:var(--grad);color:#fff;font-family:"Inter",sans-serif;font-weight:800;font-size:14px;display:grid;place-items:center;line-height:1}
+.steps > li .muted{display:block;font-size:13.5px;margin-top:2px}
+
+/* 選び方のチップ */
+.chips{display:grid;gap:8px;margin:0 0 12px}
+.chips > div{display:grid;grid-template-columns:7.5em 1fr;gap:12px;align-items:baseline;background:var(--bg2);border-radius:16px;padding:10px 16px;font-size:14.5px}
+.chips b{display:inline-flex;align-items:center;gap:8px}
+
+/* 意見の例 */
+.ex{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.ex .card{border-radius:22px;padding:18px 20px;background:var(--bg2);font-size:14.5px}
+.ex .card .lbl{font-size:12.5px;font-weight:800;letter-spacing:.04em;margin:0 0 6px}
+.ex .ok .lbl{color:var(--st-cond)}
+.ex .ng .lbl{color:var(--st-oppose)}
+.ex .card p{margin:0 0 6px}
+.ex .card .why{color:var(--muted);font-size:13.5px;margin:0}
+
+/* よくある質問 */
+details.qa{background:var(--bg2);border-radius:18px;padding:0 20px;margin:0 0 8px}
+details.qa summary{cursor:pointer;padding:14px 0;font-weight:700;list-style:none;display:flex;gap:10px;align-items:baseline}
+details.qa summary::-webkit-details-marker{display:none}
+details.qa summary::before{content:"Q";font-family:"Inter",sans-serif;font-weight:800;color:var(--accent)}
+details.qa[open] summary{border-bottom:1px solid var(--rule)}
+details.qa .a{padding:12px 0 14px;font-size:14.5px}
+details.qa .a > :last-child{margin-bottom:0}
+
+/* フッター */
+.footer{margin-top:100px;padding:40px 0;border-top:1px solid var(--rule);font-size:13px;color:var(--muted);position:relative;z-index:1}
+.footer .row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 24px}
+.footer a{color:var(--muted)}
+.totop{font:inherit;font-size:13.5px;color:var(--muted);background:none;border:0;cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:0}
+.totop:hover{color:var(--ink)}
+.totop svg{width:15px;height:15px}
+
+@media (max-width: 1024px){
+  .layout{grid-template-columns:minmax(0,1fr);gap:0}
+  .toc{display:none}
+  .flow{grid-template-columns:minmax(0,1fr)}
+  .flow .ar{padding:2px 0}
+  .flow .ar svg{transform:rotate(90deg)}
+}
+@media (max-width: 768px){
+  .wrap{padding-inline:16px}
+  .top{padding-top:164px}
+  section.sec{padding-top:56px}
+  .panel{padding:22px;border-radius:22px}
+  .steps > li{padding:14px 18px 14px 60px}
+  .steps > li::before{left:16px;top:14px}
+  .chips > div{grid-template-columns:1fr;gap:2px}
+  th,td{padding:10px 12px}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .role{transition:none}
+}
+@media print{
+  .header,.glow,.toc,.roles,.totop{display:none!important}
+  .top{padding-top:0}
+  .layout{display:block}
+  details.qa{break-inside:avoid}
+  details.qa .a{display:block}
+}
+</style>
+</head>
+<body>
+<div class="glow glow-a"></div>
+<div class="glow glow-b"></div>
+
+<header class="header">
+  <div class="bar">
+    <nav class="vnav" aria-label="画面の切り替え">
+      <a href="index.html">はじめに</a><a href="overview.html">俯瞰ビュー</a><a href="detail.html">詳細ビュー</a><a href="#" aria-current="page">関係者マニュアル</a>
+    </nav>
+    <a class="logo" href="index.html"><b>@omfy</b><span>論点マップ</span></a>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="top">
+    <p class="tag"><i></i>関係者向け・限定公開</p>
+    <h1>論点マップ<br><span class="g">関係者マニュアル</span></h1>
+    <p>@omfy の論点マップを一緒に育てる人のための手引きです。意見を書くメンバー、論点を整えるモデレータ、仕組みを回す技術担当の 3 つの役割ごとに、やることと困ったときの対処をまとめています。</p>
+    <p class="meta">最終更新: 2026年11月15日 ／ 対象: シート・フォーム・サイトの 2026年11月時点の版</p>
+    <div class="caution">
+      <strong>このページの扱い</strong>
+      <p>このページは検索エンジンに載らず、サイトの他のページからもリンクしていません。ただし URL を知っていれば誰でも開けます。URL は関係者の外に広めないでください。個人情報（実名・連絡先・アカウント）はここには書いていません。</p>
+    </div>
+  </div>
+
+  <nav class="roles" aria-label="役割から探す">
+    <a class="role" href="#member"><span class="who">MEMBER</span><h3>メンバー</h3><p>意見を書く人。まずはここだけ読めば大丈夫です。</p><span class="go">意見の書き方へ<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+    <a class="role" href="#moderator"><span class="who">MODERATOR</span><h3>モデレータ</h3><p>論点を足し、意見を点検し、削除の申請に応える人。</p><span class="go">運営の手順へ<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+    <a class="role" href="#tech"><span class="who">TECH</span><h3>技術担当</h3><p>シート・フォーム・サイト・Kumu の仕組みを保つ人。</p><span class="go">仕組みと対処へ<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+  </nav>
+
+  <div class="layout">
+    <aside class="toc" aria-label="目次">
+      <b>目次</b>
+      <ol>
+        <li><a href="#how">全体の仕組み</a></li>
+        <li><a href="#rules">みんなのルール</a></li>
+        <li><a href="#member">メンバー編</a></li>
+        <li class="sub"><a href="#m-start">はじめに</a></li>
+        <li class="sub"><a href="#m-form">フォームで書く</a></li>
+        <li class="sub"><a href="#m-sheet">シートに直接書く</a></li>
+        <li class="sub"><a href="#m-fields">各項目の選び方</a></li>
+        <li class="sub"><a href="#m-fix">直す・消す</a></li>
+        <li><a href="#moderator">モデレータ編</a></li>
+        <li class="sub"><a href="#d-check">日々の点検</a></li>
+        <li class="sub"><a href="#d-handle">ハンドルの登録</a></li>
+        <li class="sub"><a href="#d-node">論点を変える</a></li>
+        <li class="sub"><a href="#d-past">会合の意見を入れる</a></li>
+        <li class="sub"><a href="#d-delete">削除・訂正の申請</a></li>
+        <li><a href="#tech">技術担当編</a></li>
+        <li class="sub"><a href="#t-parts">構成</a></li>
+        <li class="sub"><a href="#t-menu">omfy メニュー</a></li>
+        <li class="sub"><a href="#t-trouble">困ったとき</a></li>
+        <li class="sub"><a href="#t-site">サイトの更新</a></li>
+        <li><a href="#faq">よくある質問</a></li>
+        <li><a href="#contact">問い合わせ先</a></li>
+      </ol>
+    </aside>
+
+    <div class="body">
+
+  <!-- ===================================================== 全体の仕組み -->
+  <section class="sec" id="how" aria-labelledby="h-how">
+    <div class="sec-head">
+      <span class="en" aria-hidden="true">How it works.</span>
+      <h2 id="h-how">全体の仕組み</h2>
+      <p class="lead">データの置き場所は Google スプレッドシート 1 つだけです。フォームもサイトも Kumu も、このシートを読み書きしています。</p>
+    </div>
+
+    <div class="flow" role="list">
+      <div class="st" role="listitem"><span class="n">01 書く</span><h4>フォーム・シート</h4><p>サイトの「この論点に意見を書く」から Google フォームで。シートに直接書いてもよい</p></div>
+      <div class="ar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <div class="st hub" role="listitem"><span class="n">02 ためる</span><h4>スプレッドシート</h4><p>「意見」「論点」「属性マスタ」など 8 枚のシート。データの正本はここ</p></div>
+      <div class="ar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <div class="st" role="listitem"><span class="n">03 公開する</span><h4>公開 CSV</h4><p>3 枚のシートを自動で CSV として公開。手作業はいらない</p></div>
+      <div class="ar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <div class="st" role="listitem"><span class="n">04 見る</span><h4>サイト・Kumu</h4><p>俯瞰ビュー・詳細ビュー・Kumu が開くたびに読み込む。GitHub に毎晩控えを保存</p></div>
+    </div>
+
+    <div class="tbl timing">
+      <table>
+        <thead><tr><th>どこまで</th><th>反映にかかる時間の目安</th></tr></thead>
+        <tbody>
+          <tr><td>フォーム → シート</td><td>送信して数十秒以内に「意見」シートの末尾に 1 行入る</td></tr>
+          <tr><td>シート → サイト・Kumu</td><td>数分（長いと 5 分ほど）。そのあとページを再読み込みすると出る</td></tr>
+          <tr><td>新しい論点・ハンドル → フォームの選択肢</td><td>1 時間以内（自動更新）。急ぐときはモデレータが手動で更新</td></tr>
+          <tr><td>GitHub の控え（スナップショット）</td><td>毎晩 3 時（日本時間）。変化があった日だけ記録される</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="h">よく使うリンク</h3>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>名前</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td><a href="index.html">はじめに</a></td><td>一般の方向けの案内。論点マップの考え方と構造図</td></tr>
+          <tr><td><a href="overview.html">俯瞰ビュー</a></td><td>全体を一枚で見る。会合での発表、A3 印刷、キーワード検索</td></tr>
+          <tr><td><a href="detail.html">詳細ビュー</a></td><td>論点ごとに意見を読む。抜けの確認、データの点検（モデレータ向け）</td></tr>
+          <tr><td><a href="https://embed.kumu.io/60df0d9cd82ddb8ef5518e544d696fa7" target="_blank" rel="noopener noreferrer">Kumu のマップ</a></td><td>探索用のネットワーク図。論点のつながりをたどって見る</td></tr>
+          <tr><td><a href="https://docs.google.com/forms/d/e/1FAIpQLSfOYr0s4RfBfvcTLm4szYQKq6bH-90AHkR0yhGDKkmlgIF8iQ/viewform" target="_blank" rel="noopener noreferrer">意見フォーム</a></td><td>意見を書く。サイトのボタンから開けば論点が入った状態で開く</td></tr>
+          <tr><td>公開用スプレッドシート</td><td>「omfy 論点マップ（公開用）」。メンバーには Google ドライブで共有済み（ドライブの「共有アイテム」で探す）</td></tr>
+          <tr><td><a href="https://github.com/kyosinaga628-lab/omfy-energy-map" target="_blank" rel="noopener noreferrer">GitHub リポジトリ</a></td><td>サイトのファイルと毎晩の控え。削除・訂正の申請（Issues）もここ</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="h">役割</h3>
+    <div class="tbl wide">
+      <table>
+        <thead><tr><th>役割</th><th>やること</th><th>触れる場所</th></tr></thead>
+        <tbody>
+          <tr><td class="nw">メンバー</td><td>意見を書く。自分の意見を直す</td><td>意見フォーム、「意見」シート</td></tr>
+          <tr><td class="nw">モデレータ</td><td>論点・ハンドル・属性の追加と変更、意見の点検、削除・訂正の申請への対応、会合の意見の取り込み</td><td>上に加えて「論点」「属性マスタ」「選択肢」「変更履歴」、会員名簿（非公開）</td></tr>
+          <tr><td class="nw">技術担当</td><td>Apps Script・フォーム・公開 CSV・サイト・Kumu・GitHub の保守</td><td>すべて</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small muted">2026年11月時点では、モデレータは未選任で、技術担当の吉永が兼ねています。</p>
+  </section>
+
+  <!-- ===================================================== ルール -->
+  <section class="sec" id="rules" aria-labelledby="h-rules">
+    <div class="sec-head">
+      <span class="en" aria-hidden="true">Rules.</span>
+      <h2 id="h-rules">みんなのルール</h2>
+      <p class="lead">シートとサイトは一般に公開されています。書いたものは誰でも読めて、再利用もされます。</p>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <h3 class="h">書かないこと</h3>
+        <ul class="ls">
+          <li>実名、連絡先、学校名、住んでいる地域など、個人が分かること（自分のことも、他人のことも）</li>
+          <li>会合に出た人・講師の実名。「ゲストの講師」「参加者の一人」のように書く</li>
+          <li>他の人の行の書き換え・削除</li>
+          <li>特定の人や団体への攻撃。意見には意見で応える（相手の行ではなく、同じ論点に自分の意見を書く）</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3 class="h">知っておくこと</h3>
+        <ul class="ls">
+          <li>名前はハンドルネームだけが出ます。ハンドルと実名の対応は非公開の会員名簿にあり、モデレータだけが見られます</li>
+          <li>書いたものは <a href="https://creativecommons.org/licenses/by/4.0/deed.ja" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>（出典を示せば誰でも再利用できる）で公開されます</li>
+          <li>意見は書いた人個人の見解で、@omfy の公式見解ではありません</li>
+          <li>中学生・高校生は、参加の前に保護者の同意が必要です</li>
+          <li>消した意見も、GitHub の毎晩の控えに過去の版が残ります。完全に消す必要があるときは<a href="#d-delete">削除の申請</a>へ</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== メンバー編 -->
+  <section class="sec" id="member" aria-labelledby="h-member">
+    <div class="sec-head">
+      <span class="en" aria-hidden="true">Member.</span>
+      <h2 id="h-member">メンバー編：意見を書く</h2>
+      <p class="lead">意見は 1 件ずつ、論点マップの論点のどれか 1 つに付けます。書き方はフォームとシートの 2 通りで、どちらで書いても同じ「意見」シートに入ります。</p>
+    </div>
+
+    <h3 class="h" id="m-start">はじめに：ハンドルネームを登録する</h3>
+    <ol class="steps">
+      <li>使いたいハンドルネームを決める（英数字。例: <code>hana2026</code>）<span class="muted">本名や SNS のアカウント名は避けてください。</span></li>
+      <li>モデレータ（いまは吉永）に伝える<span class="muted">登録されると、フォームとシートの▼の候補に出ます（遅くとも 1 時間以内）。登録前は書けません。</span></li>
+      <li>Google アカウントを用意する<span class="muted">フォームは Google アカウントでのログインが必要です。シートの共有に使ったアカウントで構いません。</span></li>
+    </ol>
+    <div class="box-tip"><p>ハンドルを出さずに書きたいときは、共通のハンドル <code>@omfyメンバー</code> を選べます。</p></div>
+
+    <h3 class="h" id="m-form">書き方 1：サイトからフォームで書く（おすすめ）</h3>
+    <p>スマートフォンでも書けます。論点が最初から選ばれた状態でフォームが開くので、選び間違いがありません。</p>
+    <ol class="steps">
+      <li><a href="detail.html">詳細ビュー</a>か<a href="overview.html">俯瞰ビュー</a>で、意見を書きたい論点を選ぶ</li>
+      <li>論点の欄にある <span class="ui">この論点に意見を書く</span> を押す<span class="muted">Google フォームが別のタブで開きます。初回は Google へのログインを求められます。</span></li>
+      <li>ハンドル・記入者属性・立場・根拠タイプを選び、主張を書く<span class="muted">選び方は<a href="#m-fields">下の「各項目の選び方」</a>へ。</span></li>
+      <li>送信する<span class="muted">数分後、サイトのページを再読み込みすると地図に出ます。</span></li>
+    </ol>
+    <div class="box-tip"><p>論点が決まっていなくても、<a href="https://docs.google.com/forms/d/e/1FAIpQLSfOYr0s4RfBfvcTLm4szYQKq6bH-90AHkR0yhGDKkmlgIF8iQ/viewform" target="_blank" rel="noopener noreferrer">意見フォーム</a>を直接開いて、フォームの中で論点を選べます。</p></div>
+
+    <h3 class="h" id="m-sheet">書き方 2：スプレッドシートに直接書く</h3>
+    <p>パソコンでまとめて書くときに向いています。</p>
+    <ol class="steps">
+      <li>共有された「omfy 論点マップ（公開用）」を開き、下のタブで「意見」シートを選ぶ</li>
+      <li>いちばん下の空いている行に、1 件 1 行で書く<span class="muted">記入日は、書き始めると自動で入ります。</span></li>
+      <li>ハンドル・論点・記入者属性・立場・根拠タイプは、セルの▼から選ぶ<span class="muted">一覧に無い値は入力できません。</span></li>
+      <li>主張を書く。長くなったら「補足・出典」の欄へ<span class="muted">主張が 200 字を超えたり、必須の欄が空いていたりすると、セルが赤くなります。</span></li>
+    </ol>
+    <div class="box-warn"><p>シートのタブは「意見」以外は触らないでください（論点の追加はモデレータが行います）。主張を <code>=</code> や <code>-</code> で始めると数式として扱われることがあります。そのときは先頭に <code>'</code>（半角のアポストロフィ）を付けてください。</p></div>
+
+    <h3 class="h" id="m-fields">各項目の選び方</h3>
+    <div class="tbl wide">
+      <table>
+        <thead><tr><th>項目</th><th>書くこと</th><th>必須</th></tr></thead>
+        <tbody>
+          <tr><td class="nw">ハンドル</td><td>登録したハンドルネーム</td><td class="nw">必須</td></tr>
+          <tr><td class="nw">論点</td><td>意見を付ける論点。迷ったら、いちばん近い上の論点に付ける</td><td class="nw">必須</td></tr>
+          <tr><td class="nw">記入者属性</td><td>この意見を<strong>どの立場で</strong>書いたか（下の一覧）</td><td class="nw">必須</td></tr>
+          <tr><td class="nw">立場</td><td>その論点への賛否（下の 5 つ）</td><td class="nw">必須</td></tr>
+          <tr><td class="nw">根拠タイプ</td><td>主張の拠りどころ（下の 3 つ）</td><td class="nw">必須</td></tr>
+          <tr><td class="nw">主張</td><td>言いたいことの中心を 200 字以内で。一つの意見に一つの主張</td><td class="nw">必須</td></tr>
+          <tr><td class="nw">補足・出典</td><td>理由の続き、数字の出典（URL・資料名）、条件など</td><td class="nw">任意</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid2">
+      <div>
+        <h3 class="h">立場（5 つ）</h3>
+        <div class="chips">
+          <div><b><i class="sw round" style="background:var(--st-support)"></i>賛成</b><span>その論点の方向に賛成</span></div>
+          <div><b><i class="sw round" style="background:var(--st-cond)"></i>条件付き</b><span>条件がそろえば賛成。条件を主張に書く</span></div>
+          <div><b><i class="sw round" style="background:var(--st-neutral)"></i>中立</b><span>どちらにも寄らない、事実や整理の提示</span></div>
+          <div><b><i class="sw round" style="background:var(--st-question)"></i>問い</b><span>疑問・問いかけ。決めきれないときもこれ</span></div>
+          <div><b><i class="sw round" style="background:var(--st-oppose)"></i>反対</b><span>その論点の方向に反対</span></div>
+        </div>
+      </div>
+      <div>
+        <h3 class="h">根拠タイプ（3 つ）</h3>
+        <div class="chips">
+          <div><b>データ</b><span>数字・統計・文献。出典を補足に</span></div>
+          <div><b>経験</b><span>自分が見聞きしたこと、体験したこと</span></div>
+          <div><b>価値観</b><span>大切にしたいこと、こうあってほしいこと</span></div>
+        </div>
+        <p class="small muted">どれが偉いということはありません。感じたことも立派な意見です。</p>
+      </div>
+    </div>
+
+    <h3 class="h">記入者属性（14）</h3>
+    <p>同じ人でも、家庭で電気を使う立場で書く日もあれば、学生として書く日もあります。<strong>その意見を書いたときの立場</strong>を選んでください。</p>
+    <div class="tbl wide">
+      <table>
+        <thead><tr><th>属性</th><th>どんな立場か</th></tr></thead>
+        <tbody>
+          <tr><td>需要家（家庭・生活者）</td><td>家庭で電気・ガス等を使う立場。電気料金や暮らしへの影響から考える</td></tr>
+          <tr><td>需要家（産業・業務）</td><td>工場・オフィス・店舗などで使う立場。コスト、立地、脱炭素の要請から考える</td></tr>
+          <tr><td>生徒（中学・高校）</td><td>これからの社会を担う立場。授業や日常で感じることから考える</td></tr>
+          <tr><td>学生（大学・大学院）</td><td>専門を学びつつ、就職や研究で関わる可能性のある立場</td></tr>
+          <tr><td>供給主体（発電・小売）</td><td>発電・小売事業者。投資回収、規制、事業環境から考える</td></tr>
+          <tr><td>供給主体（燃料・資源）</td><td>石油・ガス・ウラン等の調達や資源開発に関わる立場</td></tr>
+          <tr><td>送配電・系統運用</td><td>系統の安定、接続、投資と費用負担から考える</td></tr>
+          <tr><td>政策立案・行政</td><td>国・自治体の政策、規制、計画をつくる立場</td></tr>
+          <tr><td>立地地域の住民・自治体</td><td>発電所や処分場の立地地域として関わる立場</td></tr>
+          <tr><td>研究・教育・技術</td><td>研究者、技術者、教員。知見の提供と検証</td></tr>
+          <tr><td>金融・投資</td><td>融資・投資・保険。資金調達のリスクと機会から考える</td></tr>
+          <tr><td>メディア・言論</td><td>報道、発信、世論形成に関わる立場</td></tr>
+          <tr><td>市民団体・NPO</td><td>環境・消費者・地域などの団体として関わる立場</td></tr>
+          <tr><td>その他（自由記述）</td><td>上に当てはまらない立場。補足欄に具体的に書く</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="h">書き方の例</h3>
+    <div class="ex">
+      <div class="card ok">
+        <p class="lbl">伝わりやすい</p>
+        <p>論点「安定供給」／立場「条件付き」／根拠「データ」</p>
+        <p>「再エネを増やすなら、蓄電池と送電網の増強を同じ計画で進めるべきだ。そうでなければ、晴れの日の余りと夜の不足を埋められない。」</p>
+        <p class="why">条件（何がそろえば賛成か）がはっきりしている。補足に出典を書けばさらに良い。</p>
+      </div>
+      <div class="card ng">
+        <p class="lbl">伝わりにくい</p>
+        <p>論点「エネルギー」／立場「反対」</p>
+        <p>「今のやり方はおかしいと思う。もっとちゃんと考えるべき。」</p>
+        <p class="why">何に反対なのかが分からない。もっと具体的な論点を選び、何がおかしいのかを一つに絞って書く。</p>
+      </div>
+    </div>
+
+    <h3 class="h" id="m-fix">書いた意見を直す・消す</h3>
+    <ul class="ls">
+      <li><strong>直す</strong>: 「意見」シートで自分の行を直接直してください。フォームから送った意見も、シートの行を直せば反映されます。</li>
+      <li><strong>消す</strong>: モデレータに連絡してください（行を消すと、他の人の行を巻き込む事故が起きやすいため）。</li>
+      <li><strong>間違えて他の人の行を変えてしまった</strong>: すぐに <kbd>Ctrl</kbd>+<kbd>Z</kbd> で戻すか、モデレータに連絡してください。シートの「ファイル → 変更履歴」から元に戻せます。</li>
+    </ul>
+  </section>
+
+  <!-- ===================================================== モデレータ編 -->
+  <section class="sec" id="moderator" aria-labelledby="h-mod">
+    <div class="sec-head">
+      <span class="en" aria-hidden="true">Moderator.</span>
+      <h2 id="h-mod">モデレータ編：論点を整える</h2>
+      <p class="lead">モデレータは、地図の骨組み（論点）を整え、意見がルールに沿っているかを確かめます。意見の中身の良し悪しは判断しません。</p>
+    </div>
+
+    <h3 class="h" id="d-check">日々の点検（週に 1 回が目安）</h3>
+    <ol class="steps">
+      <li><a href="detail.html">詳細ビュー</a>の「データの点検」を開く<span class="muted">親が見つからない論点、名前が重なる論点、論点名がずれた意見などを警告します。警告が 0 件なら問題ありません。</span></li>
+      <li>「意見」シートで赤いセルを探す<span class="muted">主張が 200 字超、または必須の欄（ハンドル・論点・属性・立場・根拠タイプ）が空です。書いた人に知らせるか、明らかな誤りなら直します。</span></li>
+      <li>新しい意見を読み、ルール違反（実名・連絡先・攻撃など）が無いか確かめる<span class="muted">確かめた行は「モデレータ確認」列を <code>済</code> に。直してほしい行は <code>要修正</code> にして、書いた人に連絡します。</span></li>
+      <li>詳細ビューの「抜けの確認」で、意見の少ない論点・立場を見る<span class="muted">会合で「この論点に、この立場の声がまだ無い」と呼びかける材料にします。</span></li>
+    </ol>
+
+    <h3 class="h" id="d-handle">ハンドルを登録する</h3>
+    <ol class="steps">
+      <li>会員名簿（非公開）に、実名とハンドルの対応を書く<span class="muted">中学生・高校生は「未成年」に ○ と保護者の同意日も。</span></li>
+      <li>公開用シートの「選択肢」シートの E 列（ハンドル）の空いている行に、<strong>ハンドルだけ</strong>を書く<span class="muted">実名は絶対に公開用シートに書かない。</span></li>
+      <li>すぐ使えるようにするなら、メニューの <span class="ui">omfy → 6. 意見フォームの選択肢を更新</span> を実行<span class="muted">しなくても 1 時間以内に自動でフォームに反映されます。シートの▼にはすぐ出ます。</span></li>
+      <li>本人に「登録しました」と知らせる</li>
+    </ol>
+
+    <h3 class="h" id="d-node">論点を足す・まとめる・分ける</h3>
+    <p>「論点」シートで 1 論点 1 行です。<strong>行は消さず</strong>、要らなくなった論点は「状態」を変えます。</p>
+    <div class="tbl wide">
+      <table>
+        <thead><tr><th>列</th><th>書き方</th></tr></thead>
+        <tbody>
+          <tr><td class="nw">ID</td><td>英小文字とピリオド。親の ID に続ける（例: 原子力の下なら <code>nuc.backend</code>）。一度決めたら変えない（サイトのリンクに使うため）</td></tr>
+          <tr><td class="nw">論点名</td><td>20 字以内の名詞句。他の論点と同じ名前にしない（意見はこの名前で論点に結び付く）</td></tr>
+          <tr><td class="nw">種別</td><td><b>目的</b>（目指す社会）／<b>テーマ</b>（エネルギーなど）／<b>評価軸</b>（S+3E、議論の視点）／<b>対象</b>（原子力などの電源・技術・個別の課題）／<b>問い</b>（さらに細かい問い）／<b>外部環境</b>（国際情勢などの前提）</td></tr>
+          <tr><td class="nw">親論点</td><td>▼から既存の論点名を選ぶ。「目的」以外は必須</td></tr>
+          <tr><td class="nw">安全性〜環境適合</td><td>関係する S+3E の評価軸に ○</td></tr>
+          <tr><td class="nw">問い</td><td>「〜か」で終わる問いにする（例: 核融合をどう位置づけ、どこまで投資するか）</td></tr>
+          <tr><td class="nw">状態</td><td><code>案</code>／<code>確定</code>（会合で合意したら）／<code>統合済</code>／<code>取り下げ</code>。統合済・取り下げの論点はフォームの選択肢とサイトのボタンから消える</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ol class="steps">
+      <li>「論点」シートのいちばん下に行を足す（まとめる・分けるときは、該当する論点の状態を変える）</li>
+      <li>まとめる・分けるときは、「意見」シートで付け替えが必要な意見の「論点」列を新しい論点に変える</li>
+      <li>「変更履歴」シートに 1 行書く<span class="muted">日付・対象（論点名）・変更内容・理由（一行）・実施者・承認者。</span></li>
+      <li>すぐ反映するなら <span class="ui">omfy → 3. Kumu 用の数式を再生成</span> を実行<span class="muted">Kumu とフォームの選択肢が一緒に更新されます。しなくても 1 時間以内に自動で反映されます。</span></li>
+      <li>詳細ビューの「データの点検」で警告が出ていないか確かめる</li>
+    </ol>
+    <div class="box-warn"><p>論点名を変えると、その論点に付いた意見が結び付かなくなります（意見は論点名で結び付くため）。名前を変えたら、「意見」シートの「論点」列も同じ名前に置き換えてください。データの点検に「論点名が一致しない意見」として出ます。</p></div>
+
+    <h3 class="h">記入者属性を変える</h3>
+    <p>「属性マスタ」シートで行います。使わなくなった属性は行を消さず「有効」の ○ を外し、表示の順は「並び順」で変えます。変えたら <span class="ui">omfy → 6</span> でフォームに反映します。</p>
+
+    <h3 class="h" id="d-past">会合やゲストの話を意見として入れる</h3>
+    <p>会合の記録から意見を起こすときは、モデレータが「意見」シートに直接書きます（メモのままではサイトにも Kumu にも出ないため）。</p>
+    <div class="tbl wide">
+      <table>
+        <thead><tr><th>だれの発言か</th><th>ハンドル</th><th>記入者属性・補足</th></tr></thead>
+        <tbody>
+          <tr><td>ゲスト・講師・外部団体</td><td><code>ゲスト意見</code></td><td>話の中身に合う属性（例: 研究・教育・技術）。補足に「2024-03-12 の会合でのゲストの情報提供より」など</td></tr>
+          <tr><td>メンバー（発言者は特定しない）</td><td><code>@omfy過去の議論（-2026/10）</code></td><td>「その他（自由記述）」など。補足に「○月○日の会合より」</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="ls">
+      <li>この 2 つのハンドルはフォームの選択肢に出ません（モデレータ専用）。</li>
+      <li>言い換えて短くまとめて構いません。別の人と思われる発言は別の行にします。</li>
+      <li>実名、会合の予算・運営・資金の話は入れません。</li>
+      <li>記入日は、会合の日付にします（自動で入った日付を書き換える）。</li>
+    </ul>
+
+    <h3 class="h" id="d-delete">削除・訂正の申請に応える</h3>
+    <p>申請は、GitHub の <a href="https://github.com/kyosinaga628-lab/omfy-energy-map/issues" target="_blank" rel="noopener noreferrer">Issues</a> か、メンバー経由で届きます。<strong>本人（未成年は保護者も）からの申請には、すぐに対応します。</strong></p>
+    <ol class="steps">
+      <li>申請の対象の行を特定する（記入日・ハンドル・主張の書き出しで探す）</li>
+      <li>訂正なら行を直す。削除なら行を削除する（行ごと削除し、空の行を残さない）</li>
+      <li>「変更履歴」シートに 1 行残す（個人が分かることは書かない）</li>
+      <li>数分後にサイトから消えたことを確かめ、申請した人に知らせる</li>
+      <li>個人情報が含まれていた場合は、技術担当に GitHub の控え（過去の版）の削除を頼む</li>
+    </ol>
+  </section>
+
+  <!-- ===================================================== 技術担当編 -->
+  <section class="sec" id="tech" aria-labelledby="h-tech">
+    <div class="sec-head">
+      <span class="en" aria-hidden="true">Tech.</span>
+      <h2 id="h-tech">技術担当編：仕組みを保つ</h2>
+      <p class="lead">ふだんは自動で回ります。手を入れるのは、論点やハンドルを足したあとの反映、何かが止まったとき、サイトを直すときです。</p>
+    </div>
+
+    <h3 class="h" id="t-parts">構成</h3>
+    <div class="tbl wide">
+      <table>
+        <thead><tr><th>部品</th><th>置き場所・持ち主</th><th>メモ</th></tr></thead>
+        <tbody>
+          <tr><td>公開用スプレッドシート</td><td>@omfy の共有 Google アカウント</td><td>8 枚: 使い方／意見／論点／属性マスタ／選択肢／変更履歴／Elements／Connections</td></tr>
+          <tr><td>会員名簿（非公開）</td><td>同上。モデレータと技術担当だけに共有</td><td>実名とハンドルの対応、未成年の同意記録。公開用シートとはつながない</td></tr>
+          <tr><td>Apps Script（omfy_setup.gs）</td><td>公開用シートの「拡張機能 → Apps Script」</td><td>v1.7（2026-11-15）。入力規則、条件付き書式、Kumu 用数式、フォーム、自動更新</td></tr>
+          <tr><td>意見フォーム</td><td>共有アカウントのドライブ</td><td>回答は送信時のトリガーで「意見」シートに書き写す。回答の控えはフォームの「回答」タブにだけ残る</td></tr>
+          <tr><td>公開 CSV</td><td>シートの「ファイル → 共有 → ウェブに公開」</td><td>論点・意見・属性マスタの 3 枚。URL はサイトの <code>site/common.js</code> の先頭 1 か所</td></tr>
+          <tr><td>サイト</td><td>GitHub Pages（リポジトリ omfy-energy-map）</td><td>はじめに／俯瞰／詳細／このマニュアル。開くたびに公開 CSV を読む</td></tr>
+          <tr><td>毎晩の控え</td><td>GitHub Actions（nightly-snapshot）</td><td>毎晩 3 時に <code>data/latest/</code> へ 3 つの CSV を保存。差分は履歴で見られる</td></tr>
+          <tr><td>Kumu</td><td>共有アカウントの公開プロジェクト</td><td>Elements / Connections シートを読む。ページを開き直すと最新になる</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="h" id="t-menu">omfy メニュー（シートのメニューバー）</h3>
+    <div class="tbl wide">
+      <table>
+        <thead><tr><th>メニュー</th><th>使うとき</th></tr></thead>
+        <tbody>
+          <tr><td>1. 入力規則（プルダウン）を設定</td><td>▼が消えた、選べない値が入るようになったとき</td></tr>
+          <tr><td>2. 条件付き書式を設定</td><td>赤く出るはずのセルが赤くならないとき</td></tr>
+          <tr><td>3. Kumu 用の数式を再生成</td><td>論点の行を足した・消したあと。フォームの選択肢も一緒に更新する</td></tr>
+          <tr><td>4. シートの保護を設定</td><td>モデレータが変わったとき（スクリプト先頭の MODERATOR_EMAILS を直してから）</td></tr>
+          <tr><td>5. 意見フォームを作成</td><td>初回だけ。作り直すと古いフォームは受け付けを止め、URL が変わる（<code>common.js</code> の FORM を貼り直して push が必要）</td></tr>
+          <tr><td>6. 意見フォームの選択肢を更新</td><td>論点・ハンドル・属性を足したあと、すぐ反映したいとき</td></tr>
+          <tr><td>意見フォームのリンク情報を表示</td><td>フォームの URL と論点の項目番号をもう一度見たいとき</td></tr>
+          <tr><td>意見フォームの診断・取りこぼしの回収</td><td>フォームで送ったのにシートに入っていないとき。シートに無い回答を一覧にし、まとめて書き写す</td></tr>
+          <tr><td>7. 自動更新（1 時間ごと）を設定／停止</td><td>共有アカウントで 1 回だけ実行してある。<strong>もう一度押すと止まる</strong>ので、ふだんは押さない</td></tr>
+          <tr><td>設定の確認</td><td>迷ったらまずこれ。足りない設定があれば、実行すべきメニューの番号を出す</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="box-warn"><p>メニューの 5 と 7 は、共有アカウントで実行してください。個人のアカウントで実行すると、トリガーが個人のアカウントに付き、フォームも開けません。「設定の確認」でどのアカウントの設定かが分かります。</p></div>
+
+    <h3 class="h" id="t-trouble">困ったとき</h3>
+    <div class="tbl wide">
+      <table>
+        <thead><tr><th>症状</th><th>よくある原因</th><th>対処</th></tr></thead>
+        <tbody>
+          <tr><td>サイトに「データの取得に失敗しました」</td><td>シートのウェブ公開が外れた</td><td>シートの「ファイル → 共有 → ウェブに公開」で 3 枚をもう一度 CSV で公開する。公開し直しても URL は変わらない</td></tr>
+          <tr><td>書いた意見がサイトに出ない</td><td>公開 CSV の反映待ち</td><td>5 分ほど待って再読み込み。直後は古い版が返ることがある</td></tr>
+          <tr><td>フォームで送ったのにシートに無い</td><td>書き写しの失敗（タブ名の変更など）</td><td>原因を直してから <span class="ui">意見フォームの診断・取りこぼしの回収</span>。回答はフォーム側に残っている</td></tr>
+          <tr><td>フォームに新しい論点・ハンドルが無い</td><td>選択肢が古い</td><td><span class="ui">omfy → 6</span>（1 時間待てば自動でも直る）</td></tr>
+          <tr><td>Kumu に新しい論点が出ない／意見数が合わない</td><td>Kumu 用の数式が古い</td><td><span class="ui">omfy → 3</span> のあと、Kumu のページを開き直す</td></tr>
+          <tr><td>▼が消えた、赤くならない</td><td>シートの貼り付け・並べ替えで規則が壊れた</td><td><span class="ui">omfy → 1</span> と <span class="ui">2</span>、そのあと <span class="ui">設定の確認</span></td></tr>
+          <tr><td>書いた意見の論点が地図に結び付かない</td><td>論点名の変更・表記ゆれ</td><td>詳細ビューの「データの点検」で該当の意見を探し、「論点」列を正しい論点名に直す</td></tr>
+          <tr><td>共有アカウントに「トリガーの失敗」メール</td><td>書き写し・自動更新が止まった</td><td>メールのエラー内容を確かめ、直したら <span class="ui">設定の確認</span> と <span class="ui">取りこぼしの回収</span></td></tr>
+          <tr><td>毎晩の控えが失敗している</td><td>公開 CSV が一時的に取れない</td><td>公開 CSV の URL をブラウザで直接開いて取れるか確かめる。取れなければ「ウェブに公開」を確認</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="h" id="t-site">サイトを直すとき</h3>
+    <ol class="steps">
+      <li>リポジトリの最新を取得し、<code>site/</code> と README だけを直す<span class="muted"><code>data/latest/</code> は毎晩 Actions が書き換えるので、手では触らない。</span></li>
+      <li>手元で確かめる: リポジトリ直下で <code>python -m http.server</code> を実行し、ブラウザで <code>http://localhost:8000/site/</code> を開く<span class="muted">ファイルを直接開く（file://）と CSV の取得に失敗する。</span></li>
+      <li>コミットして push する<span class="muted">数分で GitHub Pages に反映。公開 CSV の URL を変えるときは <code>site/common.js</code> の先頭だけ直す。</span></li>
+      <li>画面の見た目を変えたら、ガイドのカードの画像（<code>site/assets/view-*.webp</code>）を撮り直す</li>
+    </ol>
+    <div class="box-tip"><p>このマニュアル自体もリポジトリの <code>site/</code> にあります。他のページからリンクしないでください（限定公開のため）。手順や画面が変わったら、ここも直して最終更新の日付を変えます。</p></div>
+  </section>
+
+  <!-- ===================================================== FAQ -->
+  <section class="sec" id="faq" aria-labelledby="h-faq">
+    <div class="sec-head">
+      <span class="en" aria-hidden="true">FAQ.</span>
+      <h2 id="h-faq">よくある質問</h2>
+    </div>
+    <details class="qa"><summary>意見は何件書いてもいいですか？</summary><div class="a"><p>何件でも構いません。1 件に 1 つの主張にして、言いたいことが複数あれば分けて書いてください。同じ論点に、違う属性の立場から書くのも歓迎です。</p></div></details>
+    <details class="qa"><summary>他の人の意見に反論したいときは？</summary><div class="a"><p>相手の行には書き込まず、同じ論点に自分の意見を 1 件書いてください。補足に「○○さんの意見（記入日）への応答」と書くと、読む人がつながりを追えます。</p></div></details>
+    <details class="qa"><summary>書きたい論点が見つかりません。</summary><div class="a"><p>いちばん近い上の論点に書き、補足に「新しい論点の提案: ○○」と書いてください。または、モデレータに論点の追加を頼んでください。俯瞰ビューのキーワード検索も使えます。</p></div></details>
+    <details class="qa"><summary>記入者属性に自分の立場がありません。</summary><div class="a"><p>「その他（自由記述）」を選び、補足に具体的な立場を書いてください。同じ声が増えたら、モデレータが属性を足すことを検討します。</p></div></details>
+    <details class="qa"><summary>立場を決めきれません。</summary><div class="a"><p>「条件付き」か「問い」を選んでください。条件付きなら「何がそろえば賛成か」を、問いなら「何が分からないのか」を主張に書きます。</p></div></details>
+    <details class="qa"><summary>「ゲスト意見」「@omfy過去の議論」の意見は何ですか？</summary><div class="a"><p>「ゲスト意見」は会合のゲスト・講師の話を、「@omfy過去の議論」は過去の会合での議論を、モデレータが意見として起こしたものです。</p></div></details>
+    <details class="qa"><summary>フォームで「ログインが必要」と出ます。</summary><div class="a"><p>意見フォームは、なりすましを防ぐために Google アカウントでのログインが必要です。シートの共有を受けたアカウントでログインしてください。アカウントが無い場合は技術担当に相談してください。</p></div></details>
+  </section>
+
+  <!-- ===================================================== 問い合わせ -->
+  <section class="sec" id="contact" aria-labelledby="h-contact">
+    <div class="sec-head">
+      <span class="en" aria-hidden="true">Contact.</span>
+      <h2 id="h-contact">問い合わせ先</h2>
+    </div>
+    <div class="panel">
+      <p>書き方、ハンドルの登録、論点の追加、削除・訂正の申請、仕組みの不具合は、すべて<strong>吉永（技術担当・モデレータ兼務）</strong>まで、@omfy のいつもの連絡手段でお知らせください。</p>
+      <p class="small muted">一般の方からの削除・訂正の申請は、GitHub の Issues でも受け付けています。</p>
+    </div>
+  </section>
+
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap row">
+    <span>@omfy 論点マップ 関係者マニュアル（限定公開）</span>
+    <button class="totop" type="button" id="toTop">ページの先頭へ<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var header = document.querySelector('.header');
+  addEventListener('scroll', function(){ header.classList.toggle('scrolled', scrollY > 40); }, {passive:true});
+  document.getElementById('toTop').addEventListener('click', function(){ scrollTo({top:0, behavior: calm ? 'auto' : 'smooth'}); });
+  document.querySelector('.vnav a[aria-current]').addEventListener('click', function(e){ e.preventDefault(); scrollTo({top:0, behavior: calm ? 'auto' : 'smooth'}); });
+
+  // 印刷のときは「よくある質問」を全部開く
+  addEventListener('beforeprint', function(){ document.querySelectorAll('details.qa').forEach(function(d){ d.open = true; }); });
+
+  // 目次: いま読んでいる節を強調する
+  var links = {}, ids = [];
+  document.querySelectorAll('.toc a').forEach(function(a){ var id = a.getAttribute('href').slice(1); links[id] = a; ids.push(id); });
+  var targets = ids.map(function(id){ return document.getElementById(id); }).filter(Boolean);
+  function mark(){
+    var y = scrollY + 120, cur = targets[0];
+    targets.forEach(function(el){ if (el.getBoundingClientRect().top + scrollY <= y) cur = el; });
+    ids.forEach(function(id){ links[id].classList.toggle('on', cur && cur.id === id); });
+  }
+  addEventListener('scroll', mark, {passive:true});
+  mark();
+})();
+</script>
+</body>
+</html>
