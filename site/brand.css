@@ -1,4 +1,4 @@
-/* @omfy 論点マップ 新しい見た目（enepen. のサイトに寄せたもの）。common.css の後に読み込む。
+/* omfy 論点マップ 新しい見た目（enepen. のサイトに寄せたもの）。common.css の後に読み込む。
    使っている画面: はじめに index.html、詳細ビュー detail.html */
 :root{
   --bg:#FFFFFF; --bg2:#F7F8FA; --ink:#1A1A1A; --muted:#66707B; --faint:#949EA9;

@@ -1,4 +1,4 @@
-/* @omfy 論点マップ 共通モジュール
+/* omfy 論点マップ 共通モジュール
  * 詳細ビュー（detail.html）と俯瞰ビュー（overview.html）で共有する。ガイド（index.html）は使わない。
  *  - 公開用スプレッドシートの CSV（論点・意見・属性マスタ）を取得して木を組み立てる
  *  - 意見リストの HTML を作る
@@ -24,8 +24,7 @@
   // フォームの論点の選択肢から外している状態（omfy_setup.gs の CFG.FORM.HIDE_STATUSES と合わせる）
   const FORM_HIDE_STATUSES = ['取り下げ', '統合済'];
   // 過去の会合の記録から取り込んだ意見のハンドル（前方一致。omfy_setup.gs の CFG.FORM.HIDE_HANDLE_PREFIXES と合わせる）
-  // 2026-11 にハンドルから @ を外す方針にしたので、移行中は @ 付きも数える
-  const ARCHIVE_HANDLE_PREFIXES = ['omfy過去の議論', '@omfy過去の議論', 'ゲスト意見'];
+  const ARCHIVE_HANDLE_PREFIXES = ['omfy過去の議論', 'ゲスト意見'];
   const isArchiveHandle = (h) => ARCHIVE_HANDLE_PREFIXES.some((p) => h.indexOf(p) === 0);
 
   const KINDS = ['目的', 'テーマ', '評価軸', '対象', '外部環境', '問い'];
