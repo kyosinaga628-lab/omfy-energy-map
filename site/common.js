@@ -23,6 +23,10 @@
   };
   // フォームの論点の選択肢から外している状態（omfy_setup.gs の CFG.FORM.HIDE_STATUSES と合わせる）
   const FORM_HIDE_STATUSES = ['取り下げ', '統合済'];
+  // 過去の会合の記録から取り込んだ意見のハンドル（前方一致。omfy_setup.gs の CFG.FORM.HIDE_HANDLE_PREFIXES と合わせる）
+  // 2026-11 にハンドルから @ を外す方針にしたので、移行中は @ 付きも数える
+  const ARCHIVE_HANDLE_PREFIXES = ['omfy過去の議論', '@omfy過去の議論', 'ゲスト意見'];
+  const isArchiveHandle = (h) => ARCHIVE_HANDLE_PREFIXES.some((p) => h.indexOf(p) === 0);
 
   const KINDS = ['目的', 'テーマ', '評価軸', '対象', '外部環境', '問い'];
   const KIND_COLOR = { '目的': 'var(--k-objective)', 'テーマ': 'var(--k-theme)', '評価軸': 'var(--k-criterion)', '対象': 'var(--k-object)', '問い': 'var(--k-issue)', '外部環境': 'var(--k-context)' };
@@ -77,9 +81,12 @@
       else warnings.push('親論点「' + n.parentLabel + '」が見つかりません（' + n.label + '）');
     });
 
+    // order: 根から深さ優先で辿った順（地図と同じ並び。兄弟の間はシートの行の順）
+    const order = [];
     if (rootNode) {
       (function walk(n, d) {
         n.depth = d;
+        order.push(n);
         n.leaves = n.children.length ? n.children.reduce((a, c) => a + walk(c, d + 1), 0) : 1;
         return n.leaves;
       })(rootNode, 0);
@@ -101,6 +108,7 @@
       claim: claimOf(r),
       note: t(r[COL.note]),
       isExample: t(r[COL.handle]).indexOf('@example_') === 0,
+      isArchive: isArchiveHandle(t(r[COL.handle])),
     }));
     opinions.forEach((o) => {
       const n = byLabel[o.nodeLabel];
@@ -121,6 +129,7 @@
       tree: {
         root: rootNode,
         nodes: reachable,
+        order,
         byId,
         byLabel,
         maxDepth: Math.max(0, ...reachable.map((n) => n.depth)),
@@ -227,6 +236,36 @@
     return on.map((c) => '<span class="chip"><span class="dot" style="background:var(--k-criterion)"></span>' + escapeHtml(c) + '</span>').join('');
   }
 
+  // SVG の文字の幅の見積もり（px）。全角は 1 字 = 文字の大きさ、半角はその 0.6 倍。
+  // 配置を決める段階（まだ描いていない）で使う。描いた後の幅は getComputedTextLength で測る
+  function textWidth(s, px) {
+    let w = 0;
+    for (const ch of String(s)) w += /[\u0000-ÿ｡-ﾟ]/.test(ch) ? 0.6 : 1;
+    return w * px;
+  }
+
+  // 縦の木（上から下へ）の横位置を決める。葉は slot の間隔で並べ、子を持つ論点は、名前（ノードの上に
+  // 横書き）が隣の部分木の名前と重ならないだけの幅を確保する。kids(n) は表示する子、labelW(n) は名前の幅。
+  // 結果は n[key] に入れ（左端の葉が slot/2）、全体の幅を返す
+  function layoutColumns(root, kids, slot, labelW, key) {
+    let cur = 0;  // 次の葉を置ける左端
+    const shift = (n, s) => { n[key] += s; kids(n).forEach((c) => shift(c, s)); };
+    (function place(n) {
+      const ks = kids(n);
+      if (!ks.length) { n[key] = cur + slot / 2; cur += slot; return; }
+      const start = cur;
+      ks.forEach(place);
+      let mid = (ks[0][key] + ks[ks.length - 1][key]) / 2;
+      const half = labelW(n) / 2 + 6;
+      // 名前が左の部分木にはみ出すなら、この部分木ごと右へずらす
+      if (mid - half < start) { const s = start - (mid - half); ks.forEach((c) => shift(c, s)); mid += s; cur += s; }
+      // 名前が右にはみ出す分は、次の部分木を右へ送る
+      if (mid + half > cur) cur = mid + half;
+      n[key] = mid;
+    })(root);
+    return cur;
+  }
+
   function nowJST() {
     return new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo', hour12: false });
   }
@@ -243,11 +282,11 @@
   }
 
   const api = {
-    CSV_URLS, FORM, KINDS, KIND_COLOR, STANCES, STANCE_COLOR, CRITERIA_COLS,
+    CSV_URLS, FORM, KINDS, KIND_COLOR, STANCES, STANCE_COLOR, CRITERIA_COLS, ARCHIVE_HANDLE_PREFIXES,
     build, loadCSV, loadAll,
     countStances, subtreeOpinions, descendantCount, pathOf,
     escapeHtml, stanceColor, kindColor, opinionHtml, opinionsHtml, criteriaChipsHtml, formUrl, writeLinkHtml,
-    nowJST, readHashId, writeHashId,
+    textWidth, layoutColumns, nowJST, readHashId, writeHashId,
   };
   root.OMFY = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

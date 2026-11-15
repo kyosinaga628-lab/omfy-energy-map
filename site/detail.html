@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>@omfy 論点マップ</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap">
@@ -46,6 +47,12 @@ tr.sel td{background:var(--accent-soft)}
 td.cnt{text-align:center;font-variant-numeric:tabular-nums}
 td.cnt span{display:inline-block;min-width:26px;padding:1px 6px;border-radius:6px}
 .zero{color:var(--rule2)}
+td .whole{font-size:11px;color:var(--muted)}
+.mxbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px 16px;margin:10px 0 0;font-size:13px}
+.mxbar label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.mxbar input{accent-color:var(--ink);width:15px;height:15px;margin:0}
+#mxNote{color:var(--muted);font-size:12.5px}
+.panel{scroll-margin-top:112px}
 .qa{margin-top:18px;padding:18px 22px;border-radius:20px;background:var(--bg2)}
 .qa h3{font-size:15px;margin-bottom:6px}
 .qa ul{margin:4px 0;padding-left:1.3em;font-size:13px}
@@ -108,7 +115,11 @@ footer a:hover{color:var(--ink)}
 
   <section class="matrices" id="matrices" hidden>
     <h2>抜けの確認</h2>
-    <p>(a) 論点 × 記入者属性。どの属性の声がどの論点に足りないかを見る。行をクリックするとその論点を開く。</p>
+    <p>(a) 論点 × 記入者属性。どの属性の声がどの論点に足りないかを見る。行は、意見を書く場所になっている論点（問い・末端の論点）と、意見が付いている論点で、地図と同じ順に並ぶ。行をクリックするとその論点を開く。</p>
+    <div class="mxbar">
+      <label><input type="checkbox" id="mxArchive" checked> 過去の会合の記録から取り込んだ意見（ゲスト意見・omfy過去の議論）も数える</label>
+      <span id="mxNote"></span>
+    </div>
     <div class="scroll"><table id="mxRole"></table></div>
     <p>(b) 電源 × S+3E。セルは、その電源の下の各論のうち評価軸に関係するものの数。</p>
     <div class="scroll"><table id="mxCrit"></table></div>
@@ -127,6 +138,7 @@ footer a:hover{color:var(--ink)}
 'use strict';
 const O = window.OMFY;
 let DATA = null, SELECTED = null, VIEW = 'h', GROUP = 'role';
+const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const NS = 'http://www.w3.org/2000/svg';
 function el(tag, attrs, parent){ const e=document.createElementNS(NS,tag); for(const k in attrs){ if(k==='text') e.textContent=attrs[k]; else e.setAttribute(k,attrs[k]); } if(parent) parent.appendChild(e); return e; }
@@ -137,64 +149,90 @@ function badges(g, x, y, node, dx, dy){
 function nodeTitle(n){ return n.label + '（' + n.kind + '）' + (n.opinions.length ? ' 意見 ' + n.opinions.length + ' 件' : ''); }
 function nodeGroup(parent, n){
   const g = el('g', {class:'node'+(n.id===SELECTED?' selected':''), tabindex:'0', role:'button', 'aria-label':nodeTitle(n)}, parent);
-  g.addEventListener('click', () => select(n.id));
-  g.addEventListener('keydown', (e) => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); select(n.id); } });
+  g.addEventListener('click', () => select(n.id, true));
+  g.addEventListener('keydown', (e) => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); select(n.id, true); } });
   el('title',{text:nodeTitle(n)}, g);
   return g;
+}
+
+// 描き終えた図の大きさに合わせて SVG の幅・高さを決める（長い論点名が右端で切れないように）
+function fitSvg(svg, g){
+  const bb = g.getBBox();
+  const W = Math.ceil(Math.max(bb.x + bb.width + 16, 300)), H = Math.ceil(Math.max(bb.y + bb.height + 16, 200));
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  svg.style.width = W + 'px';
 }
 
 function drawHorizontal(container){
   const T = DATA.tree;
   container.innerHTML = '';
-  const svg = el('svg', {role:'img', 'aria-label':'左から右へ広がる論点ツリー'}, container);
-  const rowH=19, x0=24, colW=122, top=22; let row=0;
-  (function place(n){ if(!n.children.length){ n.y=top+row*rowH; row++; } else { n.children.forEach(place); n.y=(n.children[0].y+n.children[n.children.length-1].y)/2; } n.x=x0+n.depth*colW; })(T.root);
-  const W = x0 + T.maxDepth*colW + 190, H = Math.max(300, top+row*rowH+16);
-  svg.setAttribute('viewBox', '0 0 '+W+' '+H);
-  svg.style.width = W + 'px';
+  const svg = el('svg', {role:'group', 'aria-label':'左から右へ広がる論点ツリー'}, container);
+  // 子が 1 つだけの論点は、名前（ノードの上）と意見の印（ノードの下）が隣の行にかかるので、
+  // その前後のまとまりとの間を GAP だけ空ける
+  const rowH=19, GAP=20, x0=24, colW=108, top=24; let y=top, prev=null;
+  (function place(n){
+    if(!n.children.length){
+      if(prev && prev.parent!==n.parent && ((n.parent && n.parent.children.length===1) || (prev.parent && prev.parent.children.length===1))) y += GAP;
+      n.y=y; y+=rowH; prev=n;
+    } else { n.children.forEach(place); n.y=(n.children[0].y+n.children[n.children.length-1].y)/2; }
+    n.x=x0+n.depth*colW;
+  })(T.root);
   const g = el('g', {}, svg);
   T.nodes.forEach(n => { if(!n.parent) return; const p=n.parent; const mx=(p.x+n.x)/2; el('path',{d:'M'+p.x+','+p.y+' C'+mx+','+p.y+' '+mx+','+n.y+' '+n.x+','+n.y, class:'edge'}, g); });
   T.nodes.forEach(n => {
     const ng = nodeGroup(g, n);
     el('circle',{cx:n.x,cy:n.y,r:n.depth===0?7:5,fill:O.kindColor(n.kind),class:'core'}, ng);
     const isLeaf = !n.children.length;
-    el('text',{x:n.depth===0?n.x-6:n.x+(isLeaf?9:0), y:isLeaf?n.y:n.y-10, 'dominant-baseline':isLeaf?'middle':'auto','text-anchor':(isLeaf||n.depth===0)?'start':'middle', class:'lbl halo'+(n.depth<=1?' big':''), text:n.label}, ng);
-    if(n.opinions.length){ const bx = n.x+(isLeaf ? 9+n.label.length*11+8 : 0); badges(ng, isLeaf?bx:n.x, isLeaf?n.y:n.y+11, n, 1, 0); }
+    const t = el('text',{x:n.depth===0?n.x-6:n.x+(isLeaf?9:0), y:isLeaf?n.y:n.y-10, 'dominant-baseline':isLeaf?'middle':'auto','text-anchor':(isLeaf||n.depth===0)?'start':'middle', class:'lbl halo'+(n.depth<=1?' big':''), text:n.label}, ng);
+    if(n.opinions.length){
+      // 葉の印は名前のすぐ右。名前の幅は描いた後に測る（フォントで幅が変わるため）。
+      // badges は印の並びの中心を受け取るので、印の数の分だけ右へ寄せる
+      const k = O.STANCES.filter(s => n.opinions.some(o => o.stance === s)).length;
+      const bx = isLeaf ? n.x + 9 + t.getComputedTextLength() + 8 + (k-1)*4 : n.x;
+      badges(ng, bx, isLeaf?n.y:n.y+11, n, 1, 0);
+    }
   });
+  fitSvg(svg, g);
 }
 
 function drawVertical(container){
   const T = DATA.tree;
   container.innerHTML = '';
-  const svg = el('svg', {role:'img', 'aria-label':'上から下へ広がる論点ツリー'}, container);
-  const colW=28, rowH=112, x0=24, top=30; let col=0;
-  (function place(n){ if(!n.children.length){ n.tx=x0+col*colW; col++; } else { n.children.forEach(place); n.tx=(n.children[0].tx+n.children[n.children.length-1].tx)/2; } n.ty=top+n.depth*rowH; })(T.root);
-  const W = Math.max(700, x0+col*colW+20), H = top+T.maxDepth*rowH+140;
-  svg.setAttribute('viewBox', '0 0 '+W+' '+H);
-  container.querySelector('svg').style.width = W + 'px';
+  const svg = el('svg', {role:'group', 'aria-label':'上から下へ広がる論点ツリー'}, container);
+  const slot=28, rowH=112, x0=10, top=34;
+  // 子を持つ論点の名前はノードの上に横書き。名前どうしが重ならないよう、名前の幅だけ横の間隔を取る
+  O.layoutColumns(T.root, n => n.children, slot, n => O.textWidth(n.label, n.depth<=1 ? 13.5 : 11), 'tx');
+  T.nodes.forEach(n => { n.tx += x0; n.ty = top + n.depth*rowH; });
   const g = el('g', {}, svg);
   T.nodes.forEach(n => { if(!n.parent) return; const p=n.parent; const my=(p.ty+n.ty)/2; el('path',{d:'M'+p.tx+','+p.ty+' C'+p.tx+','+my+' '+n.tx+','+my+' '+n.tx+','+n.ty, class:'edge'}, g); });
   T.nodes.forEach(n => {
     const ng = nodeGroup(g, n);
     el('circle',{cx:n.tx,cy:n.ty,r:n.depth===0?7:5,fill:O.kindColor(n.kind),class:'core'}, ng);
-    const isLeaf = !n.children.length;
-    if(isLeaf){
+    if(!n.children.length){
       el('text',{x:n.tx, y:n.ty+10, class:'lbl halo', 'writing-mode':'tb', text:n.label}, ng);
-      if(n.opinions.length) badges(ng, n.tx+11, n.ty+10+n.label.length*5.5+6, n, 0, 1);
-    } else if(n.depth<=2){
+      if(n.opinions.length) badges(ng, n.tx+11, n.ty+24, n, 0, 1);
+    } else {
       el('text',{x:n.tx, y:n.ty-11, 'text-anchor':'middle', class:'lbl halo'+(n.depth<=1?' big':''), text:n.label}, ng);
       if(n.opinions.length) badges(ng, n.tx, n.ty+13, n, 1, 0);
-    } else {
-      el('text',{x:n.tx+9, y:n.ty-8, class:'lbl halo', text:n.label}, ng);
-      if(n.opinions.length) badges(ng, n.tx+11, n.ty+10, n, 0, 1);
     }
   });
+  fitSvg(svg, g);
 }
 
 function renderTree(){
   const pane = document.getElementById('treePane');
   pane.className = 'tree' + (VIEW==='v' ? ' vertical' : '');
   if (VIEW === 'h') drawHorizontal(pane); else drawVertical(pane);
+}
+
+// 選んだ論点がツリーの枠の外にあれば、枠の中をスクロールして見せる（ページ自体は動かさない）
+function revealInTree(){
+  const pane = document.getElementById('treePane');
+  const c = pane.querySelector('g.node.selected circle.core');
+  if(!c) return;
+  const pr = pane.getBoundingClientRect(), cr = c.getBoundingClientRect(), m = 40;
+  if(cr.left < pr.left+m || cr.right > pr.right-m) pane.scrollLeft += (cr.left+cr.width/2) - (pr.left+pr.width/2);
+  if(cr.top < pr.top+m || cr.bottom > pr.bottom-m) pane.scrollTop += (cr.top+cr.height/2) - (pr.top+pr.height/2);
 }
 
 function renderPanel(){
@@ -214,29 +252,53 @@ function renderPanel(){
   panel.querySelectorAll('.gbar .btn').forEach(b => b.addEventListener('click', () => { GROUP = b.dataset.g; renderPanel(); }));
 }
 
-function select(id){
+// fromTree: ツリーで押したとき。狭い画面ではツリーの下にある論点パネルまでページを送る
+function select(id, fromTree){
   SELECTED = id;
   O.writeHashId(id);
   document.getElementById('toOverview').href = 'overview.html#n=' + encodeURIComponent(id);
   renderTree(); renderPanel(); markMatrixRow();
+  if (fromTree) {
+    const g = document.querySelector('#treePane g.node.selected');
+    if (g) g.focus({preventScroll:true});
+    if (window.innerWidth <= 860) document.getElementById('panel').scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth', block:'start'});
+  } else {
+    revealInTree();
+  }
 }
 
 function markMatrixRow(){
   document.querySelectorAll('#mxRole tr[data-id]').forEach(tr => tr.classList.toggle('sel', tr.dataset.id === SELECTED));
 }
 
-function renderMatrices(){
+// (a) 論点 × 記入者属性。行は、意見を書く場所になっている論点（問い・末端の論点）と、意見が付いている論点。
+// 地図と同じ順（根から深さ優先）に並べる
+function renderRoleMatrix(){
   const T = DATA.tree, E = O.escapeHtml;
-  const issues = T.nodes.filter(n => n.kind === '問い' || (n.kind === '評価軸' && !n.children.length));
+  const withArchive = document.getElementById('mxArchive').checked;
+  const opsOf = n => withArchive ? n.opinions : n.opinions.filter(o => !o.isArchive);
+  const rows = T.order.filter(n => n.depth > 0 && (n.kind === '問い' || !n.children.length || n.opinions.length));
+  const pool = withArchive ? DATA.opinions : DATA.opinions.filter(o => !o.isArchive);
+  const shown = rows.reduce((a, n) => a + opsOf(n).length, 0);
   let h = '<thead><tr><th>親</th><th>論点</th>' + DATA.roles.map(r=>{ const m=/^(.*?)（(.*)）$/.exec(r.name); return '<th title="'+E(r.name)+'">'+(m?E(m[1])+'<br><span style="font-weight:400;color:var(--muted)">'+E(m[2])+'</span>':E(r.name))+'</th>'; }).join('') + '<th>合計</th></tr></thead><tbody>';
-  issues.forEach(n => {
-    h += '<tr data-id="'+E(n.id)+'"><td style="color:var(--muted);font-size:11.5px">'+(n.parent?E(n.parent.label):'')+'</td><td>'+E(n.label)+'</td>';
-    DATA.roles.forEach(r => { const v = n.opinions.filter(o=>o.role===r.name).length; const bg = v ? 'color-mix(in srgb, var(--accent) '+Math.min(14+v*22,80)+'%, var(--surface))' : 'transparent'; h += '<td class="cnt"><span style="background:'+bg+'" class="'+(v?'':'zero')+'">'+(v||'·')+'</span></td>'; });
-    h += '<td class="cnt '+(n.opinions.length?'':'zero')+'">'+(n.opinions.length||'·')+'</td></tr>';
+  rows.forEach(n => {
+    const ops = opsOf(n);
+    const whole = n.children.length ? ' <span class="whole" title="下位の論点への意見は含まない">（この論点そのもの）</span>' : '';
+    h += '<tr data-id="'+E(n.id)+'"><td style="color:var(--muted);font-size:11.5px">'+(n.parent?E(n.parent.label):'')+'</td><td>'+E(n.label)+whole+'</td>';
+    DATA.roles.forEach(r => { const v = ops.filter(o=>o.role===r.name).length; const bg = v ? 'color-mix(in srgb, var(--accent) '+Math.min(14+v*22,80)+'%, var(--surface))' : 'transparent'; h += '<td class="cnt"><span style="background:'+bg+'" class="'+(v?'':'zero')+'">'+(v||'·')+'</span></td>'; });
+    h += '<td class="cnt '+(ops.length?'':'zero')+'">'+(ops.length||'·')+'</td></tr>';
   });
   const mx = document.getElementById('mxRole');
   mx.innerHTML = h + '</tbody>';
-  mx.querySelectorAll('tr[data-id]').forEach(tr => tr.addEventListener('click', () => { select(tr.dataset.id); window.scrollTo({top:0, behavior:'smooth'}); }));
+  mx.querySelectorAll('tr[data-id]').forEach(tr => tr.addEventListener('click', () => { select(tr.dataset.id); window.scrollTo({top:0, behavior: reduceMotion ? 'auto' : 'smooth'}); }));
+  document.getElementById('mxNote').textContent = '表の意見 ' + shown + ' 件' + (shown !== pool.length ? '（ほかに表の行に無い論点への意見 ' + (pool.length - shown) + ' 件）' : '') +
+    (withArchive ? '' : '。過去の会合の記録から取り込んだ ' + (DATA.opinions.length - pool.length) + ' 件を除いています');
+  markMatrixRow();
+}
+
+function renderMatrices(){
+  const T = DATA.tree, E = O.escapeHtml;
+  renderRoleMatrix();
 
   const src = T.byLabel['電源・技術'];
   const objects = src ? src.children.filter(n=>n.kind==='対象') : [];
@@ -269,7 +331,10 @@ async function main(){
       '<span>取得 '+O.nowJST()+'</span><button class="btn" id="reload">再読み込み</button>';
     document.getElementById('reload').addEventListener('click', () => location.reload());
     renderMatrices();
+    document.getElementById('mxArchive').addEventListener('change', renderRoleMatrix);
     select(SELECTED);
+    // ウェブフォントが届くと文字の幅が変わるので、届いたら描き直す（意見の印の位置を測り直す）
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { renderTree(); revealInTree(); });
   } catch (err) {
     document.getElementById('loadingState').hidden = true;
     const es = document.getElementById('errorState');

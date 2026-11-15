@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>@omfy 論点マップ 俯瞰</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="common.css">
@@ -33,6 +34,7 @@ body{display:flex;flex-direction:column;overflow:hidden}
 .zoomctl{position:absolute;left:16px;top:16px;display:flex;flex-direction:column;gap:6px;z-index:2}
 .zoomctl .btn{width:34px;height:34px;padding:0;border-radius:8px;font-size:17px;line-height:1;box-shadow:var(--shadow)}
 .zoomctl .btn.txt{width:auto;padding:0 10px;font-size:12px}
+.zoomctl .narrow-only{display:none}
 
 .legend{position:absolute;left:16px;bottom:16px;z-index:2;background:color-mix(in srgb, var(--surface) 92%, transparent);border:1px solid var(--rule);border-radius:8px;padding:8px 12px;font-size:11.5px;color:var(--muted);display:grid;gap:4px;max-width:calc(100% - 32px)}
 .legend .row{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
@@ -55,9 +57,15 @@ body{display:flex;flex-direction:column;overflow:hidden}
 .hint{position:absolute;right:16px;bottom:16px;z-index:1;font-size:11.5px;color:var(--muted);background:color-mix(in srgb, var(--surface) 88%, transparent);border:1px solid var(--rule);border-radius:6px;padding:4px 10px}
 
 @media (max-width: 760px){
-  .topbar h1{font-size:16px}
-  .topbar .meta{margin-left:0;width:100%}
-  .ctrl input{width:8em}
+  /* 地図を広く見せるため、上の帯を 2 段に詰める（見出しの文字は読み上げ用に残す） */
+  .topbar{gap:6px 8px;padding:8px 10px}
+  .topbar h1{font-size:15px}
+  .nav a{padding:4px 10px}
+  .ctrl .cap{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .ctrl.search{flex:1;min-width:6em}
+  .ctrl input{width:100%;min-width:0}
+  .topbar .meta{display:none}
+  .zoomctl .narrow-only{display:inline-block}
   .panel{left:10px;right:10px;top:auto;bottom:10px;width:auto;max-height:58%}
   .legend,.hint{display:none}
   .zoomctl{left:10px;top:10px}
@@ -77,24 +85,25 @@ body{display:flex;flex-direction:column;overflow:hidden}
   <nav class="nav" aria-label="画面の切り替え">
     <a href="index.html">はじめに</a><a href="overview.html" aria-current="page">俯瞰ビュー</a><a href="detail.html" id="toDetail">詳細ビュー</a>
   </nav>
-  <div class="ctrl"><span>形</span>
+  <div class="ctrl"><span class="cap" aria-hidden="true">形</span>
     <span class="seg" role="group" aria-label="マップの形">
       <button class="btn" id="lyRadial" aria-pressed="true">放射状</button><button class="btn" id="lyVertical" aria-pressed="false">縦</button>
     </span>
   </div>
-  <div class="ctrl"><label for="depthSel">表示する深さ</label><select id="depthSel"></select></div>
-  <div class="ctrl"><label for="searchBox">検索</label><input id="searchBox" type="search" placeholder="論点名・問い" autocomplete="off"></div>
+  <div class="ctrl"><label class="cap" for="depthSel">表示する深さ</label><select id="depthSel"></select></div>
+  <div class="ctrl search"><label class="cap" for="searchBox">検索</label><input id="searchBox" type="search" placeholder="論点名・問いで検索" autocomplete="off"></div>
   <div class="meta" id="metaLine">読み込み中…</div>
 </header>
 
 <div class="stage" id="stage">
-  <svg id="canvas" role="img" aria-label="論点の構造を一枚で示すマップ"><g id="vp"></g></svg>
+  <svg id="canvas" role="group" aria-label="論点の構造を一枚で示すマップ"><g id="vp"></g></svg>
 
   <div class="zoomctl" aria-label="表示の操作">
     <button class="btn" id="zIn" title="拡大" aria-label="拡大">＋</button>
     <button class="btn" id="zOut" title="縮小" aria-label="縮小">−</button>
     <button class="btn txt" id="zFit" title="全体を表示">全体</button>
     <button class="btn txt" id="btnPrint" title="印刷（A3 横）">印刷</button>
+    <button class="btn txt narrow-only" id="zReload" title="最新のデータを読み込み直す">更新</button>
   </div>
 
   <div class="legend" id="legend" hidden>
@@ -145,12 +154,14 @@ function el(tag, attrs, parent){ const e=document.createElementNS(NS,tag); for(c
 
 // ---------------------------------------------------------------- layout
 // 表示する深さ（MAXD）より深い論点は折りたたみ、その親を葉として扱う
+// _w は放射状で受け持つ角度の重み。中心に近い葉（深さ 1）は半径が小さく、隣の葉と名前が
+// 重なりやすいので、2 倍の角度を割り当てる
 function prepareVisible(){
   (function walk(n){
     n._open = n.depth < MAXD;
     n._vis = n._open ? n.children : [];
-    n._leaves = n._vis.length ? n._vis.reduce((a,c)=>a+walk(c),0) : 1;
-    return n._leaves;
+    n._w = n._vis.length ? n._vis.reduce((a,c)=>a+walk(c),0) : (n.depth === 1 ? 2 : 1);
+    return n._w;
   })(DATA.tree.root);
 }
 function visibleNodes(){ const out=[]; (function w(n){ out.push(n); n._vis.forEach(w); })(DATA.tree.root); return out; }
@@ -162,18 +173,14 @@ function layoutRadial(){
     n._x = Math.cos(n._a) * r;
     n._y = Math.sin(n._a) * r;
     let a = a0;
-    n._vis.forEach(c => { const w = (a1 - a0) * c._leaves / n._leaves; place(c, a, a + w); a += w; });
+    n._vis.forEach(c => { const w = (a1 - a0) * c._w / n._w; place(c, a, a + w); a += w; });
   })(DATA.tree.root, -Math.PI/2, Math.PI*1.5);
 }
 function layoutVertical(){
-  let col = 0;
-  (function place(n){
-    if(!n._vis.length){ n._x = col * V_COL; col++; }
-    else { n._vis.forEach(place); n._x = (n._vis[0]._x + n._vis[n._vis.length-1]._x) / 2; }
-    n._y = n.depth * V_ROW;
-  })(DATA.tree.root);
+  // 子を持つ論点の名前（ノードの上に横書き）が隣どうしで重ならないよう、名前の幅だけ横の間隔を取る
+  O.layoutColumns(DATA.tree.root, n => n._vis, V_COL, n => O.textWidth(n.label, n.depth <= 1 ? 17.5 : 14), '_x');
   const shift = DATA.tree.root._x;
-  visibleNodes().forEach(n => { n._x -= shift; });
+  visibleNodes().forEach(n => { n._x -= shift; n._y = n.depth * V_ROW; });
 }
 function doLayout(){ prepareVisible(); if(LAYOUT==='radial') layoutRadial(); else layoutVertical(); }
 
@@ -336,6 +343,7 @@ window.addEventListener('pointerup', () => {
 document.getElementById('zIn').addEventListener('click', () => { const a = area(); zoomAt(a.x + a.w/2, a.y + a.h/2, 1.3); });
 document.getElementById('zOut').addEventListener('click', () => { const a = area(); zoomAt(a.x + a.w/2, a.y + a.h/2, 1/1.3); });
 document.getElementById('zFit').addEventListener('click', () => fit(true));
+document.getElementById('zReload').addEventListener('click', () => location.reload());
 document.getElementById('btnPrint').addEventListener('click', () => {
   const wasOpen = !panel.hidden; panel.hidden = true; fit(false);
   setTimeout(() => { window.print(); if (wasOpen) { panel.hidden = false; } }, 50);
