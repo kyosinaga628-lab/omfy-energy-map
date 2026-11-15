@@ -30,6 +30,10 @@ body{font-size:16px;line-height:1.85;overflow-x:hidden}
 .hero h1 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .hero p{font-size:17px;color:var(--muted);margin:0 0 12px;max-width:34em}
 .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.hero p.story{margin:20px 0 0;font-size:14.5px}
+.story a{color:var(--muted);text-decoration:underline;text-underline-offset:3px;display:inline-flex;align-items:center;gap:6px}
+.story a:hover{color:var(--ink)}
+.story svg{width:14px;height:14px;flex:none}
 
 /* 重なったカード（3 秒ごとに入れ替わる） */
 .stack{position:relative;width:min(100%,420px);aspect-ratio:420/500;justify-self:center}
@@ -234,6 +238,7 @@ section.sec{padding:80px 0 0}
         <a class="pill dark" href="detail.html">論点ごとに意見を読む（詳細ビュー）<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
         <a class="pill line" href="overview.html">全体を一枚で見る（俯瞰ビュー）</a>
       </div>
+      <p class="story"><a href="https://note.com/apt_coyote2167" target="_blank" rel="noopener">omfy の note を見る<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg></a></p>
     </div>
     <div class="stack" aria-hidden="true">
       <div class="sc sc-1"><span class="t">俯瞰ビュー</span><div class="pv"><img src="assets/view-overview.webp" width="960" height="768" alt="" fetchpriority="high" decoding="async"></div></div>
@@ -469,7 +474,7 @@ section.sec{padding:80px 0 0}
     <div class="sec-head">
       <span class="en" aria-hidden="true">Write.</span>
       <h2 id="h-write">意見を書くには（omfy メンバー向け）</h2>
-      <p class="lead">書き込みは omfy のメンバーが行います（当面は共通のハンドル「omfyメンバー」で書きます）。閲覧はどなたでもできます。今後は、どなたでも書き込めるようにしていく予定です。</p>
+      <p class="lead">書き込みは omfy のメンバーが行います（当面は共通のハンドル「omfyメンバー」で書きます）。閲覧はどなたでもできます。将来的には、どなたでも書き込めるようにしていく予定です。</p>
     </div>
     <ol class="steps">
       <li>詳細ビューまたは俯瞰ビューで、意見を書きたい論点を選ぶ</li>
@@ -505,6 +510,7 @@ section.sec{padding:80px 0 0}
       <div class="links">
         <span>データは <a href="https://creativecommons.org/licenses/by/4.0/deed.ja">CC BY 4.0</a> で公開（出典表示で再利用可）</span>
         <span>意見は記入者個人の見解であり omfy の公式見解ではない</span>
+        <a href="https://note.com/apt_coyote2167" target="_blank" rel="noopener">omfy の note</a>
         <a href="https://github.com/kyosinaga628-lab/omfy-energy-map">GitHub リポジトリ</a>
       </div>
       <button class="totop" type="button" id="toTop">ページの先頭へ<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
