@@ -62,6 +62,15 @@ section.sec{padding:80px 0 0}
 .aims h3{font-size:19px;line-height:1.5;letter-spacing:-.01em;margin:0 0 10px}
 .aims p{margin:0;font-size:15px;color:var(--muted)}
 
+/* 議論の視点（4 枚のカード。押すと詳細ビューでその論点を開く） */
+.lens{display:flex;flex-direction:column;text-decoration:none;color:inherit}
+.lens .q{font-size:15px;font-weight:600;margin:0 0 10px;color:var(--ink)}
+.lens p:not(.q){flex:1}
+.lens .go{display:inline-flex;align-items:center;gap:8px;margin-top:18px;font-weight:700;font-size:14.5px}
+.lens .go svg{width:16px;height:16px;transition:transform .2s ease}
+.lens:hover .go svg{transform:translateX(4px)}
+.lens:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
 /* 構造図 */
 .figure{margin:0;background:var(--bg2);border-radius:32px;padding:28px 20px 12px}
 .figscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -79,6 +88,8 @@ section.sec{padding:80px 0 0}
 .fig .box.hl rect{fill:var(--accent)}
 .fig .box.hl text{fill:var(--bg);font-weight:700}
 .fig .crit rect{fill:var(--bg);stroke:var(--k-criterion);stroke-width:1.5}
+.fig .view rect{fill:var(--bg);stroke:var(--k-criterion);stroke-width:1.5}
+.fig .view text{font-weight:700}
 .fig .q rect{fill:var(--bg);stroke:var(--rule2);stroke-width:1}
 .fig .q text{font-size:13px}
 .fig .ctx rect{fill:color-mix(in srgb, var(--k-context) 18%, var(--bg));stroke:transparent;stroke-width:1.5}
@@ -258,7 +269,7 @@ section.sec{padding:80px 0 0}
     <figure class="figure">
       <div class="figscroll">
       <svg class="fig" viewBox="0 0 1000 630" role="group" aria-labelledby="figTitle">
-        <title id="figTitle">論点マップの構造図。社会像「豊かで平和な生活」の下にテーマ、エネルギーの下に評価軸 S+3E と外部環境、その下に電源、原子力の下に個別の問いが並ぶ。時間軸は今後の構想。</title>
+        <title id="figTitle">論点マップの構造図。社会像「豊かで平和な生活」の下にテーマと、テーマを横断する「議論の視点」。エネルギーの下に評価軸 S+3E と外部環境、その下に電源、原子力の下に個別の問いが並ぶ。時間軸は今後の構想。</title>
         <defs>
           <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
         </defs>
@@ -281,6 +292,7 @@ section.sec{padding:80px 0 0}
           <path class="line" d="M255,70 V114"/><circle class="dot" cx="255" cy="70" r="4"/><circle class="dot" cx="255" cy="114" r="4"/>
           <path class="line" d="M415,70 V114"/><circle class="dot" cx="415" cy="70" r="4"/><circle class="dot" cx="415" cy="114" r="4"/>
           <path class="line" d="M575,70 V114"/><circle class="dot" cx="575" cy="70" r="4"/><circle class="dot" cx="575" cy="114" r="4"/>
+          <path class="line" d="M800,70 V114"/><circle class="dot" cx="800" cy="70" r="4"/><circle class="dot" cx="800" cy="114" r="4"/>
           <path class="line" d="M255,154 V180 H480 V202"/><circle class="dot" cx="255" cy="154" r="4"/><circle class="dot" cx="480" cy="202" r="4"/>
           <path class="line" d="M266,272 H296" marker-end="url(#arr)"/>
           <path class="line" d="M694,272 H664" marker-end="url(#arr)"/>
@@ -304,6 +316,9 @@ section.sec{padding:80px 0 0}
         <a class="box" href="overview.html#n=food" aria-label="食料"><rect x="350" y="114" width="130" height="40" rx="5"/><text x="415" y="135" text-anchor="middle" dominant-baseline="middle">食料</text></a>
         <a class="box" href="overview.html#n=security" aria-label="安全保障"><rect x="510" y="114" width="130" height="40" rx="5"/><text x="575" y="135" text-anchor="middle" dominant-baseline="middle">安全保障</text></a>
         <text class="more" x="668" y="139">…</text>
+
+        <!-- 議論の視点（テーマを横断） -->
+        <a class="view" href="overview.html#n=view" aria-label="議論の視点（テーマを横断する視点）"><rect x="725" y="114" width="150" height="40" rx="5"/><text x="800" y="135" text-anchor="middle" dominant-baseline="middle">議論の視点</text></a>
 
         <!-- 評価軸 S+3E -->
         <rect class="frame" x="300" y="202" width="360" height="132" rx="6"/>
@@ -357,11 +372,25 @@ section.sec{padding:80px 0 0}
       <div><dt><i class="sw" style="background:var(--k-objective)"></i>社会像</dt><dd>すべての議論が目指す先。ここでは「豊かで平和な生活」と置いています。<br><span class="ex">エネルギーはそのための手段の一つで、食料や安全保障と並ぶテーマです。</span></dd></div>
       <div><dt><i class="sw" style="background:var(--k-theme)"></i>テーマ</dt><dd>社会像を支える分野。いまはエネルギーを深く掘り、他のテーマは骨組みだけ置いています。</dd></div>
       <div><dt><i class="sw" style="background:var(--k-criterion)"></i>評価軸</dt><dd>選択肢を測るものさし。国のエネルギー基本計画などの政策文書で使われる「S+3E」、つまり安全性（Safety）を大前提に、安定供給（Energy Security）を第一とし、経済効率性（Economic Efficiency）の向上と環境適合（Environment）を同時に図る、という考え方を軸にしています。<br><span class="ex">個々の問いには、どの評価軸に関係するかの印が付いています。</span></dd></div>
+      <div><dt><i class="sw" style="background:var(--k-criterion)"></i>議論の視点</dt><dd>テーマを問わず、どの話をするときにも持っておきたい視点。種別は評価軸として扱い、社会像のすぐ下に置いています。<br><span class="ex">前提を問う・俯瞰（時間軸と将来世代を含む）、事実の確かめ方、対話と学びの場の 3 つ。詳しくは下の「議論の視点」へ。</span></dd></div>
       <div><dt><i class="sw" style="background:var(--k-context)"></i>外部環境</dt><dd>こちらでは選べないが、判断を左右する前提。国際情勢（資源価格・地政学）と国内情勢（人口・産業構造、世論・財政）。</dd></div>
       <div><dt><i class="sw" style="background:var(--k-object)"></i>対象（電源）</dt><dd>実際に選ぶもの。再エネ、原子力、火力、水素、送配電・蓄電。</dd></div>
       <div><dt><i class="sw" style="background:var(--k-issue)"></i>問い（各論）</dt><dd>意見を書く場所の中心。「〜をどうするか」という問いの形で置いています。いまは原子力を最も細かく分けています。</dd></div>
-      <div class="future"><dt><i class="sw" style="border:1.4px dashed var(--muted)"></i>時間軸（今後）</dt><dd>同じ問いでも、2030 年の話か 2050 年の話かで答えは変わります。時点を区切って整理する方法は、試し書きの結果を見て検討します。いまの地図にはまだ入っていません。</dd></div>
+      <div class="future"><dt><i class="sw" style="border:1.4px dashed var(--muted)"></i>時間軸（今後）</dt><dd>同じ問いでも、2030 年の話か 2050 年の話かで答えは変わります。時点を区切って整理する方法は、試し書きの結果を見て検討します。いまの地図にはまだ入っていません。<br><span class="ex">「どの時間軸で話しているかを意識すべき」という意見そのものは、議論の視点の「前提を問う・俯瞰」に集めています。</span></dd></div>
     </dl>
+  </section>
+
+  <section class="sec fade" aria-labelledby="h-lens">
+    <div class="sec-head">
+      <span class="en" aria-hidden="true">Lenses.</span>
+      <h2 id="h-lens">議論の視点</h2>
+      <p class="lead">賛成か反対かとは別に、どのテーマを話すときにも持っておきたい視点です。これまでの @omfy の会合で、講師やメンバーから繰り返し出た指摘を 3 つにまとめ、地図の最上位に置いています。</p>
+    </div>
+    <div class="aims">
+      <a class="panel lift lens" href="detail.html#n=view.premise"><span class="num">01</span><h3>前提を問う・俯瞰</h3><p class="q">賛否の前に、何のため・いつの・誰のための選択かを問えているか</p><p>一つの論点だけを見ていないか。2030 年の話か、2050 年の話か。いまの多数決に、まだ生まれていない世代の声は入っているか。</p><span class="go">意見を読む<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="panel lift lens" href="detail.html#n=view.fact"><span class="num">02</span><h3>事実の確かめ方</h3><p class="q">情報の確かさと偏りをどう見極めるか</p><p>一次情報に当たる。賛成と反対の両方のファクトを突き合わせる。肩書きだけで信じない。</p><span class="go">意見を読む<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="panel lift lens" href="detail.html#n=view.dialogue"><span class="num">03</span><h3>対話と学びの場</h3><p class="q">立場の違う人と、どう話し、どう学び合うか</p><p>相手がなぜそう考えるのかを聞く。結論を急がず、答えのない問いを一緒に考える。</p><span class="go">意見を読む<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+    </div>
   </section>
 
   <section class="sec fade" aria-labelledby="h-views">
