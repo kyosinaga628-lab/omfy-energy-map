@@ -63,6 +63,13 @@ section.sec{padding:80px 0 0}
 .lift:hover{transform:translateY(-8px);box-shadow:var(--lift)}
 .num{display:block;font-family:"Inter",sans-serif;font-size:44px;font-weight:800;letter-spacing:-.04em;line-height:1;margin:0 0 18px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:max-content}
 
+/* 活動理念（Aims の導入） */
+.creed{position:relative;margin:0 0 18px;padding:4px 0 4px 24px;max-width:40em}
+.creed::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:2px;background:var(--grad)}
+.creed blockquote{margin:0}
+.creed p{margin:0;font-size:17px;line-height:1.95;font-weight:500;color:var(--ink)}
+.creed figcaption{margin:8px 0 0;font-size:13px;color:var(--muted)}
+
 .aims{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
 .aims h3{font-size:19px;line-height:1.5;letter-spacing:-.01em;margin:0 0 10px}
 .aims p{margin:0;font-size:15px;color:var(--muted)}
@@ -257,12 +264,16 @@ section.sec{padding:80px 0 0}
     <div class="sec-head">
       <span class="en" aria-hidden="true">Aims.</span>
       <h2 id="h-aim">目指していること</h2>
-      <p class="lead">賛成か反対かを決める場所ではありません。話の「位置」と「声の偏り」を見えるようにする場所です。</p>
+      <figure class="creed">
+        <blockquote><p>世界に広がる社会課題に対し、誰かが答えを示してくれることを待つのではなく、国や社会の課題を自分事として捉え、多様な専門家の知見を踏まえながら自ら考え、判断し、行動する。その実践の輪を広げることで、豊かな未来社会の実現を目指す。</p></blockquote>
+        <figcaption>omfy 活動理念</figcaption>
+      </figure>
+      <p class="lead">論点マップは、その実践のための取り組みです。</p>
     </div>
     <div class="aims">
-      <div class="panel lift"><span class="num">01</span><h3>いま何の話をしているかを揃える</h3><p>意見は必ず地図のどこか一点に付きます。「それは安全性の話」「それはコストの話」と位置が分かれば、すれ違いが減ります。</p></div>
-      <div class="panel lift"><span class="num">02</span><h3>どの声が足りないかを見えるようにする</h3><p>意見ごとに、書いた人の立場（立地地域の住民、需要家、学生など）を記録します。どの論点にどの立場の声がまだ無いかが一目で分かります。</p></div>
-      <div class="panel lift"><span class="num">03</span><h3>違う意見を、同じ地図に並べる</h3><p>賛成・反対・条件付き・問い。結論が違う意見も同じ論点の下に並べ、根拠（データ・経験・価値観）と一緒に読めるようにします。</p></div>
+      <div class="panel lift"><span class="num">01</span><h3>論点を構造化し、見える化する</h3><p>社会の課題を、目指す社会から個別の問いまで一つの地図に整理します。意見は必ず地図のどこか一点に付き、書いた人の立場も記録します。いま何の話をしているか、どの立場の声がまだ足りないかが見えるようになります。</p></div>
+      <div class="panel lift"><span class="num">02</span><h3>対話を通じて磨き続ける</h3><p>地図は完成品ではありません。立場の違う人との対話を重ねるたびに意見を書き足し、論点の追加や整理を続けて育てていきます。</p></div>
+      <div class="panel lift"><span class="num">03</span><h3>「問いの種」として届ける</h3><p>賛成か反対かを決めるための地図ではありません。整理した論点を「問いの種」として社会に届け、答えのない問いを自分事として考え、自分の意見を発信する人を増やしていきます。</p></div>
     </div>
   </section>
 
