@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>別案A 3階層マップ</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="common.css">
+<link rel="stylesheet" href="brand.css">
+<link rel="stylesheet" href="alt.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="common.js"></script>
+<script src="alt-tags.js"></script>
+<style>
+.tiers{position:relative;padding:22px 24px 24px}
+.tiers svg.links{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.tiers svg.links path{fill:none;stroke:var(--rule2);stroke-linecap:round;transition:stroke-width .25s ease,opacity .25s ease}
+.tiers svg.links path.hot{stroke:var(--f-tech)}
+.tier{position:relative;display:flex;justify-content:center;align-items:stretch;gap:10px;flex-wrap:wrap}
+.tier + .tier{margin-top:34px}
+.tlabel{position:absolute;left:0;top:50%;transform:translateY(-50%);font-size:10.5px;font-weight:700;color:var(--faint);letter-spacing:.06em;writing-mode:vertical-rl}
+.premise{display:block;width:100%;text-align:center;padding:9px 12px;border-radius:14px;background:var(--pill-bg);color:var(--pill-ink);font-weight:800;font-size:16px;letter-spacing:.02em}
+.premise small{font-weight:500;font-size:12px;opacity:.75;margin-left:8px}
+.nb{font:inherit;position:relative;cursor:pointer;border:1.5px solid var(--rule2);background:var(--bg);color:var(--ink);border-radius:12px;padding:8px 14px;font-size:14px;font-weight:700;line-height:1.35;text-align:center;transition:border-color .2s ease,background .2s ease,opacity .2s ease}
+.nb .c{display:block;font-size:11px;font-weight:500;color:var(--muted);margin-top:2px}
+.nb:hover{border-color:var(--ink)}
+.nb[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.nb[aria-pressed="true"] .c{color:inherit;opacity:.8}
+.nb.zero{opacity:.38}
+.nb.energy{font-size:18px;padding:10px 34px;border-color:var(--k-theme);color:var(--k-theme)}
+.nb.energy[aria-pressed="true"]{background:var(--k-theme);color:#fff}
+.block{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:18px;background:color-mix(in srgb,var(--f-axis) 10%,var(--bg));border:1.5px solid color-mix(in srgb,var(--f-axis) 40%,var(--bg))}
+.block .bl{font-size:12px;font-weight:800;color:var(--f-axis);writing-mode:vertical-rl;letter-spacing:.08em;padding:0 2px}
+.block .axes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.block .nb{border-color:color-mix(in srgb,var(--f-axis) 45%,var(--bg));min-width:96px}
+.nb.plus{border-style:dashed;border-color:color-mix(in srgb,var(--f-axis) 60%,var(--bg));background:var(--bg)}
+.ext{display:flex;align-items:center;gap:6px}
+.ext .nb{border-color:color-mix(in srgb,var(--k-context) 55%,var(--bg));font-size:13px}
+.ext .ar{color:var(--k-context);font-size:20px;font-weight:800;line-height:1}
+.techs{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;width:100%}
+.techs .nb{border-color:color-mix(in srgb,var(--f-tech) 50%,var(--bg));font-size:13px;padding:8px 6px}
+.techs .nb[aria-pressed="true"]{background:var(--f-tech);border-color:var(--f-tech);color:#fff}
+.kwbox{margin-top:30px;border:2px solid var(--ink);border-radius:18px;padding:14px 18px 16px;position:relative}
+.kwbox .h3{margin-bottom:10px}
+.cloud{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:baseline}
+.cloud button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:2px 9px;background:color-mix(in srgb,var(--f-kw) 9%,var(--bg));color:var(--ink);line-height:1.5;transition:background .15s ease}
+.cloud button i{font-style:normal;font-size:10.5px;color:var(--muted);margin-left:3px}
+.cloud button:hover{background:color-mix(in srgb,var(--f-kw) 22%,var(--bg))}
+.cloud button[aria-pressed="true"]{background:var(--f-kw);color:#fff}
+.cloud button[aria-pressed="true"] i{color:#fff}
+.listhead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 16px;margin:34px 0 10px}
+.listhead h2{font-size:clamp(20px,2.4vw,26px);letter-spacing:-.02em}
+.crumbs{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--muted)}
+.crumbs .tg{font-size:12px}
+.note2{margin-top:14px;font-size:12px;color:var(--muted)}
+@media (max-width: 980px){
+  .techs{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .block .axes{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width: 640px){
+  .tiers{padding:16px 12px 18px}
+  .tlabel{display:none}
+  .tier.l2{flex-direction:column;align-items:stretch}
+  .ext{justify-content:center}
+  .ext .ar{transform:rotate(90deg)}
+  .block .nb{min-width:0}
+  .techs{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<div class="glow glow-a"></div>
+<div class="glow glow-b"></div>
+<header class="header">
+  <div class="bar">
+    <nav class="vnav" aria-label="別案の切り替え">
+      <a href="alt.html">別案トップ</a><a href="alt-layers.html" aria-current="page">A 3階層</a><a href="alt-axes.html">B 3軸</a><a href="alt-life.html">C 暮らし</a>
+    </nav>
+    <a class="logo" href="alt.html"><b>omfy</b><span>論点マップ 別案</span></a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="pagehead">
+    <h1>別案A　3階層＋キーワード<span class="proto">試作</span><span class="sub">エネルギー → S+3E → 技術。その下はキーワードとして意見に付ける</span></h1>
+    <div class="meta" id="metaLine">読み込み中…</div>
+  </div>
+  <p class="lead">地図は<b>3 階層</b>までにとどめ、これまで 4 階層目の論点だったもの（放射性廃棄物、再稼働など）は、<b>意見に付くキーワード</b>として扱う案です。2 段目・3 段目の箱を押すと、その組み合わせの意見と、よく出てくるキーワードが絞り込まれます。数字は意見の件数、線の太さは 2 段目で選んだ評価軸での意見の多さです。</p>
+
+  <div id="loadingState" class="state">データを取得しています…</div>
+
+  <div class="card tiers" id="tiers" hidden>
+    <svg class="links" id="links" aria-hidden="true"></svg>
+    <div class="tier"><span class="premise">豊かで平和な生活<small>大前提</small></span></div>
+    <div class="tier"><span class="tlabel">1段目</span><button class="nb energy" id="energyBtn" aria-pressed="true">エネルギー<span class="c" id="energyC"></span></button></div>
+    <div class="tier l2"><span class="tlabel">2段目</span>
+      <div class="ext"><button class="nb" data-l2="intl">国際情勢<span class="c"></span></button><span class="ar">→</span></div>
+      <div class="block" id="block"><span class="bl">S+3E</span><div class="axes" id="axes"></div></div>
+      <div class="ext"><span class="ar">←</span><button class="nb" data-l2="dom">国内情勢<span class="c"></span></button></div>
+      <button class="nb plus" data-l2="R">＋ 社会的受容・対話<span class="c"></span></button>
+    </div>
+    <div class="tier"><span class="tlabel">3段目</span><div class="techs" id="techs"></div></div>
+    <div class="kwbox" id="kwbox">
+      <div class="h3">キーワード<span class="n">旧・4 階層目の論点と、意見から拾った言葉。押すと意見を絞り込む</span></div>
+      <div class="cloud" id="cloud"></div>
+    </div>
+  </div>
+
+  <div id="listArea" hidden>
+    <div class="listhead">
+      <h2 id="listTitle">意見</h2>
+      <div class="crumbs" id="crumbs"></div>
+    </div>
+    <div class="oplist" id="oplist"></div>
+    <p class="note2">タグ（評価軸・技術・主体・キーワード）は、この試作のために仮に付けたものです。採用する場合は、意見シートにタグの列を足して、書く人・モデレータが付けられるようにします。タグの無い新しい意見は、付いている論点から自動で推定しています。</p>
+  </div>
+
+  <footer>
+    <span>omfy 論点マップ 別案（試作・関係者向け）</span>
+    <a href="index.html">現行の論点マップ</a>
+    <a href="alt-axes.html">別案B 3軸で並べる</a>
+    <a href="alt-life.html">別案C 暮らしから見る</a>
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  const O = window.OMFY, A = window.ALT, e = O.escapeHtml;
+  const AX = A.FACETS.axis, TE = A.FACETS.tech;
+  const L2_LABEL = Object.assign({}, AX.label, { intl: '国際情勢', dom: '国内情勢' });
+  const st = { l2: null, tech: null, kw: null };
+  let OPS = [];
+
+  const hasL2 = (o, v) => (v === 'intl' || v === 'dom') ? o.ext === v : o.tags.axis.indexOf(v) >= 0;
+  const match = (o, l2, tech, kw) =>
+    (!l2 || hasL2(o, l2)) && (!tech || o.tags.tech.indexOf(tech) >= 0) && (!kw || o.tags.kw.indexOf(kw) >= 0);
+  const cnt = (l2, tech, kw) => OPS.filter((o) => match(o, l2, tech, kw)).length;
+
+  A.start((data, ops) => {
+    OPS = ops;
+    document.getElementById('axes').innerHTML = ['S', 'A', 'E', 'V'].map((v) =>
+      '<button class="nb" data-l2="' + v + '">' + e(AX.label[v]) + '<span class="c"></span></button>').join('');
+    const BR = { '再生可能エネルギー': '再生可能<br>エネルギー', '水素・アンモニア': '水素・<br>アンモニア', '技術を問わない': '技術を<br>問わない' };
+    document.getElementById('techs').innerHTML = TE.values.map(([v, name]) =>
+      '<button class="nb" data-tech="' + v + '">' + (BR[name] || e(name)) + '<span class="c"></span></button>').join('');
+    document.getElementById('tiers').hidden = false;
+    document.getElementById('listArea').hidden = false;
+
+    document.getElementById('tiers').addEventListener('click', (ev) => {
+      const b = ev.target.closest('button');
+      if (!b) return;
+      if (b.id === 'energyBtn') { st.l2 = st.tech = st.kw = null; }
+      else if (b.dataset.l2) { st.l2 = st.l2 === b.dataset.l2 ? null : b.dataset.l2; }
+      else if (b.dataset.tech) { st.tech = st.tech === b.dataset.tech ? null : b.dataset.tech; }
+      else if (b.dataset.kw) { st.kw = st.kw === b.dataset.kw ? null : b.dataset.kw; }
+      else if (b.dataset.more) { st.allKw = !st.allKw; }
+      else return;
+      render();
+    });
+    document.getElementById('listArea').addEventListener('click', (ev) => {
+      const b = ev.target.closest('[data-kw],[data-clear]');
+      if (!b) return;
+      if (b.dataset.clear) st[b.dataset.clear] = null; else st.kw = st.kw === b.dataset.kw ? null : b.dataset.kw;
+      render();
+      if (b.dataset.kw) document.getElementById('kwbox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    window.addEventListener('resize', drawLinks);
+    render();
+  });
+
+  function render() {
+    document.getElementById('energyBtn').setAttribute('aria-pressed', String(!st.l2 && !st.tech && !st.kw));
+    document.getElementById('energyC').textContent = OPS.length + ' 件';
+    document.querySelectorAll('[data-l2]').forEach((b) => {
+      const n = cnt(b.dataset.l2, st.tech, st.kw);
+      b.setAttribute('aria-pressed', String(st.l2 === b.dataset.l2));
+      b.querySelector('.c').textContent = n + ' 件';
+      b.classList.toggle('zero', n === 0);
+    });
+    document.querySelectorAll('[data-tech]').forEach((b) => {
+      const n = cnt(st.l2, b.dataset.tech, st.kw);
+      b.setAttribute('aria-pressed', String(st.tech === b.dataset.tech));
+      b.querySelector('.c').textContent = n + ' 件';
+      b.classList.toggle('zero', n === 0);
+    });
+    // キーワード（評価軸・技術で絞った意見から数える）
+    const base = OPS.filter((o) => match(o, st.l2, st.tech, null));
+    const kc = Array.from(A.count(base, (o) => o.tags.kw)).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ja'));
+    if (st.kw && !kc.some(([k]) => k === st.kw)) kc.unshift([st.kw, 0]);
+    const max = Math.max(1, ...kc.map((x) => x[1]));
+    const LIMIT = 24;
+    const shown = st.allKw ? kc : kc.slice(0, LIMIT);
+    if (!st.allKw && st.kw && !shown.some(([k]) => k === st.kw)) shown.push(kc.find(([k]) => k === st.kw));
+    document.getElementById('cloud').innerHTML = kc.length ? shown.map(([k, n]) =>
+      '<button data-kw="' + e(k) + '" aria-pressed="' + (st.kw === k) + '" style="font-size:' + (12 + 9 * Math.sqrt(n / max)).toFixed(1) + 'px">' + e(k) + '<i>' + n + '</i></button>').join('') +
+      (kc.length > LIMIT ? '<button class="more" data-more="1" style="background:none;color:var(--accent);font-size:12.5px;text-decoration:underline">' + (st.allKw ? '少なくする' : 'すべて表示（' + kc.length + '）') + '</button>' : '')
+      : '<span class="hint">この組み合わせの意見にはキーワードがありません。</span>';
+
+    // 意見リスト
+    const list = OPS.filter((o) => match(o, st.l2, st.tech, st.kw));
+    const crumbs = [];
+    if (st.l2) crumbs.push('<span class="tg tg-axis">' + e(L2_LABEL[st.l2]) + '</span><button class="clear" data-clear="l2">外す</button>');
+    if (st.tech) crumbs.push('<span class="tg tg-tech">' + e(TE.label[st.tech]) + '</span><button class="clear" data-clear="tech">外す</button>');
+    if (st.kw) crumbs.push('<span class="tg tg-kw on">#' + e(st.kw) + '</span><button class="clear" data-clear="kw">外す</button>');
+    document.getElementById('crumbs').innerHTML = crumbs.length ? crumbs.join('') : '<span>すべての意見（箱を押すと絞り込めます）</span>';
+    document.getElementById('listTitle').textContent = '意見 ' + list.length + ' 件';
+    document.getElementById('oplist').innerHTML = list.length ? list.map((o) => A.opCardHtml(o, { kw: st.kw })).join('')
+      : '<div class="empty">この組み合わせの意見はまだありません。ここが「抜け」です。</div>';
+    drawLinks();
+  }
+
+  // S+3E の箱 → 技術の箱 の線。太さは、選んでいる評価軸（無ければ全体）での意見数
+  function drawLinks() {
+    const svg = document.getElementById('links');
+    const box = document.getElementById('tiers').getBoundingClientRect();
+    const rel = (el) => { const r = el.getBoundingClientRect(); return { x: r.left - box.left, y: r.top - box.top, w: r.width, h: r.height }; };
+    const out = [];
+    const pe = rel(document.getElementById('energyBtn'));
+    const bl = rel(document.getElementById('block'));
+    out.push('<path d="M' + (pe.x + pe.w / 2) + ' ' + (pe.y + pe.h) + ' V' + bl.y + '" style="stroke-width:2"/>');
+    const sy = bl.y + bl.h;
+    const ns = TE.values.map(([v]) => cnt(st.l2, v, st.kw));
+    const max = Math.max(1, ...ns);
+    const btns = Array.from(document.querySelectorAll('[data-tech]'));
+    const firstY = Math.min(...btns.map((b) => rel(b).y));
+    const row1 = btns.filter((b) => rel(b).y <= firstY + 4);
+    btns.forEach((b, i) => {
+      const r = rel(b);
+      if (r.y > firstY + 4) return; // 折り返した 2 行目以降には線を引かない（箱の上を横切るため）
+      // 線の出発点は S+3E の箱の下辺に均等に散らす（1 点に集まると太い帯になって読めないため）
+      const k = row1.indexOf(b), m = row1.length;
+      const sx = bl.x + bl.w * (m > 1 ? 0.1 + 0.8 * k / (m - 1) : 0.5);
+      const tx = r.x + r.w / 2, ty = r.y;
+      const my = (sy + ty) / 2;
+      const w = ns[i] ? 1.5 + 9 * ns[i] / max : 1;
+      const hot = st.tech === b.dataset.tech;
+      out.push('<path class="' + (hot ? 'hot' : '') + '" d="M' + sx + ' ' + sy + ' C' + sx + ' ' + my + ' ' + tx + ' ' + my + ' ' + tx + ' ' + ty + '" style="stroke-width:' + w.toFixed(1) + ';opacity:' + (ns[i] ? 1 : .35) + '"/>');
+    });
+    svg.innerHTML = out.join('');
+  }
+})();
+</script>
+</body>
+</html>

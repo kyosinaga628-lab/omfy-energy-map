@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>論点マップ 別案</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="common.css">
+<link rel="stylesheet" href="brand.css">
+<link rel="stylesheet" href="alt.css">
+<style>
+.purpose{max-width:46em;margin:0 0 30px;padding:20px 24px;border-radius:24px;background:var(--bg2)}
+.purpose .pl{display:block;font-size:13px;font-weight:800;letter-spacing:.04em;margin:0 0 6px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:max-content}
+.purpose p{margin:0;font-size:15.5px;line-height:1.85}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.cards a{display:flex;flex-direction:column;gap:8px;padding:26px 26px 22px;border-radius:28px;background:var(--bg2);text-decoration:none;color:inherit;transition:transform .3s ease,box-shadow .3s ease}
+.cards a:hover{transform:translateY(-6px);box-shadow:var(--lift)}
+.cards .num{font-family:"Inter",sans-serif;font-size:40px;font-weight:800;line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:max-content}
+.cards h2{font-size:19px;letter-spacing:-.01em;line-height:1.45}
+.cards p{margin:0;font-size:14px;color:var(--muted)}
+.cards .for{font-size:12px;font-weight:700;color:var(--ink);margin-top:auto;padding-top:8px}
+.cards .go{font-size:13px;font-weight:700;color:var(--accent)}
+.scope{margin-top:30px;font-size:13px;color:var(--muted);max-width:52em}
+</style>
+</head>
+<body>
+<div class="glow glow-a"></div>
+<div class="glow glow-b"></div>
+<header class="header">
+  <div class="bar">
+    <nav class="vnav" aria-label="別案の切り替え">
+      <a href="alt.html" aria-current="page">別案トップ</a><a href="alt-layers.html">A 3階層</a><a href="alt-axes.html">B 3軸</a><a href="alt-life.html">C 暮らし</a>
+    </nav>
+    <a class="logo" href="alt.html"><b>omfy</b><span>論点マップ 別案</span></a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="pagehead">
+    <h1>論点マップの別案<span class="proto">試作</span><span class="sub">同じ意見のデータを、3 つの別の切り口で整理してみる</span></h1>
+  </div>
+
+  <div class="purpose">
+    <span class="pl">活動と論点マップの目的</span>
+    <p>特定の政策提言や一つの結論へ誘導することはしません。産業界の方も一般の市民も、それぞれの立場と関心のレベルで、問題を自分事として考えられる場と情報を提供します。</p>
+  </div>
+  <p class="lead">「それぞれのレベルで」考えられるように、入口の違う 3 つの整理を試作しました。いずれも現行の論点マップと同じスプレッドシートの意見を読み込んでいます。現行のマップはそのまま残します。</p>
+
+  <div class="cards">
+    <a href="alt-layers.html">
+      <span class="num">A</span>
+      <h2>3階層＋キーワード</h2>
+      <p>エネルギー → S+3E → 技術 の 3 段だけで全体を見渡し、細かい論点（放射性廃棄物、再稼働など）は意見に付くキーワードにする。階層が浅いので迷いにくい。</p>
+      <span class="for">向いている人: はじめて全体を見る人、説明の場</span>
+      <span class="go">開く →</span>
+    </a>
+    <a href="alt-axes.html">
+      <span class="num">B</span>
+      <h2>3つの軸で並べる</h2>
+      <p>意見に「評価軸・技術・主体」の 3 種類のタグを付け、1 つの軸で絞り込む（例: 経済効率性）と、残り 2 軸のタグで意見どうしの関係がネットワーク／格子で見える。</p>
+      <span class="for">向いている人: 産業界・専門家など、特定の観点から深く比べたい人</span>
+      <span class="go">開く →</span>
+    </a>
+    <a href="alt-life.html">
+      <span class="num">C</span>
+      <h2>暮らしから見る</h2>
+      <p>電気代やスマホの充電など「見えている」ものから、素材を作るエネルギーや燃料の輸入など「見えていない」ものへ。生活者の認識を同心円で表し、論点・意見につなぐ。</p>
+      <span class="for">向いている人: 一般の市民、生徒、ワークショップ</span>
+      <span class="go">開く →</span>
+    </a>
+  </div>
+
+  <p class="scope">このページは、omfy の関係者と、その周りの方に見ていただくための試作です。検索エンジンには載せず、現行の論点マップのページからもリンクしていません。意見に付いているタグ（評価軸・技術・主体・キーワード・暮らしの項目）は、試作のために仮に付けたものです。</p>
+
+  <footer>
+    <span>omfy 論点マップ 別案（試作・関係者向け）</span>
+    <a href="index.html">現行の論点マップ</a>
+  </footer>
+</div>
+</body>
+</html>

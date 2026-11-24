@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>別案B 3軸マップ</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="common.css">
+<link rel="stylesheet" href="brand.css">
+<link rel="stylesheet" href="alt.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="common.js"></script>
+<script src="alt-tags.js"></script>
+<style>
+.ctrl{padding:16px 20px;display:grid;gap:12px}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.row > .k{font-size:12.5px;font-weight:800;min-width:9.5em}
+.step{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--ink);color:var(--bg);font-size:11px;font-weight:800;margin-right:6px}
+.vals{display:flex;flex-wrap:wrap;gap:6px}
+.vals .btn i{font-style:normal;color:var(--muted);margin-left:4px;font-size:11px}
+.vals .btn[aria-pressed="true"] i{color:inherit;opacity:.75}
+.axlabel{font-size:12.5px;color:var(--muted)}
+.axlabel b{font-weight:800}
+.fc-axis{color:var(--f-axis)} .fc-tech{color:var(--f-tech)} .fc-actor{color:color-mix(in srgb,var(--f-actor) 80%,var(--ink))}
+main.app{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);margin-top:16px;overflow:hidden}
+.viz{border-right:1px solid var(--rule);min-height:560px;position:relative}
+.viz svg{display:block;width:100%;height:auto}
+.panel{padding:18px 20px;max-height:760px;overflow:auto}
+.panel h2{font-size:19px;letter-spacing:-.01em;margin:2px 0 4px}
+.panel .sub{font-size:12.5px;color:var(--muted);margin-bottom:12px}
+.legend{position:absolute;left:14px;bottom:10px;display:flex;flex-wrap:wrap;gap:4px 12px;font-size:11.5px;color:var(--muted);background:color-mix(in srgb,var(--bg) 85%,transparent);padding:4px 8px;border-radius:10px}
+/* ネットワーク */
+.net .lk{stroke:var(--rule2);stroke-width:.8;opacity:.75}
+.net .lk.hot{stroke:var(--ink);opacity:1;stroke-width:1.4}
+.net .hub{cursor:pointer}
+.net .hub circle,.net .hub rect{stroke:var(--bg);stroke-width:2}
+.net .hub text{font-size:12.5px;font-weight:700}
+.net .hub.dim{opacity:.45}
+.net .opn{cursor:pointer}
+.net .opn circle{stroke:var(--bg);stroke-width:1}
+.net .opn.sel circle{stroke:var(--ink);stroke-width:2.2}
+.net.focus .opn:not(.on){opacity:.18}
+.net.focus .lk:not(.hot){opacity:.12}
+.net.focus .hub:not(.on){opacity:.35}
+/* 格子 */
+.grid{padding:12px;overflow:auto;max-height:760px}
+.grid table{border-collapse:separate;border-spacing:3px;font-size:12px}
+.grid th{font-weight:700;padding:4px 6px;text-align:left;vertical-align:bottom;color:var(--ink)}
+.grid thead th{writing-mode:vertical-rl;text-orientation:mixed;white-space:nowrap;height:9.5em;text-align:left;font-size:12px}
+.grid tbody th{white-space:nowrap;font-size:12px;max-width:11em}
+.grid td{background:var(--bg2);border-radius:8px;min-width:58px;height:44px;vertical-align:top;padding:5px;cursor:pointer}
+.grid td:hover{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.grid td.sel{box-shadow:inset 0 0 0 2px var(--accent);background:var(--accent-soft)}
+.grid td.z{cursor:default;background:color-mix(in srgb,var(--bg2) 45%,var(--bg))}
+.grid td.z:hover{box-shadow:none}
+.grid .dots{display:flex;flex-wrap:wrap;gap:2px;max-width:92px}
+.grid .dots i{width:8px;height:8px;border-radius:50%;display:block}
+.grid .n{font-size:10.5px;color:var(--muted);display:block;margin-top:2px}
+@media (max-width: 900px){ main.app{grid-template-columns:1fr} .viz{border-right:0;border-bottom:1px solid var(--rule);min-height:0} .panel{max-height:none} }
+@media (max-width: 640px){ .row > .k{min-width:0;width:100%} .ctrl{padding:14px} }
+</style>
+</head>
+<body>
+<div class="glow glow-a"></div>
+<div class="glow glow-b"></div>
+<header class="header">
+  <div class="bar">
+    <nav class="vnav" aria-label="別案の切り替え">
+      <a href="alt.html">別案トップ</a><a href="alt-layers.html">A 3階層</a><a href="alt-axes.html" aria-current="page">B 3軸</a><a href="alt-life.html">C 暮らし</a>
+    </nav>
+    <a class="logo" href="alt.html"><b>omfy</b><span>論点マップ 別案</span></a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="pagehead">
+    <h1>別案B　3つの軸で並べる<span class="proto">試作</span><span class="sub">1 つの軸で絞り込み、残り 2 つの軸で意見どうしの関係を見る</span></h1>
+    <div class="meta" id="metaLine">読み込み中…</div>
+  </div>
+  <p class="lead">各意見に<b>評価軸</b>・<b>技術</b>・<b>主体</b>の 3 種類のタグを付けておきます。1 つの軸で絞り込む（例: 評価軸 =「経済効率性」）と、その意見だけが残り、<b>残り 2 つの軸のタグ</b>を手がかりに配置されます。ネットワークでは、同じタグを持つ意見が近くに集まり、2 つのタグにまたがる意見はその間に置かれます。</p>
+
+  <div id="loadingState" class="state">データを取得しています…</div>
+
+  <div id="appArea" hidden>
+    <div class="card ctrl">
+      <div class="row"><span class="k"><span class="step">1</span>絞り込む軸</span>
+        <span class="seg" id="facetSeg" role="group" aria-label="絞り込む軸"></span></div>
+      <div class="row"><span class="k"><span class="step">2</span>値</span><div class="vals" id="vals"></div></div>
+      <div class="row"><span class="k"><span class="step">3</span>残り 2 軸での整理</span>
+        <span class="seg" role="group" aria-label="表示">
+          <button class="btn" id="vNet" aria-pressed="true">ネットワーク</button><button class="btn" id="vGrid" aria-pressed="false">格子（表）</button>
+        </span>
+        <span class="axlabel" id="axLabel"></span>
+        <button class="btn" id="swap" title="2 つの軸を入れ替える">入れ替え ⇄</button>
+      </div>
+    </div>
+
+    <main class="card app">
+      <div class="viz" id="viz"></div>
+      <div class="panel" id="panel"></div>
+    </main>
+    <p class="hint" style="margin-top:10px">タグはこの試作のために仮に付けたものです（1 つの意見に複数付くことがあります）。格子では、複数のタグを持つ意見は複数のマスに数えます。</p>
+  </div>
+
+  <footer>
+    <span>omfy 論点マップ 別案（試作・関係者向け）</span>
+    <a href="index.html">現行の論点マップ</a>
+    <a href="alt-layers.html">別案A 3階層</a>
+    <a href="alt-life.html">別案C 暮らしから見る</a>
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  const O = window.OMFY, A = window.ALT, e = O.escapeHtml;
+  const F = A.FACETS;
+  const FKEYS = ['axis', 'tech', 'actor'];
+  const FCOLOR = { axis: 'var(--f-axis)', tech: 'var(--f-tech)', actor: 'var(--f-actor)' };
+  const st = { facet: 'axis', value: 'E', view: 'net', swap: false, pick: null };
+  let OPS = [];
+
+  // URL の #f=axis&v=E で状態を共有できるようにする
+  function readHash() {
+    const p = new URLSearchParams(location.hash.slice(1));
+    if (FKEYS.indexOf(p.get('f')) >= 0) st.facet = p.get('f');
+    if (p.has('v')) st.value = p.get('v') || null;
+    if (p.get('view') === 'grid') st.view = 'grid';
+  }
+  function writeHash() {
+    history.replaceState(null, '', '#f=' + st.facet + '&v=' + encodeURIComponent(st.value || '') + (st.view === 'grid' ? '&view=grid' : ''));
+  }
+  const rest = () => { const r = FKEYS.filter((k) => k !== st.facet); return st.swap ? r.reverse() : r; };
+  const filtered = () => OPS.filter((o) => !st.value || A.valuesOf(o, st.facet).indexOf(st.value) >= 0);
+
+  A.start((data, ops) => {
+    OPS = ops;
+    readHash();
+    document.getElementById('appArea').hidden = false;
+    document.getElementById('facetSeg').innerHTML = FKEYS.map((k) => '<button class="btn" data-f="' + k + '">' + e(F[k].short) + '</button>').join('');
+    document.getElementById('facetSeg').addEventListener('click', (ev) => {
+      const b = ev.target.closest('[data-f]'); if (!b) return;
+      st.facet = b.dataset.f; st.value = null; st.pick = null; st.swap = false; render();
+    });
+    document.getElementById('vals').addEventListener('click', (ev) => {
+      const b = ev.target.closest('[data-v]'); if (!b) return;
+      st.value = b.dataset.v || null; st.pick = null; render();
+    });
+    document.getElementById('vNet').onclick = () => { st.view = 'net'; st.pick = null; render(); };
+    document.getElementById('vGrid').onclick = () => { st.view = 'grid'; st.pick = null; render(); };
+    document.getElementById('swap').onclick = () => { st.swap = !st.swap; st.pick = null; render(); };
+    document.getElementById('panel').addEventListener('click', (ev) => {
+      const b = ev.target.closest('[data-unpick]'); if (b) { st.pick = null; highlight(); renderPanel(); }
+    });
+    render();
+  });
+
+  function render() {
+    writeHash();
+    document.querySelectorAll('#facetSeg [data-f]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.f === st.facet)));
+    const f = F[st.facet];
+    const counts = A.count(OPS, (o) => A.valuesOf(o, st.facet));
+    const vals = f.values.map(([v, name]) => [v, name]).concat(counts.get('_') ? [['_', f.none]] : []);
+    if (st.value && !vals.some(([v]) => v === st.value)) st.value = null;
+    document.getElementById('vals').innerHTML =
+      '<button class="btn" data-v="" aria-pressed="' + !st.value + '">すべて<i>' + OPS.length + '</i></button>' +
+      vals.map(([v, name]) => '<button class="btn" data-v="' + e(v) + '" aria-pressed="' + (st.value === v) + '">' + e(name) + '<i>' + (counts.get(v) || 0) + '</i></button>').join('');
+    document.getElementById('vNet').setAttribute('aria-pressed', String(st.view === 'net'));
+    document.getElementById('vGrid').setAttribute('aria-pressed', String(st.view === 'grid'));
+    const [p, q] = rest();
+    document.getElementById('axLabel').innerHTML = st.view === 'net'
+      ? '<b class="fc-' + p + '">● ' + e(F[p].short) + '</b> と <b class="fc-' + q + '">■ ' + e(F[q].short) + '</b> のタグで配置'
+      : '列 = <b class="fc-' + p + '">' + e(F[p].short) + '</b>、行 = <b class="fc-' + q + '">' + e(F[q].short) + '</b>';
+    if (st.view === 'net') drawNet(); else drawGrid();
+    renderPanel();
+  }
+
+  // ---------- ネットワーク ----------
+  let NET = null;
+  function drawNet() {
+    const [p, q] = rest();
+    const ops = filtered();
+    const W = 900, H = 640;
+    const hubs = new Map();
+    const nodes = [], links = [];
+    ops.forEach((o) => {
+      const on = { kind: 'op', o, id: 'o' + o.idx, r: 5.5 };
+      nodes.push(on);
+      [[p, 'P'], [q, 'Q']].forEach(([fk, side]) => A.valuesOf(o, fk).forEach((v) => {
+        const id = side + ':' + v;
+        if (!hubs.has(id)) { const h = { kind: 'hub', side, facet: fk, v, id, n: 0, label: A.valueLabel(fk, v), none: v === '_' || (fk === 'tech' && v === 'X') }; hubs.set(id, h); nodes.push(h); }
+        hubs.get(id).n++;
+        links.push({ source: on.id, target: id });
+      }));
+    });
+    hubs.forEach((h) => { h.r = 7 + 3.2 * Math.sqrt(h.n); });
+    const degOf = {};
+    links.forEach((l) => { degOf[l.source] = (degOf[l.source] || 0) + 1; });
+    nodes.forEach((d) => { d.deg = degOf[d.id] || 0; });
+    // 2 つの軸の拠点（ハブ）を左右に分けて置く。意見はタグの付いた拠点に引かれて間に収まる
+    const sim = d3.forceSimulation(nodes)
+      .force('link', d3.forceLink(links).id((d) => d.id).distance((l) => 26 + l.target.r).strength((l) => 0.9 / Math.max(1, l.source.deg || 1)))
+      .force('charge', d3.forceManyBody().strength((d) => d.kind === 'hub' ? -260 : -26))
+      .force('collide', d3.forceCollide((d) => d.r + (d.kind === 'hub' ? 6 : 1.5)))
+      .force('x', d3.forceX((d) => d.kind === 'hub' ? (d.side === 'P' ? W * 0.27 : W * 0.73) : W / 2).strength((d) => d.kind === 'hub' ? 0.22 : 0.02))
+      .force('y', d3.forceY(H / 2).strength((d) => d.kind === 'hub' ? 0.06 : 0.03))
+      .stop();
+    // 初期位置を決めておく（毎回同じ形になるように）
+    let hp = 0, hq = 0;
+    nodes.forEach((d, i) => {
+      if (d.kind === 'hub') { const k = d.side === 'P' ? hp++ : hq++; d.x = d.side === 'P' ? W * 0.27 : W * 0.73; d.y = 80 + k * 70; }
+      else { d.x = W / 2 + ((i * 37) % 120) - 60; d.y = H / 2 + ((i * 53) % 200) - 100; }
+    });
+    for (let i = 0; i < 420; i++) sim.tick();
+    // 表示範囲を中身に合わせる
+    const pad = 70;
+    const xs = nodes.map((d) => d.x), ys = nodes.map((d) => d.y);
+    const x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad, y0 = Math.min(...ys) - 30, y1 = Math.max(...ys) + 40;
+    const lk = links.map((l) => ({ s: l.source, t: l.target }));
+    const out = ['<svg class="net" id="netSvg" viewBox="' + [x0, y0, x1 - x0, y1 - y0].map((v) => v.toFixed(0)).join(' ') + '" role="img" aria-label="意見とタグのネットワーク">'];
+    lk.forEach((l) => out.push('<line class="lk" data-o="' + l.s.o.idx + '" data-h="' + e(l.t.id) + '" x1="' + l.s.x.toFixed(1) + '" y1="' + l.s.y.toFixed(1) + '" x2="' + l.t.x.toFixed(1) + '" y2="' + l.t.y.toFixed(1) + '"/>'));
+    nodes.filter((d) => d.kind === 'op').forEach((d) => out.push(
+      '<g class="opn" data-o="' + d.o.idx + '" tabindex="0"><circle cx="' + d.x.toFixed(1) + '" cy="' + d.y.toFixed(1) + '" r="' + d.r + '" fill="' + O.stanceColor(d.o.stance) + '"/><title>' + e(d.o.claim) + '</title></g>'));
+    nodes.filter((d) => d.kind === 'hub').forEach((d) => {
+      const c = FCOLOR[d.facet];
+      const shape = d.side === 'P'
+        ? '<circle cx="' + d.x.toFixed(1) + '" cy="' + d.y.toFixed(1) + '" r="' + d.r.toFixed(1) + '" fill="' + c + '"/>'
+        : '<rect x="' + (d.x - d.r).toFixed(1) + '" y="' + (d.y - d.r).toFixed(1) + '" width="' + (2 * d.r).toFixed(1) + '" height="' + (2 * d.r).toFixed(1) + '" rx="4" fill="' + c + '"/>';
+      out.push('<g class="hub' + (d.none ? ' dim' : '') + '" data-h="' + e(d.id) + '" tabindex="0">' + shape +
+        '<text class="halo" x="' + d.x.toFixed(1) + '" y="' + (d.y - d.r - 5).toFixed(1) + '" text-anchor="middle">' + e(d.label) + ' ' + d.n + '</text></g>');
+    });
+    out.push('</svg>');
+    const viz = document.getElementById('viz');
+    viz.innerHTML = out.join('') + legendHtml();
+    NET = { hubs };
+    const svg = document.getElementById('netSvg');
+    const act = (ev) => {
+      const h = ev.target.closest('.hub'), o = ev.target.closest('.opn');
+      if (h) st.pick = st.pick && st.pick.hub === h.dataset.h ? null : { hub: h.dataset.h };
+      else if (o) st.pick = st.pick && st.pick.op === +o.dataset.o ? null : { op: +o.dataset.o };
+      else st.pick = null;
+      highlight(); renderPanel();
+    };
+    svg.addEventListener('click', act);
+    svg.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); act(ev); } });
+    highlight();
+  }
+  function legendHtml() {
+    return '<div class="legend">' + O.STANCES.map((s) => '<span class="legend-k"><i class="sw round" style="background:' + O.stanceColor(s) + '"></i>' + s + '</span>').join('') + '<span>（意見の点の色 = 立場）</span></div>';
+  }
+  function highlight() {
+    const svg = document.getElementById('netSvg');
+    if (!svg) return;
+    svg.classList.toggle('focus', !!st.pick);
+    svg.querySelectorAll('.on,.hot,.sel').forEach((x) => x.classList.remove('on', 'hot', 'sel'));
+    if (!st.pick) return;
+    if (st.pick.hub) {
+      const h = st.pick.hub;
+      svg.querySelector('.hub[data-h="' + CSS.escape(h) + '"]').classList.add('on');
+      svg.querySelectorAll('.lk[data-h="' + CSS.escape(h) + '"]').forEach((l) => {
+        l.classList.add('hot');
+        svg.querySelector('.opn[data-o="' + l.dataset.o + '"]').classList.add('on');
+      });
+    } else {
+      const g = svg.querySelector('.opn[data-o="' + st.pick.op + '"]');
+      if (g) g.classList.add('on', 'sel');
+      svg.querySelectorAll('.lk[data-o="' + st.pick.op + '"]').forEach((l) => {
+        l.classList.add('hot');
+        svg.querySelector('.hub[data-h="' + CSS.escape(l.dataset.h) + '"]').classList.add('on');
+      });
+    }
+  }
+
+  // ---------- 格子 ----------
+  function drawGrid() {
+    const [p, q] = rest();
+    const ops = filtered();
+    const valsOf = (fk) => {
+      const c = A.count(ops, (o) => A.valuesOf(o, fk));
+      return F[fk].values.map(([v]) => v).concat(['_']).filter((v) => c.get(v));
+    };
+    const cols = valsOf(p), rows = valsOf(q);
+    const cell = (cv, rv) => ops.filter((o) => A.valuesOf(o, p).indexOf(cv) >= 0 && A.valuesOf(o, q).indexOf(rv) >= 0);
+    let h = '<div class="grid"><table><thead><tr><th></th>' + cols.map((c) => '<th class="fc-' + p + '">' + e(A.valueLabel(p, c)) + '</th>').join('') + '</tr></thead><tbody>';
+    rows.forEach((r) => {
+      h += '<tr><th class="fc-' + q + '">' + e(A.valueLabel(q, r)) + '</th>';
+      cols.forEach((c) => {
+        const list = cell(c, r);
+        const sel = st.pick && st.pick.cell === c + '|' + r;
+        h += list.length
+          ? '<td data-c="' + e(c) + '" data-r="' + e(r) + '" class="' + (sel ? 'sel' : '') + '" title="' + e(A.valueLabel(p, c) + ' × ' + A.valueLabel(q, r)) + '"><span class="dots">' +
+            list.map((o) => '<i style="background:' + O.stanceColor(o.stance) + '"></i>').join('') + '</span><span class="n">' + list.length + '</span></td>'
+          : '<td class="z"></td>';
+      });
+      h += '</tr>';
+    });
+    h += '</tbody></table></div>';
+    const viz = document.getElementById('viz');
+    viz.innerHTML = h;
+    viz.querySelector('table').addEventListener('click', (ev) => {
+      const td = ev.target.closest('td[data-c]'); if (!td) return;
+      const k = td.dataset.c + '|' + td.dataset.r;
+      st.pick = st.pick && st.pick.cell === k ? null : { cell: k, c: td.dataset.c, r: td.dataset.r };
+      viz.querySelectorAll('td.sel').forEach((x) => x.classList.remove('sel'));
+      if (st.pick) td.classList.add('sel');
+      renderPanel();
+    });
+  }
+
+  // ---------- 右の欄 ----------
+  function renderPanel() {
+    const [p, q] = rest();
+    const ops = filtered();
+    const head = st.value ? A.valueLabel(st.facet, st.value) : 'すべての意見';
+    let title = head, sub = F[st.facet].short + 'で絞り込み', list = ops, back = false;
+    if (st.pick && st.pick.hub) {
+      const h = NET.hubs.get(st.pick.hub);
+      list = ops.filter((o) => A.valuesOf(o, h.facet).indexOf(h.v) >= 0);
+      title = head + ' × ' + h.label; sub = F[h.facet].short + '「' + h.label + '」のタグを持つ意見'; back = true;
+    } else if (st.pick && st.pick.op != null) {
+      list = ops.filter((o) => o.idx === st.pick.op); title = '選んだ意見'; sub = 'つながっている拠点が強調されています'; back = true;
+    } else if (st.pick && st.pick.cell) {
+      list = ops.filter((o) => A.valuesOf(o, p).indexOf(st.pick.c) >= 0 && A.valuesOf(o, q).indexOf(st.pick.r) >= 0);
+      title = A.valueLabel(p, st.pick.c) + ' × ' + A.valueLabel(q, st.pick.r); sub = head + ' の中で'; back = true;
+    } else {
+      sub += '。' + (st.view === 'net' ? '拠点（大きな丸・四角）や点' : 'マス') + 'を押すと、ここに絞って表示します';
+    }
+    document.getElementById('panel').innerHTML =
+      '<h2>' + e(title) + '<span style="font-weight:500;font-size:13px;color:var(--muted);margin-left:8px">' + list.length + ' 件</span></h2>' +
+      '<div class="sub">' + e(sub) + (back ? '　<button class="clear" data-unpick="1">選択を外す</button>' : '') + '</div>' +
+      (list.length ? '<div class="oplist">' + list.map((o) => A.opCardHtml(o)).join('') + '</div>' : '<div class="empty">該当する意見はありません。</div>');
+  }
+})();
+</script>
+</body>
+</html>

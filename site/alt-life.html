@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>別案C 暮らしの視界</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="common.css">
+<link rel="stylesheet" href="brand.css">
+<link rel="stylesheet" href="alt.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="common.js"></script>
+<script src="alt-tags.js"></script>
+<style>
+:root{ --ring:var(--k-theme); }
+main.app{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);overflow:hidden}
+.ringlg{display:flex;flex-wrap:wrap;gap:4px 16px;padding:4px 10px 8px;font-size:12px;color:var(--muted)}
+.ringlg b{color:var(--ink)}
+.hzsw{display:inline-block;width:22px;border-top:2.5px dashed var(--warn);vertical-align:middle;margin-right:6px}
+.viz{border-right:1px solid var(--rule);padding:10px;position:relative}
+.viz svg{display:block;width:100%;height:auto}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding:6px 8px 0;font-size:12.5px;color:var(--muted)}
+.panel{padding:20px 22px;max-height:860px;overflow:auto}
+.panel .crumb{font-size:12px;color:var(--muted)}
+.panel h2{font-size:22px;letter-spacing:-.02em;margin:2px 0 8px}
+.panel p.tx{font-size:14px;margin:0 0 12px}
+.panel .links{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.panel .links a{font-size:12px;text-decoration:none;padding:2px 10px;border-radius:999px;background:var(--bg2);color:var(--ink)}
+.panel .links a:hover{background:var(--accent-soft)}
+.panel h3{font-size:13px;margin:14px 0 8px}
+/* 同心円 */
+.life .ringbg{stroke:none}
+.life .div{stroke:var(--bg);stroke-width:3}
+.life .horizon{fill:none;stroke:var(--warn);stroke-width:2.5;stroke-dasharray:9 7}
+.life .hz{font-size:15px;font-weight:700;fill:var(--warn)}
+.life .rl{font-size:13px;font-weight:700;fill:var(--muted)}
+.life .scene{font-size:21px;font-weight:800}
+.life .it{cursor:pointer}
+.life .it rect{fill:var(--bg);stroke:var(--rule2);stroke-width:1.5;transition:stroke .15s ease}
+.life .it text{font-size:15px;font-weight:700}
+.life .it:hover rect,.life .it:focus-visible rect{stroke:var(--ink)}
+.life .it.sel rect{stroke:var(--accent);stroke-width:3}
+.life .it.known rect{fill:color-mix(in srgb,var(--ok) 22%,var(--bg));stroke:var(--ok)}
+.life .it .bd{fill:var(--accent)}
+.life .it .bt{fill:#fff;font-size:11.5px;font-weight:800}
+.life .it .ck{fill:var(--ok);font-size:15px;font-weight:800}
+.life .me{cursor:pointer}
+.life .me circle{fill:var(--pill-bg)}
+.life .me text{fill:var(--pill-ink);font-weight:800}
+.life .me.sel circle{stroke:var(--accent);stroke-width:4}
+.life.dimops .bdg{display:none}
+/* 一覧（スマホ） */
+.list{display:none;padding:6px}
+.list .rg{margin:10px 0 4px;font-size:12.5px;font-weight:800;color:var(--muted)}
+.list .items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.list button{font:inherit;text-align:left;border:1.5px solid var(--rule2);background:var(--bg);color:var(--ink);border-radius:12px;padding:6px 10px;cursor:pointer;font-size:13px;font-weight:700;line-height:1.4}
+.list button small{display:block;font-weight:500;font-size:11px;color:var(--muted)}
+.list button.sel{border-color:var(--accent)}
+.list button.known{background:color-mix(in srgb,var(--ok) 18%,var(--bg));border-color:var(--ok)}
+/* まとめ */
+.sum{margin-top:22px;padding:20px 22px}
+.sbar{display:flex;height:30px;border-radius:10px;overflow:hidden;margin:10px 0 8px;gap:2px}
+.sbar span{display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;color:#fff;min-width:0;white-space:nowrap;overflow:hidden}
+.barlg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
+.sum p{font-size:13.5px;margin:8px 0 0}
+.self{margin-top:12px;font-size:13px}
+.self b{font-variant-numeric:tabular-nums}
+@media (max-width: 900px){ main.app{grid-template-columns:1fr} .viz{border-right:0;border-bottom:1px solid var(--rule)} .panel{max-height:none} }
+@media (max-width: 640px){ .viz svg{display:none} .list{display:block} }
+</style>
+</head>
+<body>
+<div class="glow glow-a"></div>
+<div class="glow glow-b"></div>
+<header class="header">
+  <div class="bar">
+    <nav class="vnav" aria-label="別案の切り替え">
+      <a href="alt.html">別案トップ</a><a href="alt-layers.html">A 3階層</a><a href="alt-axes.html">B 3軸</a><a href="alt-life.html" aria-current="page">C 暮らし</a>
+    </nav>
+    <a class="logo" href="alt.html"><b>omfy</b><span>論点マップ 別案</span></a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="pagehead">
+    <h1>別案C　暮らしから見たエネルギー<span class="proto">試作</span><span class="sub">生活者には、エネルギーのどこまでが見えているか</span></h1>
+    <div class="meta" id="metaLine">読み込み中…</div>
+  </div>
+  <p class="lead">生活者は、電気代やガソリン代は意識しても、製品の<b>原材料や製造・輸送に使われたエネルギー</b>まではあまり意識しません。この図は、暮らしの 6 つの場面（扇形）ごとに、エネルギーとの関わりを<b>見えやすいもの（内側）から見えにくいもの（外側）</b>へ並べた仮説です。点線は「ふだんの意識が届くのはここまで」という仮の境界です。項目を押すと、説明と、関係する論点・omfy の意見が出ます。</p>
+
+  <div id="loadingState" class="state">データを取得しています…</div>
+
+  <div id="appArea" hidden>
+    <main class="card app">
+      <div class="viz">
+        <div class="toolbar">
+          <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="showOps" checked style="accent-color:var(--accent)"> omfy の意見の数を表示</label>
+          <button class="btn" id="selfBtn" aria-pressed="false">セルフチェック: 知っていたものを押す</button>
+          <button class="clear" id="selfReset" hidden>チェックを消す</button>
+        </div>
+        <div id="svgHost"></div>
+        <div class="list" id="list"></div>
+      </div>
+      <div class="panel" id="panel"></div>
+    </main>
+
+    <section class="card sum" id="sum"></section>
+  </div>
+
+  <footer>
+    <span>omfy 論点マップ 別案（試作・関係者向け）</span>
+    <a href="index.html">現行の論点マップ</a>
+    <a href="alt-layers.html">別案A 3階層</a>
+    <a href="alt-axes.html">別案B 3軸で並べる</a>
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  const O = window.OMFY, A = window.ALT, e = O.escapeHtml;
+
+  const SCENES = [
+    ['home', '住む'], ['move', '移動する'], ['food', '食べる'], ['buy', '買う・使う'], ['net', 'つながる'], ['work', '働く'],
+  ];
+  const RINGS = ['', '① 見えている', '② 聞いたことはある', '③ 意識しにくい', '④ 遠い（上流）'];
+  const RING_DESC = ['', '毎月払う・目にするもの', '言葉は知っているもの', '製品やサービスの中に埋もれているもの', '資源・産業・国際など、暮らしから遠いもの'];
+  // 暮らしの項目。text の中の数字は omfy の意見で紹介されたもの（「意見より」と書く）に限る
+  const ITEMS = [
+    { id: 'me', ring: 0, label: 'わたし', nodes: ['demand.behavior', 'demand.save'],
+      text: '暮らしを支えるエネルギーの全体量。omfy の議論では「人の生存に最低限必要なのは約 100W、日本人は平均約 4,700W を使っている」という数字が紹介された（意見より）。' },
+    { id: 'home_bill', scene: 'home', ring: 1, label: '電気代・ガス代', nodes: ['re.cost', 'dom.opinion'],
+      text: '毎月の請求で、いちばん目に見えるエネルギー。値上がりは家計の実感として伝わる。' },
+    { id: 'home_outage', scene: 'home', ring: 2, label: '停電・節電要請', nodes: ['re.grid', 'grid'],
+      text: '災害や需給のひっ迫のときにだけ意識される。ふだんは「あって当たり前」のもの。' },
+    { id: 'home_levy', scene: 'home', ring: 3, label: '電気代の内訳', nodes: ['re.cost', 'eco'],
+      text: '燃料費調整額や再エネ賦課金など、請求書には載っているが、中身はあまり意識されない部分。' },
+    { id: 'fuel_import', scene: 'home', ring: 4, label: '発電燃料の輸入', nodes: ['intl.price', 'thermal.lng', 'sec'],
+      text: '電気の多くは、輸入した LNG・石炭などで作られている。その支払いは国全体で大きな額になる（意見より: 電力市場の売上 約 25 兆円のうち、約 13 兆円が燃料費として海外へ）。' },
+    { id: 'move_gas', scene: 'move', ring: 1, label: 'ガソリン代', nodes: ['intl.price'],
+      text: '給油のたびに価格が見える。中東情勢などのニュースとも結びつきやすい。' },
+    { id: 'move_ev', scene: 'move', ring: 2, label: 'EV・充電', nodes: ['demand.save'],
+      text: '電気自動車が「電気で走る」ことは知られているが、その電気がどう作られるかまでは意識されにくい。' },
+    { id: 'move_logi', scene: 'move', ring: 3, label: '物流の燃料', nodes: ['demand.save'],
+      text: '届く荷物の一つひとつに、トラックや船の燃料が使われている。送料や商品の値段の中に埋もれて見えない。' },
+    { id: 'move_oil', scene: 'move', ring: 4, label: '原油の調達', nodes: ['intl.geo'],
+      text: '輸送燃料や化学品の原料など、石油は転換の難しい用途に残る。調達先が偏っていると、海峡の封鎖などの影響を受ける。' },
+    { id: 'food_price', scene: 'food', ring: 1, label: '食費', nodes: ['dom.opinion'],
+      text: '食料品の値上がりとして実感されるが、その一部がエネルギー価格の上昇によるものだとは気付きにくい。' },
+    { id: 'food_self', scene: 'food', ring: 2, label: '食料自給率', nodes: ['view.fact', 'sec'],
+      text: '言葉としては知られている。ただし指標によって数字が違う（意見より）。エネルギーの自給と並べて語られることは少ない。' },
+    { id: 'food_energy', scene: 'food', ring: 3, label: '肥料・加温・冷蔵', nodes: ['demand.save'],
+      text: '化学肥料の製造、ハウスの加温、冷蔵・冷凍の流通など、食べ物は多くのエネルギーで作られ、運ばれている。' },
+    { id: 'food_farm', scene: 'food', ring: 4, label: '農林水産と地域資源', short: ['農林水産と', '地域資源'], nodes: ['re', 're.site'],
+      text: '農林水産業そのもののエネルギー需要と、地域の未利用バイオマスや営農型太陽光などの地域資源。' },
+    { id: 'buy_price', scene: 'buy', ring: 1, label: '製品の値段', nodes: ['eco'],
+      text: '値札は見えるが、その中にどれだけのエネルギー代が含まれているかは見えない。脱炭素のコストも、最終的には価格に乗る（意見より）。' },
+    { id: 'buy_eco', scene: 'buy', ring: 2, label: '省エネ家電', nodes: ['demand.save'],
+      text: '使うときの電気の量は、省エネラベルなどで比べられる。' },
+    { id: 'buy_material', scene: 'buy', ring: 3, label: '素材を作るエネルギー', short: ['素材を作る', 'エネルギー'], nodes: ['demand.ind', 'env'],
+      text: '鉄・セメント・プラスチックなどの素材は、作るときに多くの熱と電気を使う。プラスチックの原料のナフサは輸入への依存が大きい（意見より）。製品を買うとき、ここまで意識する人は少ない。' },
+    { id: 'buy_waste', scene: 'buy', ring: 4, label: '捨てたあと・循環', short: ['捨てたあと', '・循環'], nodes: ['env'],
+      text: '使い終わった製品の回収・リサイクルにも、エネルギーと費用がかかる。誰がその費用を持つかも論点になる。' },
+    { id: 'net_phone', scene: 'net', ring: 1, label: 'スマホの充電', nodes: ['demand.behavior'],
+      text: 'いちばん身近な電気の利用。omfy の議論では「停電してもスマホで照らせばよい」という若い世代の発想も紹介された。' },
+    { id: 'net_video', scene: 'net', ring: 2, label: '動画・通信量', nodes: ['demand.behavior'],
+      text: '通信量（ギガ）は気にしても、その通信が電気を使うことは意識されにくい。危機感を「この動画が見られなくなる」のように暮らしの言葉で伝える工夫が提案された。' },
+    { id: 'net_dc', scene: 'net', ring: 3, label: 'データセンター', nodes: ['demand.ind'],
+      text: '動画やクラウドを支えるデータセンター・通信網の電力。スマホ本体だけでなく、通信やデータ処理にも電気が使われている（意見より）。' },
+    { id: 'net_ai', scene: 'net', ring: 4, label: 'AI の電力需要', nodes: ['demand.ind', 'src'],
+      text: 'AI の普及で電力需要が増える見通し。どの電源でまかなうか、温暖化とどう両立するかに直結する。' },
+    { id: 'work_wage', scene: 'work', ring: 1, label: '給料・物価', nodes: ['dom.pop'],
+      text: '賃金と物価は誰もが気にするが、エネルギーの価格や産業の生産性がそこに効いていることは見えにくい。' },
+    { id: 'work_price', scene: 'work', ring: 2, label: '値上げのニュース', nodes: ['eco'],
+      text: '「電気代の高騰で値上げ」というニュースで、企業のエネルギーコストが少しだけ見える。' },
+    { id: 'work_power', scene: 'work', ring: 3, label: '止められない電気', nodes: ['sec', 'grid'],
+      text: '工場・病院・データセンターなど、瞬時の停電も許されない現場がある。その安定した電源をどう確保するか。' },
+    { id: 'work_industry', scene: 'work', ring: 4, label: '産業の立地と雇用', short: ['産業の立地', 'と雇用'], nodes: ['demand.ind', 'dom.pop'],
+      text: '電気が高く不安定だと、工場は国内に残りにくく、雇用にも響く。電源の選択は、働く場所の問題でもある。' },
+  ];
+  const BY_ID = Object.fromEntries(ITEMS.map((it) => [it.id, it]));
+  const R = [0, 74, 194, 314, 434, 554];
+  const st = { sel: 'me', self: false, known: new Set() };
+  let OPS = [], DATA = null;
+  try { (JSON.parse(localStorage.getItem('omfy-life-known') || '[]')).forEach((id) => st.known.add(id)); } catch (_) {}
+  const saveKnown = () => { try { localStorage.setItem('omfy-life-known', JSON.stringify(Array.from(st.known))); } catch (_) {} };
+  const opsOf = (id) => OPS.filter((o) => o.tags.life.indexOf(id) >= 0);
+
+  A.start((data, ops) => {
+    OPS = ops; DATA = data;
+    document.getElementById('appArea').hidden = false;
+    drawSvg(); drawList(); renderPanel(); renderSum();
+    const pick = (id) => {
+      if (st.self && id !== 'me') { st.known.has(id) ? st.known.delete(id) : st.known.add(id); saveKnown(); }
+      st.sel = id; drawSvg(); drawList(); renderPanel(); renderSum();
+    };
+    document.getElementById('svgHost').addEventListener('click', (ev) => { const g = ev.target.closest('[data-it]'); if (g) pick(g.dataset.it); });
+    document.getElementById('svgHost').addEventListener('keydown', (ev) => {
+      const g = ev.target.closest('[data-it]'); if (g && (ev.key === 'Enter' || ev.key === ' ')) { ev.preventDefault(); pick(g.dataset.it); }
+    });
+    document.getElementById('list').addEventListener('click', (ev) => {
+      const b = ev.target.closest('[data-it]'); if (!b) return;
+      pick(b.dataset.it);
+      if (window.matchMedia('(max-width: 900px)').matches) document.getElementById('panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    document.getElementById('showOps').addEventListener('change', drawSvg);
+    document.getElementById('selfBtn').addEventListener('click', () => {
+      st.self = !st.self;
+      document.getElementById('selfBtn').setAttribute('aria-pressed', String(st.self));
+      drawSvg(); drawList(); renderSum();
+    });
+    document.getElementById('selfReset').addEventListener('click', () => { st.known.clear(); saveKnown(); drawSvg(); drawList(); renderSum(); });
+  });
+
+  function pol(r, deg) { const a = deg * Math.PI / 180; return [r * Math.cos(a), r * Math.sin(a)]; }
+  // 場面の扇の中心の角度（真上から時計回り）。扇の境目は ±30° ずれた位置
+  const sceneAngle = (i) => -90 + i * 60;
+  // 図の中で 2 行に折る位置（5 字を超える項目名）
+  const SPLIT = {
+    '電気代・ガス代': ['電気代・', 'ガス代'], '停電・節電要請': ['停電・', '節電要請'], '電気代の内訳': ['電気代の', '内訳'],
+    '発電燃料の輸入': ['発電燃料', 'の輸入'], '肥料・加温・冷蔵': ['肥料・加温', '・冷蔵'], '農林水産と地域資源': ['農林水産と', '地域資源'],
+    '素材を作るエネルギー': ['素材を作る', 'エネルギー'], '捨てたあと・循環': ['捨てたあと', '・循環'], 'スマホの充電': ['スマホの', '充電'],
+    '動画・通信量': ['動画・', '通信量'], 'データセンター': ['データ', 'センター'], 'AI の電力需要': ['AI の', '電力需要'],
+    '値上げのニュース': ['値上げの', 'ニュース'], '止められない電気': ['止められ', 'ない電気'], '産業の立地と雇用': ['産業の立地', 'と雇用'],
+  };
+  const FS = 21, LH = 25; // 項目名の文字の大きさと行の高さ（viewBox の単位）
+
+  function drawSvg() {
+    const showOps = document.getElementById('showOps').checked;
+    const o = ['<svg class="life' + (showOps ? '' : ' dimops') + '" viewBox="-606 -606 1212 1212" role="img" aria-label="暮らしから見たエネルギーの同心円">'];
+    const alpha = [0, 24, 15, 8, 4];
+    o.push('<circle class="ringbg" r="' + (R[5] + 50) + '" fill="var(--bg2)"/>');
+    for (let k = 4; k >= 1; k--) o.push('<circle class="ringbg" r="' + R[k + 1] + '" fill="color-mix(in srgb, var(--ring) ' + alpha[k] + '%, var(--bg))"/>');
+    for (let i = 0; i < 6; i++) { const [x1, y1] = pol(R[1], -60 + i * 60), [x2, y2] = pol(R[5] + 50, -60 + i * 60); o.push('<line class="div" x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '"/>'); }
+    o.push('<circle class="horizon" r="' + R[3] + '"/>');
+    // 段の番号は右の境目（0°）の線の上に置く
+    for (let k = 1; k <= 4; k++) {
+      const x = (R[k] + R[k + 1]) / 2;
+      o.push('<circle cx="' + x + '" cy="0" r="17" fill="var(--bg)" stroke="var(--rule2)"/><text class="rl" x="' + x + '" y="7" text-anchor="middle" style="font-size:19px;fill:var(--ink)">' + '①②③④'[k - 1] + '</text>');
+    }
+    o.push('<text class="hz halo" x="' + (-R[3]) + '" y="-12" text-anchor="middle" style="font-size:19px">意識の境界？</text>');
+    SCENES.forEach(([id, name], i) => {
+      const [x, y] = pol(R[5] + 25, sceneAngle(i));
+      o.push('<text class="scene" x="' + x.toFixed(0) + '" y="' + (y + 10).toFixed(0) + '" text-anchor="middle" style="font-size:27px">' + e(name) + '</text>');
+    });
+    // 中心
+    const meN = opsOf('me').length;
+    o.push('<g class="me' + (st.sel === 'me' ? ' sel' : '') + '" data-it="me" tabindex="0"><circle r="' + (R[1] - 6) + '"/><text y="9" text-anchor="middle" style="font-size:26px">わたし</text>' +
+      (meN ? '<g class="bdg"><circle cx="46" cy="-46" r="16" style="fill:var(--accent)"/><text x="46" y="-40" text-anchor="middle" style="fill:#fff;font-size:16px;font-weight:800">' + meN + '</text></g>' : '') + '</g>');
+    ITEMS.filter((it) => it.ring).forEach((it) => {
+      const si = SCENES.findIndex((s) => s[0] === it.scene);
+      const [cx, cy] = pol((R[it.ring] + R[it.ring + 1]) / 2, sceneAngle(si));
+      const lines = SPLIT[it.label] || [it.label];
+      const w = Math.max(...lines.map((l) => O.textWidth(l, FS))) + 24, h = 18 + LH * lines.length;
+      const n = opsOf(it.id).length;
+      const cls = 'it' + (st.sel === it.id ? ' sel' : '') + (st.known.has(it.id) ? ' known' : '');
+      const bx = cx + w / 2 - 2, by = cy - h / 2 + 2;
+      o.push('<g class="' + cls + '" data-it="' + it.id + '" tabindex="0"><rect x="' + (cx - w / 2).toFixed(1) + '" y="' + (cy - h / 2).toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + h + '" rx="14"/>' +
+        lines.map((l, j) => '<text x="' + cx.toFixed(1) + '" y="' + (cy - h / 2 + 9 + FS + LH * j - 2).toFixed(1) + '" text-anchor="middle" style="font-size:' + FS + 'px">' + e(l) + '</text>').join('') +
+        (n ? '<g class="bdg"><circle class="bd" cx="' + bx.toFixed(1) + '" cy="' + by.toFixed(1) + '" r="14"/><text class="bt" x="' + bx.toFixed(1) + '" y="' + (by + 5.5).toFixed(1) + '" text-anchor="middle" style="font-size:15px">' + n + '</text></g>' : '') +
+        (st.known.has(it.id) ? '<text class="ck" x="' + (cx - w / 2 + 2).toFixed(1) + '" y="' + (cy - h / 2 + 6).toFixed(1) + '" style="font-size:22px">✓</text>' : '') +
+        '<title>' + e(it.label + '（' + RINGS[it.ring] + '）') + '</title></g>');
+    });
+    o.push('</svg>');
+    o.push('<div class="ringlg">' + [1, 2, 3, 4].map((k) => '<span><b>' + e(RINGS[k]) + '</b> ' + e(RING_DESC[k]) + '</span>').join('') +
+      '<span><i class="hzsw"></i>ふだんの意識が届く境界（仮説）</span><span class="hint">青い数字 = 結びつく omfy の意見の数</span></div>');
+    document.getElementById('svgHost').innerHTML = o.join('');
+  }
+
+  function drawList() {
+    let h = '<div class="rg">中心</div><div class="items"><button data-it="me" class="' + (st.sel === 'me' ? 'sel' : '') + '">わたし<small>暮らしのエネルギーの全体量</small></button></div>';
+    for (let k = 1; k <= 4; k++) {
+      h += '<div class="rg">' + e(RINGS[k]) + '　<span style="font-weight:500">' + e(RING_DESC[k]) + '</span></div><div class="items">';
+      ITEMS.filter((it) => it.ring === k).forEach((it) => {
+        const n = opsOf(it.id).length;
+        h += '<button data-it="' + it.id + '" class="' + (st.sel === it.id ? 'sel ' : '') + (st.known.has(it.id) ? 'known' : '') + '">' + e(it.label) +
+          '<small>' + e(SCENES.find((s) => s[0] === it.scene)[1]) + (n ? '・意見 ' + n + ' 件' : '') + (st.known.has(it.id) ? '・✓知っていた' : '') + '</small></button>';
+      });
+      h += '</div>';
+      if (k === 2) h += '<div class="rg" style="color:var(--warn)">－－ ふだんの意識はここまで？（仮説）－－</div>';
+    }
+    document.getElementById('list').innerHTML = h;
+  }
+
+  function renderPanel() {
+    const it = BY_ID[st.sel];
+    const ops = opsOf(it.id);
+    const scene = it.scene ? SCENES.find((s) => s[0] === it.scene)[1] : '';
+    const nodes = it.nodes.map((id) => DATA.tree.byId[id]).filter(Boolean);
+    document.getElementById('panel').innerHTML =
+      '<div class="crumb">' + (it.ring ? e(scene) + '　/　' + e(RINGS[it.ring]) + '（' + e(RING_DESC[it.ring]) + '）' : '中心') + '</div>' +
+      '<h2>' + e(it.label) + '</h2>' +
+      '<p class="tx">' + e(it.text) + '</p>' +
+      (nodes.length ? '<div class="h3" style="font-size:13px">関係する論点<span class="n">現行の論点マップで開く</span></div><div class="links">' +
+        nodes.map((n) => '<a href="detail.html#n=' + encodeURIComponent(n.id) + '">' + e(n.label) + '</a>').join('') + '</div>' : '') +
+      '<h3>omfy の意見 ' + ops.length + ' 件</h3>' +
+      (ops.length ? '<div class="oplist">' + ops.map((o) => A.opCardHtml(o)).join('') + '</div>'
+        : '<div class="empty" style="background:var(--bg2);border-radius:12px">この項目に結びつく意見はまだありません。生活者の目線で書く余地があるところです。</div>');
+  }
+
+  function renderSum() {
+    // 意見を、結びつく暮らしの項目のうち最も内側の段で数える。どの項目にも結びつかない意見は「暮らしの外」
+    const by = [0, 0, 0, 0, 0, 0]; // 0=中心, 1..4, 5=結びつかない
+    OPS.forEach((o) => {
+      const rings = o.tags.life.map((id) => BY_ID[id] ? BY_ID[id].ring : null).filter((r) => r != null);
+      by[rings.length ? Math.min(...rings) : 5]++;
+    });
+    const total = OPS.length || 1;
+    const segs = [
+      ['中心・①②（見えている側）', by[0] + by[1] + by[2], 'var(--k-theme)'],
+      ['③（意識しにくい）', by[3], 'color-mix(in srgb, var(--k-theme) 60%, var(--bg))'],
+      ['④（遠い）', by[4], 'color-mix(in srgb, var(--k-theme) 35%, var(--bg))'],
+      ['暮らしの項目に結びつかない（制度・技術・対話など）', by[5], 'var(--rule2)'],
+    ];
+    let selfHtml = '';
+    if (st.self || st.known.size) {
+      const per = [1, 2, 3, 4].map((k) => { const all = ITEMS.filter((it) => it.ring === k); return [all.filter((it) => st.known.has(it.id)).length, all.length]; });
+      selfHtml = '<div class="self">あなたのセルフチェック: ' + per.map(([a, b], i) => e(RINGS[i + 1]) + ' <b>' + a + '/' + b + '</b>').join('　') +
+        '<br><span class="hint">この結果はこのブラウザの中だけに保存され、どこにも送られません。</span></div>';
+    }
+    document.getElementById('selfReset').hidden = !st.known.size;
+    document.getElementById('sum').innerHTML =
+      '<div class="h3">omfy の意見は、暮らしのどこにあるか<span class="n">意見 ' + OPS.length + ' 件を、結びつく項目のいちばん内側の段で数えた</span></div>' +
+      '<div class="sbar">' + segs.map(([l, n, c]) => n ? '<span style="flex:' + n + ';background:' + c + (c.indexOf('rule2') >= 0 ? ';color:var(--ink)' : '') + '" title="' + e(l) + ' ' + n + ' 件">' + n + '</span>' : '').join('') + '</div>' +
+      '<div class="barlg">' + segs.map(([l, n, c]) => '<span class="legend-k"><i class="sw" style="background:' + c + '"></i>' + e(l) + ' ' + n + ' 件（' + Math.round(100 * n / total) + '%）</span>').join('') + '</div>' +
+      '<p>これまでの議論の多くは、供給側の技術・制度・対話のあり方についてのもので、生活者の目に見える場面（①②）に結びつく意見は一部です。生活者に届けるには、上流の論点を<b>暮らしの場面から辿れる入口</b>につなげることが一つの方向になりそうです。</p>' +
+      selfHtml;
+  }
+})();
+</script>
+</body>
+</html>
