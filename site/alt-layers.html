@@ -58,6 +58,20 @@
 .crumbs{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--muted)}
 .crumbs .tg{font-size:12px}
 .note2{margin-top:14px;font-size:12px;color:var(--muted)}
+.tier.l1{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px}
+.tier.l1 .view{justify-self:start;font-size:13px}
+.nb small{display:block;font-size:10.5px;font-weight:500;color:var(--muted)}
+.nb[aria-pressed="true"] small{color:inherit;opacity:.8}
+.mx{margin-top:18px}
+.mx summary{cursor:pointer;font-size:13.5px;font-weight:700}
+.mx .hint{margin:6px 0 8px}
+.mxscroll{overflow-x:auto}
+.mx table{border-collapse:separate;border-spacing:3px;font-size:12px}
+.mx th{font-weight:700;padding:3px 6px;text-align:left;white-space:nowrap}
+.mx td{min-width:52px;text-align:center;padding:4px 6px;border-radius:6px;cursor:pointer;font-variant-numeric:tabular-nums}
+.mx td.z{color:var(--rule2);cursor:default}
+.mx td.on{outline:2px solid var(--ink)}
+@media (max-width: 640px){ .tier.l1{grid-template-columns:1fr} .tier.l1 > span:nth-of-type(2){display:none} .tier.l1 .view{justify-self:center} }
 @media (max-width: 980px){
   .techs{grid-template-columns:repeat(4,minmax(0,1fr))}
   .block .axes{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -90,25 +104,31 @@
     <h1>別案A　3階層＋キーワード<span class="proto">試作</span><span class="sub">エネルギー → S+3E → 技術。その下はキーワードとして意見に付ける</span></h1>
     <div class="meta" id="metaLine">読み込み中…</div>
   </div>
-  <p class="lead">地図は<b>3 階層</b>までにとどめ、これまで 4 階層目の論点だったもの（放射性廃棄物、再稼働など）は、<b>意見に付くキーワード</b>として扱う案です。2 段目・3 段目の箱を押すと、その組み合わせの意見と、よく出てくるキーワードが絞り込まれます。数字は意見の件数、線の太さは 2 段目で選んだ評価軸での意見の多さです。</p>
+  <p class="lead">地図は<b>3 階層</b>までにとどめ、これまで 4 階層目の論点だったもの（放射性廃棄物、再稼働など）は、<b>意見に付くキーワード</b>として扱う案です。2 段目は評価の観点（S+3E に社会的受容を加えたもの）、3 段目は評価の対象（技術）です。テーマを横断する「議論の視点」は、現行の地図と同じくエネルギーの横に置きました。2 段目・3 段目の箱を押すと、その組み合わせの意見と、よく出てくるキーワードが絞り込まれます。数字は意見の件数、線の太さは 2 段目で選んだ評価軸での意見の多さです。</p>
 
   <div id="loadingState" class="state">データを取得しています…</div>
 
   <div class="card tiers" id="tiers" hidden>
     <svg class="links" id="links" aria-hidden="true"></svg>
     <div class="tier"><span class="premise">豊かで平和な生活<small>大前提</small></span></div>
-    <div class="tier"><span class="tlabel">1段目</span><button class="nb energy" id="energyBtn" aria-pressed="true">エネルギー<span class="c" id="energyC"></span></button></div>
+    <div class="tier l1"><span class="tlabel">1段目</span><span></span><button class="nb energy" id="energyBtn" aria-pressed="true">エネルギー<span class="c" id="energyC"></span></button>
+      <button class="nb plus view" data-l2="M" title="テーマを横断する、議論のときに持つべき視点（対話・学び・情報の見極め・時間軸など）">議論の視点<small>テーマを横断</small><span class="c"></span></button></div>
     <div class="tier l2"><span class="tlabel">2段目</span>
       <div class="ext"><button class="nb" data-l2="intl">国際情勢<span class="c"></span></button><span class="ar">→</span></div>
       <div class="block" id="block"><span class="bl">S+3E</span><div class="axes" id="axes"></div></div>
       <div class="ext"><span class="ar">←</span><button class="nb" data-l2="dom">国内情勢<span class="c"></span></button></div>
-      <button class="nb plus" data-l2="R">＋ 社会的受容・対話<span class="c"></span></button>
+      <button class="nb plus" data-l2="R" title="立地地域の合意、世論、政治、制度など、社会が受け入れるかどうか">＋ 社会的受容<span class="c"></span></button>
     </div>
     <div class="tier"><span class="tlabel">3段目</span><div class="techs" id="techs"></div></div>
     <div class="kwbox" id="kwbox">
       <div class="h3">キーワード<span class="n">旧・4 階層目の論点と、意見から拾った言葉。押すと意見を絞り込む</span></div>
       <div class="cloud" id="cloud"></div>
     </div>
+    <details class="mx" id="mxBox">
+      <summary>評価軸 × 技術 の件数表で見る</summary>
+      <p class="hint">2 段目（評価の観点）と 3 段目（評価の対象）は、親と子ではなく掛け合わせの関係です。図では上下に並べていますが、実際の構造はこの表のとおりです。マスを押すと、その組み合わせで絞り込みます。0 のマスは、まだ意見がない組み合わせです。</p>
+      <div class="mxscroll"><table id="mx"></table></div>
+    </details>
   </div>
 
   <div id="listArea" hidden>
@@ -117,7 +137,7 @@
       <div class="crumbs" id="crumbs"></div>
     </div>
     <div class="oplist" id="oplist"></div>
-    <p class="note2">タグ（評価軸・技術・主体・キーワード）は、この試作のために仮に付けたものです。採用する場合は、意見シートにタグの列を足して、書く人・モデレータが付けられるようにします。タグの無い新しい意見は、付いている論点から自動で推定しています。</p>
+    <p class="note2">タグ（評価軸・技術・主体・キーワード）は、この試作のために仮に付けたものです。採用する場合は、意見シートにタグの列を足して、書く人・モデレータが付けられるようにします。タグの無い新しい意見は、付いている論点から自動で推定しています。国際情勢・国内情勢の件数は、タグではなく、意見が付いている論点（国際情勢・国内情勢の下の論点）で数えています。キーワードは、同じ意味の言葉を 1 つにまとめています（例: 人材・技術基盤 → 人材・技術継承）。定義と検証は <a href="alt.html#method">別案トップの「分類の方法と検証」</a> にあります。</p>
   </div>
 
   <footer>
@@ -161,6 +181,12 @@
       else if (b.dataset.kw) { st.kw = st.kw === b.dataset.kw ? null : b.dataset.kw; }
       else if (b.dataset.more) { st.allKw = !st.allKw; }
       else return;
+      render();
+    });
+    document.getElementById('mx').addEventListener('click', (ev) => {
+      const td = ev.target.closest('td[data-a]'); if (!td) return;
+      const same = st.l2 === td.dataset.a && st.tech === td.dataset.t;
+      st.l2 = same ? null : td.dataset.a; st.tech = same ? null : td.dataset.t; st.kw = null;
       render();
     });
     document.getElementById('listArea').addEventListener('click', (ev) => {
@@ -212,7 +238,24 @@
     document.getElementById('listTitle').textContent = '意見 ' + list.length + ' 件';
     document.getElementById('oplist').innerHTML = list.length ? list.map((o) => A.opCardHtml(o, { kw: st.kw })).join('')
       : '<div class="empty">この組み合わせの意見はまだありません。ここが「抜け」です。</div>';
+    renderMx();
     drawLinks();
+  }
+
+  // 評価軸 × 技術 の件数表（キーワードの絞り込みは効かせる）
+  function renderMx() {
+    const rows = AX.values.map(([v]) => v), cols = TE.values.map(([v]) => v);
+    const max = Math.max(1, ...rows.flatMap((a) => cols.map((t) => cnt(a, t, st.kw))));
+    let h = '<tr><th></th>' + cols.map((t) => '<th>' + e(TE.label[t]) + '</th>').join('') + '</tr>';
+    rows.forEach((a) => {
+      h += '<tr><th>' + e(AX.label[a]) + '</th>' + cols.map((t) => {
+        const n = cnt(a, t, st.kw);
+        const on = st.l2 === a && st.tech === t;
+        return n ? '<td data-a="' + a + '" data-t="' + t + '" class="' + (on ? 'on' : '') + '" style="background:color-mix(in srgb, var(--f-tech) ' + Math.round(8 + 50 * n / max) + '%, var(--bg))">' + n + '</td>'
+          : '<td class="z">0</td>';
+      }).join('') + '</tr>';
+    });
+    document.getElementById('mx').innerHTML = h;
   }
 
   // S+3E の箱 → 技術の箱 の線。太さは、選んでいる評価軸（無ければ全体）での意見数

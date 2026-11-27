@@ -69,6 +69,9 @@ main.app{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);overf
 .barlg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
 .sum p{font-size:13.5px;margin:8px 0 0}
 .self{margin-top:12px;font-size:13px}
+.method summary{cursor:pointer;font-size:14px}
+.method ul{margin:10px 0 0;padding-left:1.3em;font-size:13.5px}
+.method li{margin:0 0 6px}
 .self b{font-variant-numeric:tabular-nums}
 @media (max-width: 900px){ main.app{grid-template-columns:1fr} .viz{border-right:0;border-bottom:1px solid var(--rule)} .panel{max-height:none} }
 @media (max-width: 640px){ .viz svg{display:none} .list{display:block} }
@@ -110,6 +113,15 @@ main.app{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);overf
     </main>
 
     <section class="card sum" id="sum"></section>
+    <details class="card sum method">
+      <summary><b>この図の作り方と限界</b></summary>
+      <ul>
+        <li><b>場面（扇）</b>: 家計のカーボンフットプリントの研究で使われる消費の分類（食・住居・移動・消費財・レジャー・サービス）に、おおむね対応させています（住む＝住居、移動する＝移動、食べる＝食、買う・使う＝消費財、つながる＝通信などのサービス・レジャー）。「働く」は消費ではなく生産の側から暮らしに効いてくる部分として、別に加えました。</li>
+        <li><b>段（同心円）</b>: どの項目をどの段に置くかは、omfy の議論と一般的な知見をもとにした<b>仮説</b>で、調査で確かめたものではありません。エネルギーの<b>大きさ</b>と<b>見えやすさ</b>は別物で、人は目に見える小さな節電を大きく、見えにくい大きな消費を小さく見積もりがちだという研究があります。食品の生産にかかるエネルギー・排出も、消費者は大きく過小評価するという研究があり、③の段の置き方を支える材料になります。</li>
+        <li><b>確かめ方の案</b>: セルフチェックをワークショップで使い、参加者の「知っていた」を集計すれば、段の置き方を実際の認識で検証できます（集計の仕組みは、採用する場合に別途作ります）。</li>
+      </ul>
+      <p class="hint">参考文献は <a href="alt.html#refs">別案トップの「参考文献」</a> にまとめています。</p>
+    </details>
   </div>
 
   <footer>
@@ -329,6 +341,7 @@ main.app{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);overf
       '<div class="sbar">' + segs.map(([l, n, c]) => n ? '<span style="flex:' + n + ';background:' + c + (c.indexOf('rule2') >= 0 ? ';color:var(--ink)' : '') + '" title="' + e(l) + ' ' + n + ' 件">' + n + '</span>' : '').join('') + '</div>' +
       '<div class="barlg">' + segs.map(([l, n, c]) => '<span class="legend-k"><i class="sw" style="background:' + c + '"></i>' + e(l) + ' ' + n + ' 件（' + Math.round(100 * n / total) + '%）</span>').join('') + '</div>' +
       '<p>これまでの議論の多くは、供給側の技術・制度・対話のあり方についてのもので、生活者の目に見える場面（①②）に結びつく意見は一部です。生活者に届けるには、上流の論点を<b>暮らしの場面から辿れる入口</b>につなげることが一つの方向になりそうです。</p>' +
+      '<p class="hint">注意: 意見と暮らしの項目の結びつきは、本文で暮らしの場面に直接ふれている意見にだけ付けています（試作のための仮のタグ）。割合はおおよその傾向として見てください。</p>' +
       selfHtml;
   }
 })();

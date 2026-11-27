@@ -26,6 +26,25 @@
 .cards .for{font-size:12px;font-weight:700;color:var(--ink);margin-top:auto;padding-top:8px}
 .cards .go{font-size:13px;font-weight:700;color:var(--accent)}
 .scope{margin-top:30px;font-size:13px;color:var(--muted);max-width:52em}
+.doc{margin-top:56px;max-width:56em;scroll-margin-top:100px}
+.doc h2{font-size:clamp(20px,2.4vw,26px);letter-spacing:-.02em;margin:0 0 10px}
+.doc h3{font-size:16px;margin:26px 0 8px}
+.doc p,.doc li,.doc dd{font-size:14px}
+.doc ul{padding-left:1.3em;margin:6px 0}
+.doc li{margin:0 0 6px}
+.defs dt{font-weight:800;font-size:14px;margin-top:10px}
+.defs dd{margin:2px 0 0 0;color:var(--ink)}
+.ktbl{overflow-x:auto;margin:10px 0;border-radius:16px;background:var(--bg2);padding:4px 8px}
+.ktbl table{border-collapse:collapse;font-size:12.5px}
+.ktbl th,.ktbl td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--rule)}
+.ktbl th{white-space:nowrap}
+.ktbl tr:last-child th,.ktbl tr:last-child td{border-bottom:0}
+.caveat{background:color-mix(in srgb,var(--warn) 10%,var(--bg));border-radius:14px;padding:12px 16px}
+.refs{list-style:none;padding:0;margin:0}
+.refs li{font-size:13.5px;margin:0 0 10px;padding-left:0}
+.refs .g{font-size:12px;font-weight:800;color:var(--muted);margin:18px 0 6px;letter-spacing:.04em}
+.refs .u{font-size:12px;word-break:break-all}
+.refs .why{display:block;font-size:12.5px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -74,6 +93,84 @@
       <span class="go">開く →</span>
     </a>
   </div>
+
+  <section class="doc" id="method">
+    <h2>分類の方法と検証</h2>
+    <p>3 つの別案は、意見 1 件ごとに付けたタグを使っています。タグは試作のために Claude（AI）が付け、下の方法で付け方を点検しました。採用する場合は、意見シートにタグの列を足し、書く人とモデレータが付ける形にすることを想定しています。</p>
+
+    <h3>タグの定義</h3>
+    <dl class="defs">
+      <dt>評価軸</dt>
+      <dd><b>安全性</b>（事故・放射線・健康・防災・核不拡散のリスク）／<b>安定供給</b>（量の確保、自給・自律、燃料や資源の調達、系統の安定、技術・人材・設備の継続性、技術の実現性）／<b>経済効率性</b>（コスト・価格・投資・補助・税・産業競争力・雇用）／<b>環境適合</b>（気候変動・CO2・環境負荷・資源循環）。ここまでが政府のエネルギー基本計画の「S+3E」です。これに、<b>社会的受容</b>（立地地域の合意・世論・政治・制度など、社会が受け入れるかどうか）と、<b>議論の視点</b>（対話の仕方・教育・情報の見極め・時間軸・世代間倫理など、議論や考え方そのもの）を加えました。1 件に主なもの 1 つ、明確なら 2 つまで。</dd>
+      <dt>技術</dt>
+      <dd>原子力（核燃料サイクル・廃棄物・次世代炉を含む）／再生可能エネルギー／火力・燃料（化石燃料の調達・燃料費・CCS を含む）／水素・アンモニア／送配電・蓄電／核融合／需要・暮らし（省エネ・電化・暮らし方・データセンターなどの需要）／技術を問わない。複数可。</dd>
+      <dt>主体</dt>
+      <dd>意見が論じている、判断・行動・影響の主体（書いた人の属性ではない）: 国・政策／事業者・産業／立地地域／生活者・市民／若い世代・将来世代／専門家・メディア／海外・国際。本文に書かれている主体だけを付け、書かれていなければ「特定しない」。</dd>
+      <dt>キーワード</dt>
+      <dd>現行の地図の 4 階層目の論点名（放射性廃棄物など）と、意見から拾った言葉。同じ意味の言葉は 1 つの語にまとめています（シソーラスの「優先語」の考え方）。</dd>
+    </dl>
+    <h3>迷いやすい場合の決め方</h3>
+    <ul>
+      <li>技術の実現性・成立性の話は「安定供給」。規制による遅れの話は「社会的受容」も付ける。</li>
+      <li>議論の進め方・伝え方の話は「議論の視点」。立地・世論・制度そのものの話は「社会的受容」。</li>
+      <li>3 つ以上の技術を並べて論じる話は「技術を問わない」。</li>
+      <li>国全体の経済・財政の話の主体は「国・政策」。技術の説明だけの意見は主体を付けない。</li>
+    </ul>
+
+    <h3>付け方の検証（2 人目による独立のタグ付け）</h3>
+    <p>同じ定義だけを渡した別の担当（別に立ち上げた Claude。最初のタグは見せていない）が、167 件すべてに独立にタグを付けました。カテゴリごとの一致の度合いを Cohen の κ（カッパ）係数で測った結果です（突き合わせる前の値。目安: 0.8 以上 = ほぼ完全、0.6〜0.8 = かなり一致、0.4〜0.6 = 中程度）。</p>
+    <div class="ktbl"><table>
+      <tr><th>評価軸</th><td>経済効率性 0.88</td><td>議論の視点 0.85</td><td>社会的受容 0.77</td><td>環境適合 0.66</td><td>安定供給 0.64</td><td><b>安全性 0.59</b></td></tr>
+      <tr><th>技術</th><td>水素 0.95</td><td>核融合 0.94</td><td>原子力 0.91</td><td>技術を問わない 0.88</td><td>火力・燃料 0.76</td><td>再エネ・送配電・需要 0.71〜0.74</td></tr>
+      <tr><th>主体</th><td>立地地域 0.92</td><td>若い世代 0.90</td><td>海外 0.83</td><td>国 0.79</td><td>事業者・市民 0.73</td><td><b>専門家・メディア 0.49</b></td></tr>
+    </table></div>
+    <p>技術はよく一致し、評価軸もおおむね一致しました。一致が弱かったのは「安全性」（安全の話か、技術の継続性の話かの境界）と、主体の「専門家・メディア」（最初のタグでは、技術的な説明の意見に「専門家」を付けていたが、定義では「専門家やメディアそのものが論じられている意見」に限る）です。食い違った意見は定義に照らして決め直し、その決め方を上の「迷いやすい場合の決め方」に書き足しました。</p>
+    <p class="caveat"><b>この検証の限界</b>: 2 人目も AI のため、同じ癖を持っている可能性があり、人どうしの検証ほど独立ではありません。採用を検討する段階で、メンバー 2〜3 人に 30 件ほどを独立に付けてもらい、同じ方法で一致を確かめることを勧めます。</p>
+
+    <h3>各案の分類の妥当性と限界</h3>
+    <ul>
+      <li><b>A 3階層</b>: 2 段目（S+3E などの評価の観点）と 3 段目（技術という評価の対象）は、親子ではなく掛け合わせの関係です。そのため、図の下に「評価軸 × 技術」の件数表を付けました。S+3E は政府の枠組みで、「社会的受容」はエネルギー技術の普及を論じる研究で広く使われる観点です。キーワードは 71 語あり、1〜2 回しか使われない語が多いため、採用時には語の一覧（統制語彙）を決めておく必要があります。</li>
+      <li><b>B 3軸</b>: 3 つの軸は、何の観点か・何についてか・誰の話か、という互いに独立した切り口（ファセット）になるよう定義しました。ただし主体は、意見の約 4 分の 1 で「特定しない」になります。ネットワークのまとまりは意味がありますが、距離は数量ではありません。</li>
+      <li><b>C 暮らし</b>: 場面は家計のカーボンフットプリント研究の消費の分類におおむね対応させました。同心円の段の置き方は仮説で、調査による裏付けはまだありません。</li>
+    </ul>
+  </section>
+
+  <section class="doc" id="refs">
+    <h2>参考文献</h2>
+    <p class="hint">整理の方法の考え方の出典です。omfy として特定の結論を支持するものではありません。</p>
+    <div id="refList">
+      <ul class="refs">
+      <li class="g">A. エネルギーの評価軸と社会的受容（別案A・B の評価軸）</li>
+      <li>経済産業省 資源エネルギー庁（2025）「第7次エネルギー基本計画」第Ⅳ章「エネルギー政策の基本的視点（S＋3E）」<br><a class="u" href="https://www.enecho.meti.go.jp/category/others/basic_plan/pdf/20250218_01.pdf" target="_blank" rel="noopener">https://www.enecho.meti.go.jp/category/others/basic_plan/pdf/20250218_01.pdf</a><span class="why">S+3E（安全性を大前提に、安定供給・経済効率性・環境適合）の出典。</span></li>
+      <li>World Energy Council「World Energy Trilemma」<br><a class="u" href="https://www.worldenergy.org/transition-toolkit/world-energy-trilemma-framework" target="_blank" rel="noopener">https://www.worldenergy.org/transition-toolkit/world-energy-trilemma-framework</a><span class="why">エネルギー安全保障・公平性（手頃さ）・環境持続性の 3 つで各国を評価する国際的な枠組み。3E と対比できる。</span></li>
+      <li>Wüstenhagen, R., Wolsink, M. &amp; Bürer, M. J. (2007) Social acceptance of renewable energy innovation: An introduction to the concept. Energy Policy 35(5), 2683–2691<br><a class="u" href="https://doi.org/10.1016/j.enpol.2006.12.001" target="_blank" rel="noopener">https://doi.org/10.1016/j.enpol.2006.12.001</a><span class="why">社会的受容を社会政治的・地域的・市場的の 3 つに分けた基本文献。「社会的受容」を評価軸に加えた根拠。</span></li>
+      <li class="g">B. 論点の構造化と、結論へ誘導しない対話の場（全体の考え方）</li>
+      <li>Rittel, H. W. J. &amp; Webber, M. M. (1973) Dilemmas in a general theory of planning. Policy Sciences 4(2), 155–169<br><a class="u" href="https://doi.org/10.1007/BF01405730" target="_blank" rel="noopener">https://doi.org/10.1007/BF01405730</a><span class="why">正解が一つに決まらない「厄介な問題（wicked problems）」の原典。エネルギー問題を論点の地図で扱う前提。</span></li>
+      <li>Kunz, W. &amp; Rittel, H. W. J. (1970) Issues as Elements of Information Systems. Working Paper No. 131, IURD, University of California, Berkeley<br><a class="u" href="https://escholarship.org/uc/item/5cj786v8" target="_blank" rel="noopener">https://escholarship.org/uc/item/5cj786v8</a><span class="why">論点（Issue）・立場・論拠で議論を構造化する IBIS の原典。論点に意見を付ける現行マップの考え方の源流。</span></li>
+      <li>Kirschner, P. A., Buckingham Shum, S. J. &amp; Carr, C. S. (Eds.) (2003) Visualizing Argumentation: Software Tools for Collaborative and Educational Sense-Making. Springer<br><a class="u" href="https://doi.org/10.1007/978-1-4471-0037-9" target="_blank" rel="noopener">https://doi.org/10.1007/978-1-4471-0037-9</a><span class="why">議論の可視化（IBIS、対話マッピングなど）の定番の論集。</span></li>
+      <li>Stirling, A. (2008) “Opening Up” and “Closing Down”: Power, Participation, and Pluralism in the Social Appraisal of Technology. Science, Technology, &amp; Human Values 33(2), 262–294<br><a class="u" href="https://doi.org/10.1177/0162243907311265" target="_blank" rel="noopener">https://doi.org/10.1177/0162243907311265</a><span class="why">技術の評価で、結論を一つに絞らず選択肢と前提を開いたまま示すことの意義。誘導しない地図づくりの理論的な根拠。</span></li>
+      <li>OECD (2020) Innovative Citizen Participation and New Democratic Institutions: Catching the Deliberative Wave. OECD Publishing<br><a class="u" href="https://doi.org/10.1787/339306da-en" target="_blank" rel="noopener">https://doi.org/10.1787/339306da-en</a><span class="why">市民の熟議の場の設計原則（情報の偏りのなさ、多様な参加者など）。</span></li>
+      <li>エネルギー・環境の選択肢に関する討論型世論調査 実行委員会（2012）『エネルギー・環境の選択肢に関する討論型世論調査 調査報告書』（国立国会図書館 WARP の保存版）<br><a class="u" href="https://warp.ndl.go.jp/web/20130701081203/https://www.cas.go.jp/jp/seisaku/npu/kokumingiron/dp/120827_01.pdf" target="_blank" rel="noopener">https://warp.ndl.go.jp/web/20130701081203/https://www.cas.go.jp/jp/seisaku/npu/kokumingiron/dp/120827_01.pdf</a><span class="why">日本政府がエネルギー政策で実施した討論型世論調査の公式報告。情報提供と討論で意見がどう変わるかの実例。</span></li>
+      <li>Small, C., Bjorkegren, M., Erkkilä, T., Shaw, L. &amp; Megill, C. (2021) Polis: Scaling Deliberation by Mapping High Dimensional Opinion Spaces. RECERCA. Revista de Pensament i Anàlisi 26(2)<br><a class="u" href="https://doi.org/10.6035/recerca.5516" target="_blank" rel="noopener">https://doi.org/10.6035/recerca.5516</a><span class="why">多数の意見の分布を地図にして、合意点と対立点を見えるようにする仕組み（台湾 vTaiwan などで利用）。</span></li>
+      <li class="g">C. タグ・ファセット・ネットワーク・一致率（別案A・B の作り方と検証）</li>
+      <li>Hearst, M. A. (2009) Search User Interfaces, Ch. 8 “Integrating Navigation with Search”. Cambridge University Press（著者の公開版）<br><a class="u" href="https://searchuserinterfaces.com/book/sui_ch8_navigation_and_search.html" target="_blank" rel="noopener">https://searchuserinterfaces.com/book/sui_ch8_navigation_and_search.html</a><span class="why">独立した複数の切り口（ファセット）で絞り込む方法の解説。別案B の 3 軸の考え方。</span></li>
+      <li>ANSI/NISO Z39.19-2005 (R2010) Guidelines for the Construction, Format, and Management of Monolingual Controlled Vocabularies<br><a class="u" href="https://www.niso.org/publications/ansiniso-z3919-2005-r2010" target="_blank" rel="noopener">https://www.niso.org/publications/ansiniso-z3919-2005-r2010</a><span class="why">統制語彙（同じ意味の言葉を 1 つの優先語にまとめる）の作り方の標準。別案A のキーワード。</span></li>
+      <li>樋口耕一（2020）『社会調査のための計量テキスト分析 第2版』ナカニシヤ出版／KH Coder 公式サイト<br><a class="u" href="https://khcoder.net/" target="_blank" rel="noopener">https://khcoder.net/</a><span class="why">共起ネットワーク（一緒に現れる言葉どうしを結ぶ図）の手法とツール。</span></li>
+      <li>Borgatti, S. P. &amp; Everett, M. G. (1997) Network analysis of 2-mode data. Social Networks 19(3), 243–269<br><a class="u" href="https://doi.org/10.1016/S0378-8733(96)00301-2" target="_blank" rel="noopener">https://doi.org/10.1016/S0378-8733(96)00301-2</a><span class="why">2 種類の点（意見とタグ）を結ぶ 2 部グラフの分析法。別案B のネットワーク。</span></li>
+      <li>O&#x27;Connor, C. &amp; Joffe, H. (2020) Intercoder Reliability in Qualitative Research: Debates and Practical Guidelines. International Journal of Qualitative Methods 19<br><a class="u" href="https://doi.org/10.1177/1609406919899220" target="_blank" rel="noopener">https://doi.org/10.1177/1609406919899220</a><span class="why">複数人で分類を付けるときの一致の確かめ方の指針。上の「付け方の検証」。</span></li>
+      <li>Hayes, A. F. &amp; Krippendorff, K. (2007) Answering the Call for a Standard Reliability Measure for Coding Data. Communication Methods and Measures 1(1), 77–89<br><a class="u" href="https://doi.org/10.1080/19312450709336664" target="_blank" rel="noopener">https://doi.org/10.1080/19312450709336664</a><span class="why">分類の一致度の標準的な指標（Krippendorff の α）。人による本格的な検証で使える。</span></li>
+      <li class="g">D. 生活者のエネルギー認識と「見えないエネルギー」（別案C）</li>
+      <li>Attari, S. Z., DeKay, M. L., Davidson, C. I. &amp; Bruine de Bruin, W. (2010) Public perceptions of energy consumption and savings. PNAS 107(37), 16054–16059<br><a class="u" href="https://doi.org/10.1073/pnas.1001509107" target="_blank" rel="noopener">https://doi.org/10.1073/pnas.1001509107</a><span class="why">人はエネルギー使用量を平均で約 2.8 分の 1 に過小評価し、使用量の大きいものほど過小評価が大きい。見えやすさと大きさは別物。</span></li>
+      <li>Burgess, J. &amp; Nye, M. (2008) Re-materialising energy use through transparent monitoring systems. Energy Policy 36(12), 4454–4459<br><a class="u" href="https://doi.org/10.1016/j.enpol.2008.09.039" target="_blank" rel="noopener">https://doi.org/10.1016/j.enpol.2008.09.039</a><span class="why">家庭のエネルギーは「見えない」ものであり、見える化で行動が変わりうることを論じた研究。</span></li>
+      <li>Camilleri, A. R., Larrick, R. P., Hossain, S. &amp; Patino-Echeverri, D. (2019) Consumers underestimate the emissions associated with food but are aided by labels. Nature Climate Change 9(1), 53–58<br><a class="u" href="https://doi.org/10.1038/s41558-018-0354-z" target="_blank" rel="noopener">https://doi.org/10.1038/s41558-018-0354-z</a><span class="why">食品の生産にかかるエネルギー・排出を消費者は大きく過小評価する。製品の製造段階が意識されにくいことを示す研究。</span></li>
+      <li>IGES・Aalto University・D-mat (2019) 1.5-Degree Lifestyles: Targets and Options for Reducing Lifestyle Carbon Footprints（日本語要約版「1.5℃ライフスタイル」あり）<br><a class="u" href="https://www.iges.or.jp/jp/pub/15-degrees-lifestyles-2019/en" target="_blank" rel="noopener">https://www.iges.or.jp/jp/pub/15-degrees-lifestyles-2019/en</a><span class="why">日本の暮らし由来の排出を食・住居・移動・消費財・余暇・サービスの領域別に示した報告。別案C の場面の分け方の参照先。</span></li>
+      <li>国立環境研究所 地球環境研究センター「産業連関表による環境負荷原単位データブック（3EID）」<br><a class="u" href="https://www.cger.nies.go.jp/publications/report/d031/jpn/index_j.htm" target="_blank" rel="noopener">https://www.cger.nies.go.jp/publications/report/d031/jpn/index_j.htm</a><span class="why">製品やサービス 1 単位をつくるのに使われるエネルギー・CO2 の原単位。見えないエネルギーを数字で示す材料。</span></li>
+      <li>Hertwich, E. G. &amp; Peters, G. P. (2009) Carbon Footprint of Nations: A Global, Trade-Linked Analysis. Environmental Science &amp; Technology 43(16), 6414–6420<br><a class="u" href="https://doi.org/10.1021/es803496a" target="_blank" rel="noopener">https://doi.org/10.1021/es803496a</a><span class="why">世界の排出の多くが、最終的には家計の消費に帰属することを示した研究。</span></li>
+      <li>U.S. Department of Energy (2014) Energy Literacy: Essential Principles and Fundamental Concepts for Energy Education, Version 3.0<br><a class="u" href="https://www.energy.gov/cmei/education/articles/download-copy-energy-literacy-framework" target="_blank" rel="noopener">https://www.energy.gov/cmei/education/articles/download-copy-energy-literacy-framework</a><span class="why">エネルギー教育の 7 つの基本原則。生活者・生徒向けの入口づくりの参考。</span></li>
+      <li>DeWaters, J. E. &amp; Powers, S. E. (2011) Energy literacy of secondary students in New York State (USA): A measure of knowledge, affect, and behavior. Energy Policy 39(3), 1699–1710<br><a class="u" href="https://doi.org/10.1016/j.enpol.2010.12.049" target="_blank" rel="noopener">https://doi.org/10.1016/j.enpol.2010.12.049</a><span class="why">エネルギーリテラシーを知識・態度・行動の 3 つで測る尺度。セルフチェックを調査に発展させるときの参考。</span></li>
+      </ul><p class="hint">URL は 2026-11-24 に確認しました（DOI は doi.org から出版社のページへ転送されます）。</p>
+    </div>
+  </section>
 
   <p class="scope">このページは、omfy の関係者と、その周りの方に見ていただくための試作です。検索エンジンには載せず、現行の論点マップのページからもリンクしていません。意見に付いているタグ（評価軸・技術・主体・キーワード・暮らしの項目）は、試作のために仮に付けたものです。</p>
 
